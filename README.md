@@ -1,6 +1,6 @@
 # R Avanzado
 
-<a href="https://amzn.eu/d/00c6NjE"><img src="projectlogo.png" alt="Cover image" width="285" height="375" align="right" style="margin: 0 1em 0 1em"/></a>Este repositorio contiene el código y el texto detrás de el libro [R Avanzado](http://adv-r.hadley.nz). El libro fue creado con [Quarto](https://quarto.org/). El libro esta diseñado principalmente para usarios de R que quieran mejor sus habilidades de programación y entendimiento del lenguaje. También debería resultarle útil a programadores que vienen a R desde otros lenguajes, para ayudarlos a entender porque R funciona de la manera en que lo hace.
+<a href="https://amzn.eu/d/00c6NjE"><img src="projectlogo.png" alt="Cover image" width="285" height="285" align="right" style="margin: 0 1em 0 1em"/></a>Este repositorio contiene el código y el texto detrás de el libro [R Avanzado](http://adv-r.hadley.nz). El libro fue creado con [Quarto](https://quarto.org/). El libro esta diseñado principalmente para usarios de R que quieran mejor sus habilidades de programación y entendimiento del lenguaje. También debería resultarle útil a programadores que vienen a R desde otros lenguajes, para ayudarlos a entender porque R funciona de la manera en que lo hace.
 
 # Sobre la traducción
 
