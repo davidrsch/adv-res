@@ -1,4 +1,4 @@
-# Control flow
+# Control flow {#sec-control-flow}
 
 ```{r, include = FALSE}
 source("common.R")
@@ -8,33 +8,30 @@ source("common.R")
 
 There are two primary tools of control flow: choices and loops. Choices, like `if` statements and `switch()` calls, allow you to run different code depending on the input. Loops, like `for` and `while`, allow you to repeatedly run code, typically with changing options. I'd expect that you're already familiar with the basics of these functions so I'll briefly cover some technical details and then introduce some useful, but lesser known, features.
 
-The condition system (messages, warnings, and errors), which you'll learn about in Chapter \@ref(conditions), also provides non-local control flow. 
+The condition system (messages, warnings, and errors), which you'll learn about in Chapter \@ref(conditions), also provides non-local control flow.
 
-### Quiz {-}
+### Quiz {.unnumbered}
 
 Want to skip this chapter? Go for it, if you can answer the questions below. Find the answers at the end of the chapter in Section \@ref(control-flow-answers).
 
-*   What is the difference between `if` and `ifelse()`?
+-   What is the difference between `if` and `ifelse()`?
 
-*   In the following code, what will the value of `y` be if `x` is `TRUE`?
-    What if `x` is `FALSE`? What if `x` is `NA`?
-  
+-   In the following code, what will the value of `y` be if `x` is `TRUE`? What if `x` is `FALSE`? What if `x` is `NA`?
+
     ```{r, eval = FALSE}
     y <- if (x) 3
     ```
 
-*   What does `switch("x", x = , y = 2, z = 3)` return?
+-   What does `switch("x", x = , y = 2, z = 3)` return?
 
-### Outline {-}
+### Outline {.unnumbered}
 
-* Section \@ref(choices) dives into the details of `if`, then discusses
-  the close relatives `ifelse()` and `switch()`.
-  
-* Section \@ref(loops) starts off by reminding you of the basic structure
-  of the for loop in R, discusses some common pitfalls, and then talks
-  about the related `while` and `repeat` statements.
+-   Section \@ref(choices) dives into the details of `if`, then discusses the close relatives `ifelse()` and `switch()`.
+
+-   Section \@ref(loops) starts off by reminding you of the basic structure of the for loop in R, discusses some common pitfalls, and then talks about the related `while` and `repeat` statements.
 
 ## Choices
+
 \indexc{if}
 
 The basic form of an if statement in R is as follows:
@@ -44,7 +41,7 @@ if (condition) true_action
 if (condition) true_action else false_action
 ```
 
-If `condition` is `TRUE`, `true_action` is evaluated; if `condition` is `FALSE`, the optional `false_action` is evaluated. 
+If `condition` is `TRUE`, `true_action` is evaluated; if `condition` is `FALSE`, the optional `false_action` is evaluated.
 
 Typically the actions are compound statements contained within `{`:
 
@@ -98,6 +95,7 @@ if (c(TRUE, FALSE)) 1
 ```
 
 ### Vectorised if
+
 \indexc{ifelse()}
 
 Given that `if` only works with a single `TRUE` or `FALSE`, you might wonder what to do if you have a vector of logical values. Handling vectors of values is the job of `ifelse()`: a vectorised function with `test`, `yes`, and `no` vectors (that will be recycled to the same length):
@@ -126,6 +124,7 @@ dplyr::case_when(
 ```
 
 ### `switch()` statement {#switch}
+
 \indexc{switch()}
 
 Closely related to `if` is the `switch()`-statement. It's a compact, special purpose equivalent that lets you replace code like:
@@ -185,8 +184,7 @@ It is also possible to use `switch()` with a numeric `x`, but is harder to read,
 
 ### Exercises
 
-1.  What type of vector does each of the following calls to `ifelse()`
-    return?
+1.  What type of vector does each of the following calls to `ifelse()` return?
 
     ```{r, eval = FALSE}
     ifelse(TRUE, 1, "no")
@@ -196,7 +194,7 @@ It is also possible to use `switch()` with a numeric `x`, but is harder to read,
 
     Read the documentation and write down the rules in your own words.
 
-1.  Why does the following code work?
+2.  Why does the following code work?
 
     ```{r}
     x <- 1:10
@@ -207,9 +205,8 @@ It is also possible to use `switch()` with a numeric `x`, but is harder to read,
     ```
 
 ## Loops
-\index{loops}
-\index{loops!for@\texttt{for}}
-\indexc{for}
+
+\index{loops} \index{loops!for@\texttt{for}} \indexc{for}
 
 `for` loops are used to iterate over items in a vector. They have the following basic form:
 
@@ -235,12 +232,14 @@ for (i in 1:3) {}
 i
 ```
 
+```{=tex}
 \indexc{next}
 \indexc{break}
+```
 There are two ways to terminate a `for` loop early:
 
-* `next` exits the current iteration.
-* `break` exits the entire `for` loop.
+-   `next` exits the current iteration.
+-   `break` exits the entire `for` loop.
 
 ```{r}
 for (i in 1:10) {
@@ -255,6 +254,7 @@ for (i in 1:10) {
 ```
 
 ### Common pitfalls
+
 \index{loops!common pitfalls}
 
 There are three common pitfalls to watch out for when using `for`. First, if you're generating data, make sure to preallocate the output container. Otherwise the loop will be very slow; see Sections \@ref(memory-profiling) and \@ref(avoid-copies) for more details. The `vector()` function is helpful here.
@@ -312,14 +312,16 @@ for (i in seq_along(xs)) {
 ```
 
 ### Related tools {#for-family}
+
+```{=tex}
 \indexc{while}
 \indexc{repeat}
-
+```
 `for` loops are useful if you know in advance the set of values that you want to iterate over. If you don't know, there are two related tools with more flexible specifications:
 
-* `while(condition) action`: performs `action` while `condition` is `TRUE`.
+-   `while(condition) action`: performs `action` while `condition` is `TRUE`.
 
-* `repeat(action)`: repeats `action` forever (i.e. until it encounters `break`).
+-   `repeat(action)`: repeats `action` forever (i.e. until it encounters `break`).
 
 R does not have an equivalent to the `do {action} while (condition)` syntax found in other languages.
 
@@ -329,8 +331,8 @@ Generally speaking you shouldn't need to use `for` loops for data analysis tasks
 
 ### Exercises
 
-1.  Why does this code succeed without errors or warnings? 
-    
+1.  Why does this code succeed without errors or warnings?
+
     ```{r, results = FALSE}
     x <- numeric()
     out <- vector("list", length(x))
@@ -340,8 +342,7 @@ Generally speaking you shouldn't need to use `for` loops for data analysis tasks
     out
     ```
 
-1.  When the following code is evaluated, what can you say about the 
-    vector being iterated?
+2.  When the following code is evaluated, what can you say about the vector being iterated?
 
     ```{r}
     xs <- c(1, 2, 3)
@@ -351,7 +352,7 @@ Generally speaking you shouldn't need to use `for` loops for data analysis tasks
     xs
     ```
 
-1.  What does the following code tell you about when the index is updated?
+3.  What does the following code tell you about when the index is updated?
 
     ```{r}
     for (i in 1:3) {
@@ -362,11 +363,8 @@ Generally speaking you shouldn't need to use `for` loops for data analysis tasks
 
 ## Quiz answers {#control-flow-answers}
 
-* `if` works with scalars; `ifelse()` works with vectors.
+-   `if` works with scalars; `ifelse()` works with vectors.
 
-* When `x` is `TRUE`, `y` will be `3`; when `FALSE`, `y` will be `NULL`;
-  when `NA` the if statement will throw an error.
+-   When `x` is `TRUE`, `y` will be `3`; when `FALSE`, `y` will be `NULL`; when `NA` the if statement will throw an error.
 
-* This `switch()` statement makes use of fall-through so it will return 2.
-  See details in Section \@ref(switch).
-
+-   This `switch()` statement makes use of fall-through so it will return 2. See details in Section \@ref(switch).

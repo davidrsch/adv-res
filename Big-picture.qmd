@@ -1,34 +1,34 @@
-# Big picture {#meta-big-picture}
+# Big picture {#sec-meta-big-picture}
 
 ```{r, include = FALSE}
 source("common.R")
 ```
+
 ## Introduction
 
-Metaprogramming is the hardest topic in this book because it brings together many formerly unrelated topics and forces you grapple with issues that you probably haven't thought about before. You'll also need to learn a lot of new vocabulary, and at first it will seem like every new term is defined by three other terms that you haven't heard of. Even if you're an experienced programmer in another language, your existing skills are unlikely to be much help as few modern popular languages expose the level of metaprogramming that R provides. So don't be surprised if you're frustrated or confused at first; this is a natural part of the process that happens to everyone! 
+Metaprogramming is the hardest topic in this book because it brings together many formerly unrelated topics and forces you grapple with issues that you probably haven't thought about before. You'll also need to learn a lot of new vocabulary, and at first it will seem like every new term is defined by three other terms that you haven't heard of. Even if you're an experienced programmer in another language, your existing skills are unlikely to be much help as few modern popular languages expose the level of metaprogramming that R provides. So don't be surprised if you're frustrated or confused at first; this is a natural part of the process that happens to everyone!
 
-But I think it's easier to learn metaprogramming now than ever before. Over the last few years, the theory and practice have matured substantially, providing a strong foundation paired with tools that allow you to solve common problems. In this chapter, you'll get the big picture of all the main pieces and how they fit together. 
+But I think it's easier to learn metaprogramming now than ever before. Over the last few years, the theory and practice have matured substantially, providing a strong foundation paired with tools that allow you to solve common problems. In this chapter, you'll get the big picture of all the main pieces and how they fit together.
 
-### Outline {-}
+### Outline {.unnumbered}
 
 Each section in this chapter introduces one big new idea:
 
-* Section \@ref(code-data) shows that code is data and teaches you how to create and modify expressions by capturing code.
+-   Section \@ref(code-data) shows that code is data and teaches you how to create and modify expressions by capturing code.
 
-* Section \@ref(code-tree) describes the tree-like structure of code, called an 
-abstract syntax tree.
+-   Section \@ref(code-tree) describes the tree-like structure of code, called an abstract syntax tree.
 
-* Section \@ref(coding-code) shows how to create new expressions programmatically.
+-   Section \@ref(coding-code) shows how to create new expressions programmatically.
 
-* Section \@ref(eval-intro) shows how to execute expressions by evaluating them in an environment.
+-   Section \@ref(eval-intro) shows how to execute expressions by evaluating them in an environment.
 
-* Section \@ref(eval-funs) illustrates how to customise evaluation by supplying custom functions in a new environment.
+-   Section \@ref(eval-funs) illustrates how to customise evaluation by supplying custom functions in a new environment.
 
-* Section \@ref(eval-data) extends that customisation to data masks, which blur the line between environments and data frames.
+-   Section \@ref(eval-data) extends that customisation to data masks, which blur the line between environments and data frames.
 
-* Section \@ref(quosure-intro) introduces a new data structure called the quosure that makes all this simpler and more correct. 
+-   Section \@ref(quosure-intro) introduces a new data structure called the quosure that makes all this simpler and more correct.
 
-### Prerequisites {-}
+### Prerequisites {.unnumbered}
 
 This chapter introduces the big ideas using rlang; you'll learn the base equivalents in later chapters. We'll also use the lobstr package to explore the tree structure of code.
 
@@ -48,7 +48,7 @@ expr(mean(x, na.rm = TRUE))
 expr(10 + 100 + 1000)
 ```
 
-More formally, captured code is called an __expression__. An expression isn't a single type of object, but is a collective term for any of four types (call, symbol, constant, or pairlist), which you'll learn more about in Chapter \@ref(expressions).
+More formally, captured code is called an **expression**. An expression isn't a single type of object, but is a collective term for any of four types (call, symbol, constant, or pairlist), which you'll learn more about in Chapter \@ref(expressions).
 
 `expr()` lets you capture code that you've typed. You need a different tool to capture code passed to a function because `expr()` doesn't work:
 
@@ -88,7 +88,7 @@ The first element of the call is the function to be called, which means the firs
 
 ## Code is a tree {#code-tree}
 
-To do more complex manipulation with expressions, you need to fully understand their structure. Behind the scenes, almost every programming language represents code as a tree, often called the __abstract syntax tree__, or AST for short. R is unusual in that you can actually inspect and manipulate this tree.
+To do more complex manipulation with expressions, you need to fully understand their structure. Behind the scenes, almost every programming language represents code as a tree, often called the **abstract syntax tree**, or AST for short. R is unusual in that you can actually inspect and manipulate this tree.
 
 A very convenient tool for understanding the tree-like structure is `lobstr::ast()`. Given some code, this function displays the underlying tree structure. Function calls form the branches of the tree, and are shown by rectangles. The leaves of the tree are symbols (like `a`) and constants (like `"b"`).
 
@@ -121,7 +121,7 @@ call2("f", 1, 2, 3)
 call2("+", 1, call2("*", 2, 3))
 ```
 
-`call2()` is often convenient to program with, but is a bit clunky for interactive use. An alternative technique is to build complex code trees by combining simpler code trees with a template. `expr()` and `enexpr()` have built-in support for this idea via `!!` (pronounced bang-bang), the __unquote operator__.
+`call2()` is often convenient to program with, but is a bit clunky for interactive use. An alternative technique is to build complex code trees by combining simpler code trees with a template. `expr()` and `enexpr()` have built-in support for this idea via `!!` (pronounced bang-bang), the **unquote operator**.
 
 The precise details are the topic of Section \@ref(unquoting), but basically `!!x` inserts the code tree stored in `x` into the expression. This makes it easy to build complex trees from simple fragments:
 
@@ -154,13 +154,13 @@ Importantly, this works even when given weird variable names:
 cv(`)`)
 ```
 
-Dealing with weird names[^non-syntactic] is another good reason to avoid `paste()` when generating R code. You might think this is an esoteric concern, but not worrying about it when generating SQL code in web applications led to SQL injection attacks that have collectively cost billions of dollars.
+Dealing with weird names[^big-picture-1] is another good reason to avoid `paste()` when generating R code. You might think this is an esoteric concern, but not worrying about it when generating SQL code in web applications led to SQL injection attacks that have collectively cost billions of dollars.
 
-[^non-syntactic]: More technically, these are called non-syntactic names and are the topic of Section \@ref(non-syntactic).
+[^big-picture-1]: More technically, these are called non-syntactic names and are the topic of Section \@ref(non-syntactic).
 
 ## Evaluation runs code {#eval-intro}
 
-Inspecting and modifying code gives you one set of powerful tools. You get another set of powerful tools when you __evaluate__, i.e. execute or run, an expression. Evaluating an expression requires an environment, which tells R what the symbols in the expression mean. You'll learn the details of evaluation in Chapter \@ref(evaluation).
+Inspecting and modifying code gives you one set of powerful tools. You get another set of powerful tools when you **evaluate**, i.e. execute or run, an expression. Evaluating an expression requires an environment, which tells R what the symbols in the expression mean. You'll learn the details of evaluation in Chapter \@ref(evaluation).
 
 The primary tool for evaluating expressions is `base::eval()`, which takes an expression and an environment:
 
@@ -179,9 +179,8 @@ eval(expr(x + y))
 
 One of the big advantages of evaluating code manually is that you can tweak the environment. There are two main reasons to do this:
 
-* To temporarily override functions to implement a domain specific language.
-* To add a data mask so you can refer to variables in a data frame as if
-  they are variables in an environment.
+-   To temporarily override functions to implement a domain specific language.
+-   To add a data mask so you can refer to variables in a data frame as if they are variables in an environment.
 
 ## Customising evaluation with functions {#eval-funs}
 
@@ -224,7 +223,7 @@ DBI::dbDisconnect(con)
 
 Rebinding functions is an extremely powerful technique, but it tends to require a lot of investment. A more immediately practical application is modifying evaluation to look for variables in a data frame instead of an environment. This idea powers the base `subset()` and `transform()` functions, as well as many tidyverse functions like `ggplot2::aes()` and `dplyr::mutate()`. It's possible to use `eval()` for this, but there are a few potential pitfalls (Section \@ref(base-evaluation)), so we'll switch to `rlang::eval_tidy()` instead.
 
-As well as expression and environment, `eval_tidy()` also takes a __data mask__, which is typically a data frame:
+As well as expression and environment, `eval_tidy()` also takes a **data mask**, which is typically a data frame:
 
 ```{r}
 df <- data.frame(x = 1:5, y = sample(5))
@@ -266,7 +265,7 @@ with2(df, x + a)
 
 The problem arises because we need to evaluate the captured expression in the environment where it was written (where `a` is 10), not the environment inside of `with2()` (where `a` is 1000).
 
-Fortunately we can solve this problem by using a new data structure: the __quosure__ which bundles an expression with an environment. `eval_tidy()` knows how to work with quosures so all we need to do is switch out `enexpr()` for `enquo()`:
+Fortunately we can solve this problem by using a new data structure: the **quosure** which bundles an expression with an environment. `eval_tidy()` knows how to work with quosures so all we need to do is switch out `enexpr()` for `enquo()`:
 
 ```{r}
 with2 <- function(df, expr) {

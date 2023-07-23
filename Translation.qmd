@@ -1,4 +1,4 @@
-# Translating R code {#translation}
+# Translating R code {#sec-translation}
 
 ```{r, include = FALSE}
 source("common.R")
@@ -7,7 +7,7 @@ library(dbplyr) # to supress startup messages below
 
 ## Introduction
 
-The combination of first-class environments, lexical scoping, and metaprogramming gives us a powerful toolkit for translating R code into other languages. One fully-fledged example of this idea is dbplyr, which powers the database backends for dplyr, allowing you to express data manipulation in R and automatically translate it into SQL. You can see the key idea in  `translate_sql()` which takes R code and returns the equivalent SQL:
+The combination of first-class environments, lexical scoping, and metaprogramming gives us a powerful toolkit for translating R code into other languages. One fully-fledged example of this idea is dbplyr, which powers the database backends for dplyr, allowing you to express data manipulation in R and automatically translate it into SQL. You can see the key idea in `translate_sql()` which takes R code and returns the equivalent SQL:
 
 ```{r}
 library(dbplyr)
@@ -17,20 +17,17 @@ translate_sql(!first %in% c("John", "Roger", "Robert"))
 translate_sql(select == 7)
 ```
 
-Translating R to SQL is complex because of the many idiosyncrasies of SQL dialects, so here I'll develop two simple, but useful, domain specific languages (DSL): one to generate HTML, and the other to generate mathematical equations in LaTeX. 
+Translating R to SQL is complex because of the many idiosyncrasies of SQL dialects, so here I'll develop two simple, but useful, domain specific languages (DSL): one to generate HTML, and the other to generate mathematical equations in LaTeX.
 
-If you're interested in learning more about domain specific languages in general, I highly recommend  _Domain Specific Languages_ [@dsls]. It discusses many options for creating a DSL and provides many examples of different languages.
+If you're interested in learning more about domain specific languages in general, I highly recommend *Domain Specific Languages* [@dsls]. It discusses many options for creating a DSL and provides many examples of different languages.
 
-### Outline {-}
+### Outline {.unnumbered}
 
-* Section \@ref(html) creates a DSL for generating HTML, using quasiquotation
-  and purrr to generate a function for each HTML tag, then tidy evaluation to
-  easily access them.
+-   Section \@ref(html) creates a DSL for generating HTML, using quasiquotation and purrr to generate a function for each HTML tag, then tidy evaluation to easily access them.
 
-* Section \@ref(latex) transforms mathematically R code into its LaTeX
-  equivalent using a combination of tidy evaluation and expression walking.
+-   Section \@ref(latex) transforms mathematically R code into its LaTeX equivalent using a combination of tidy evaluation and expression walking.
 
-### Prerequisites {-}
+### Prerequisites {.unnumbered}
 
 This chapter pulls together many techniques discussed elsewhere in the book. In particular, you'll need to understand environments, expressions, tidy evaluation, and a little functional programming and S3. We'll use [rlang](https://rlang.r-lib.org) for metaprogramming tools, and [purrr](https://purrr.tidyverse.org) for functional programming.
 
@@ -40,11 +37,12 @@ library(purrr)
 ```
 
 ## HTML {#html}
+
 \index{HTML}
 
 HTML (HyperText Markup Language) underlies the majority of the web. It's a special case of SGML (Standard Generalised Markup Language), and it's similar but not identical to XML (eXtensible Markup Language). HTML looks like this:
 
-```html
+``` html
 <body>
   <h1 id='first'>A heading</h1>
   <p>Some text &amp; <b>some bold text.</b></p>
@@ -54,23 +52,23 @@ HTML (HyperText Markup Language) underlies the majority of the web. It's a speci
 
 Even if you've never looked at HTML before, you can still see that the key component of its coding structure is tags, which look like `<tag></tag>` or `<tag />`. Tags can be nested within other tags and intermingled with text. There are over 100 HTML tags, but in this chapter we'll focus on just a handful:
 
-* `<body>` is the top-level tag that contains all content.
-* `<h1>` defines a top level heading.
-* `<p>` defines a paragraph.
-* `<b>` emboldens text.
-* `<img>` embeds an image.
+-   `<body>` is the top-level tag that contains all content.
+-   `<h1>` defines a top level heading.
+-   `<p>` defines a paragraph.
+-   `<b>` emboldens text.
+-   `<img>` embeds an image.
 
-Tags can have named __attributes__ which look like `<tag name1='value1' name2='value2'></tag>`. Two of the most important attributes are `id` and `class`, which are used in conjunction with CSS (Cascading Style Sheets) to control the visual appearance of the page.
+Tags can have named **attributes** which look like `<tag name1='value1' name2='value2'></tag>`. Two of the most important attributes are `id` and `class`, which are used in conjunction with CSS (Cascading Style Sheets) to control the visual appearance of the page.
 
-__Void tags__, like `<img>`, don't have any children, and are written `<img />`, not `<img></img>`. Since they have no content, attributes are more important, and  `img` has three that are used with almost every image: `src` (where the image lives), `width`, and `height`.
+**Void tags**, like `<img>`, don't have any children, and are written `<img />`, not `<img></img>`. Since they have no content, attributes are more important, and `img` has three that are used with almost every image: `src` (where the image lives), `width`, and `height`.
 
-Because `<` and `>` have special meanings in HTML, you can't write them directly. Instead you have to use the HTML __escapes__: `&gt;` and `&lt;`. And since those escapes use `&`, if you want a literal ampersand you have to escape it as `&amp;`.
+Because `<` and `>` have special meanings in HTML, you can't write them directly. Instead you have to use the HTML **escapes**: `&gt;` and `&lt;`. And since those escapes use `&`, if you want a literal ampersand you have to escape it as `&amp;`.
 
 ### Goal
 
 Our goal is to make it easy to generate HTML from R. To give a concrete example, we want to generate the following HTML:
 
-```html
+``` html
 <body>
   <h1 id='first'>A heading</h1>
   <p>Some text &amp; <b>some bold text.</b></p>
@@ -78,7 +76,7 @@ Our goal is to make it easy to generate HTML from R. To give a concrete example,
 </body>
 ```
 
-Using the following code that matches the structure of the HTML as closely as possible: 
+Using the following code that matches the structure of the HTML as closely as possible:
 
 ```{r, eval = FALSE}
 with_html(
@@ -92,22 +90,21 @@ with_html(
 
 This DSL has the following three properties:
 
-* The nesting of function calls matches the nesting of tags.
+-   The nesting of function calls matches the nesting of tags.
 
-* Unnamed arguments become the content of the tag, and named arguments
-  become their attributes.
+-   Unnamed arguments become the content of the tag, and named arguments become their attributes.
 
-* `&` and other special characters are automatically escaped.
+-   `&` and other special characters are automatically escaped.
 
 ### Escaping
+
 \index{escaping}
 
 Escaping is so fundamental to translation that it'll be our first topic. There are two related challenges:
 
-* In user input, we need to automatically escape `&`, `<` and `>`.
+-   In user input, we need to automatically escape `&`, `<` and `>`.
 
-* At the same time we need to make sure that the `&`, `<` and `>` we generate
-  are not double-escaped (i.e. that we don't accidentally generate `&amp;amp;`, `&amp;lt;` and `&amp;gt;`).
+-   At the same time we need to make sure that the `&`, `<` and `>` we generate are not double-escaped (i.e. that we don't accidentally generate `&amp;amp;`, `&amp;lt;` and `&amp;gt;`).
 
 The easiest way to do this is to create an S3 class (Section \@ref(s3-classes)) that distinguishes between regular text (that needs escaping) and HTML (that doesn't).
 
@@ -122,10 +119,9 @@ print.advr_html <- function(x, ...) {
 
 We then write an escape generic. It has two important methods:
 
-* `escape.character()` takes a regular character vector and returns an HTML
-  vector with special characters (`&`, `<`, `>`) escaped.
+-   `escape.character()` takes a regular character vector and returns an HTML vector with special characters (`&`, `<`, `>`) escaped.
 
-* `escape.advr_html()` leaves already escaped HTML alone.
+-   `escape.advr_html()` leaves already escaped HTML alone.
 
 ```{r}
 escape <- function(x) UseMethod("escape")
@@ -212,7 +208,7 @@ p("Some text", class = "important", `data-value` = 10)
 
 ### Tag functions
 
-It's straightforward to adapt `p()` to other tags: we just need to replace `"p"` with the name of the tag. One elegant way to do that is to create a function with `rlang::new_function()` (Section \@ref(new-function)), using unquoting and `paste0()` to generate the starting and ending tags. 
+It's straightforward to adapt `p()` to other tags: we just need to replace `"p"` with the name of the tag. One elegant way to do that is to create a function with `rlang::new_function()` (Section \@ref(new-function)), using unquoting and `paste0()` to generate the starting and ending tags.
 
 ```{r}
 tag <- function(tag) {
@@ -319,6 +315,7 @@ html_tags$p(
 We can then finish off our HTML DSL with a function that allows us to evaluate code in the context of that list. Here we slightly abuse the data mask, passing it a list of functions rather than a data frame. This is quick hack to mingle the execution environment of `code` with the functions in `html_tags`.
 
 \indexc{eval\_tidy()}
+
 ```{r}
 with_html <- function(code) {
   code <- enquo(code)
@@ -342,29 +339,21 @@ If you want to access the R function overridden by an HTML tag with the same nam
 
 ### Exercises
 
-1.  The escaping rules for `<script>` tags are different because they contain
-    JavaScript, not HTML. Instead of escaping angle  brackets or ampersands,
-    you need to escape `</script>` so that the tag isn't closed too early.
-    For example, `script("'</script>'")`, shouldn't generate this:
+1.  The escaping rules for `<script>` tags are different because they contain JavaScript, not HTML. Instead of escaping angle brackets or ampersands, you need to escape `</script>` so that the tag isn't closed too early. For example, `script("'</script>'")`, shouldn't generate this:
 
-    ```html
+    ``` html
     <script>'</script>'</script>
     ```
 
     But
 
-    ```html
+    ``` html
     <script>'<\/script>'</script>
     ```
 
-    Adapt the `escape()` to follow these rules when a new argument `script`
-    is set to `TRUE`.
+    Adapt the `escape()` to follow these rules when a new argument `script` is set to `TRUE`.
 
-1.  The use of `...` for all functions has some big downsides. There's no
-    input validation and there will be little information in the
-    documentation or autocomplete about how they are used in the function.
-    Create a new function that, when given a named list of tags and their
-    attribute names (like below), creates tag functions with named arguments.
+2.  The use of `...` for all functions has some big downsides. There's no input validation and there will be little information in the documentation or autocomplete about how they are used in the function. Create a new function that, when given a named list of tags and their attribute names (like below), creates tag functions with named arguments.
 
     ```{r, eval = FALSE}
     list(
@@ -375,9 +364,7 @@ If you want to access the R function overridden by an HTML tag with the same nam
 
     All tags should get `class` and `id` attributes.
 
-1.  Reason about the following code that calls `with_html()` referencing objects
-    from the environment. Will it work or fail? Why? Run the code to
-    verify your predictions.
+3.  Reason about the following code that calls `with_html()` referencing objects from the environment. Will it work or fail? Why? Run the code to verify your predictions.
 
     ```{r, eval = FALSE}
     greeting <- "Hello!"
@@ -388,11 +375,10 @@ If you want to access the R function overridden by an HTML tag with the same nam
     with_html(p(address))
     ```
 
-1.  Currently the HTML doesn't look terribly pretty, and it's hard to see the
-    structure. How could you adapt `tag()` to do indenting and formatting?
-    (You may need to do some research into block and inline tags.)
+4.  Currently the HTML doesn't look terribly pretty, and it's hard to see the structure. How could you adapt `tag()` to do indenting and formatting? (You may need to do some research into block and inline tags.)
 
 ## LaTeX {#latex}
+
 \index{LaTeX}
 
 The next DSL will convert R expressions into their LaTeX math equivalents. (This is a bit like `?plotmath`, but for text instead of plots.) LaTeX is the lingua franca of mathematicians and statisticians: it's common to use LaTeX notation whenever you want to express an equation in text, like in email. Since many reports are produced using both R and LaTeX, it might be useful to be able to automatically convert mathematical expressions from one language to the other.
@@ -403,41 +389,27 @@ Because we need to convert both functions and names, this mathematical DSL will 
 
 Before we begin, let's quickly cover how formulas are expressed in LaTeX. The full standard is very complex, but fortunately is [well documented](http://en.wikibooks.org/wiki/LaTeX/Mathematics), and the most common commands have a fairly simple structure:
 
-* Most simple mathematical equations are written in the same way you'd type
-  them in R: `x * y`, `z ^ 5`. Subscripts are written using `_` (e.g., `x_1`).
+-   Most simple mathematical equations are written in the same way you'd type them in R: `x * y`, `z ^ 5`. Subscripts are written using `_` (e.g., `x_1`).
 
-* Special characters start with a `\`: `\pi` = $\pi$, `\pm` = $\pm$, and so on.
-  There are a huge number of symbols available in LaTeX: searching online for
-  `latex math symbols` returns many
-  [lists](http://www.sunilpatel.co.uk/latex-type/latex-math-symbols/).
-  There's even [a service](http://detexify.kirelabs.org/classify.html) that
-  will look up the symbol you sketch in the browser.
+-   Special characters start with a `\`: `\pi` = $\pi$, `\pm` = $\pm$, and so on. There are a huge number of symbols available in LaTeX: searching online for `latex math symbols` returns many [lists](http://www.sunilpatel.co.uk/latex-type/latex-math-symbols/). There's even [a service](http://detexify.kirelabs.org/classify.html) that will look up the symbol you sketch in the browser.
 
-* More complicated functions look like `\name{arg1}{arg2}`. For example, to
-  write a fraction you'd use `\frac{a}{b}`. To write a square root, you'd use
-  `\sqrt{a}`.
+-   More complicated functions look like `\name{arg1}{arg2}`. For example, to write a fraction you'd use `\frac{a}{b}`. To write a square root, you'd use `\sqrt{a}`.
 
-* To group elements together use `{}`: i.e., `x ^ a + b` versus `x ^ {a + b}`.
+-   To group elements together use `{}`: i.e., `x ^ a + b` versus `x ^ {a + b}`.
 
-* In good math typesetting, a distinction is made between variables and
-  functions. But without extra information, LaTeX doesn't know whether
-  `f(a * b)` represents calling the function `f` with input `a * b`,
-  or is shorthand for `f * (a * b)`. If `f` is a function, you can tell
-  LaTeX to typeset it using an upright font with `\textrm{f}(a * b)`.
-  (The `rm` stands for "Roman", the opposite of italics.)
+-   In good math typesetting, a distinction is made between variables and functions. But without extra information, LaTeX doesn't know whether `f(a * b)` represents calling the function `f` with input `a * b`, or is shorthand for `f * (a * b)`. If `f` is a function, you can tell LaTeX to typeset it using an upright font with `\textrm{f}(a * b)`. (The `rm` stands for "Roman", the opposite of italics.)
 
 ### Goal
 
 Our goal is to use these rules to automatically convert an R expression to its appropriate LaTeX representation. We'll tackle this in four stages:
 
-* Convert known symbols: `pi` → `\pi`
+-   Convert known symbols: `pi` → `\pi`
 
-* Leave other symbols unchanged: `x` → `x`, `y` → `y`
+-   Leave other symbols unchanged: `x` → `x`, `y` → `y`
 
-* Convert known functions to their special forms: `sqrt(frac(a, b))` →
-  `\sqrt{\frac{a}{b}}`
+-   Convert known functions to their special forms: `sqrt(frac(a, b))` → `\sqrt{\frac{a}{b}}`
 
-* Wrap unknown functions with `\textrm`: `f(a)` → `\textrm{f}(a)`
+-   Wrap unknown functions with `\textrm`: `f(a)` → `\textrm{f}(a)`
 
 We'll code this translation in the opposite direction of what we did with the HTML DSL. We'll start with infrastructure, because that makes it easy to experiment with our DSL, and then work our way back down to generate the desired output.
 
@@ -445,12 +417,9 @@ We'll code this translation in the opposite direction of what we did with the HT
 
 To begin, we need a wrapper function that will convert R expressions into LaTeX math expressions. This will work like `to_html()` by capturing the unevaluated expression and evaluating it in a special environment. There are two main differences:
 
-* The evaluation environment is no longer constant, as it has to vary depending on
-  the input. This is necessary to handle unknown symbols and functions.
+-   The evaluation environment is no longer constant, as it has to vary depending on the input. This is necessary to handle unknown symbols and functions.
 
-* We never evaluate in the argument environment because we're translating every
-  function to a LaTeX expression. The user will need to use explicitly `!!` in
-  order to evaluate normally.
+-   We never evaluate in the argument environment because we're translating every function to a LaTeX expression. The user will need to use explicitly `!!` in order to evaluate normally.
 
 This gives us:
 
@@ -732,10 +701,6 @@ You could certainly take this idea further and translate types of mathematical e
 
 ### Exercises
 
-1.  Add escaping. The special symbols that should be escaped by adding a backslash
-    in front of them are `\`, `$`, and `%`. Just as with HTML, you'll need to
-    make sure you don't end up double-escaping. So you'll need to create a small
-    S3 class and then use that in function operators. That will also allow you
-    to embed arbitrary LaTeX if needed.
+1.  Add escaping. The special symbols that should be escaped by adding a backslash in front of them are `\`, `$`, and `%`. Just as with HTML, you'll need to make sure you don't end up double-escaping. So you'll need to create a small S3 class and then use that in function operators. That will also allow you to embed arbitrary LaTeX if needed.
 
-1.  Complete the DSL to support all the functions that `plotmath` supports.
+2.  Complete the DSL to support all the functions that `plotmath` supports.

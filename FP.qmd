@@ -1,5 +1,3 @@
-# (PART) Functional programming {-}
-
 ```{r, include = FALSE}
 source("common.R")
 ```
