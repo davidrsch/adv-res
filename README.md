@@ -12,6 +12,10 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
 
 ## Traducido hasta ahora
 
+ -  Bienvenida
+ -  Prefacio
+ -  Introducción
+
 # Más información acerca del repositorio
 
 ## Diagramas
@@ -77,6 +81,10 @@ Note that this is a verbatim translation of the book so when the author refer to
 The translation was done using Google Translate and some grammar and coherence errors were corrected. If you spot any issue related to the translation content, feel free to open an issue or pull request on this [repository](https://github.com/davidrsch/adv-res).
 
 ## Translated so far
+
+ -  Welcome
+ -  Preface
+ -  Introduction
 
 # More info about the repository
 

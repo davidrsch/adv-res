@@ -4,186 +4,125 @@
 source("common.R")
 ```
 
-# Introduction
+# Introducción
 
-I have now been programming in R for over 15 years, and have been doing it full-time for the last five years. This has given me the luxury of time to examine how the language works. This book is my attempt to pass on what I've learned so that you can understand the intricacies of R as quickly and painlessly as possible. Reading it will help you avoid the mistakes I've made and dead ends I've gone down, and will teach you useful tools, techniques, and idioms that can help you to attack many types of problems. In the process, I hope to show that, despite its sometimes frustrating quirks, R is, at its heart, an elegant and beautiful language, well tailored for data science.
+Ahora he estado programando en R durante más de 15 años y lo he estado haciendo a tiempo completo durante los últimos cinco años. Esto me ha dado el lujo de tiempo para examinar cómo funciona el lenguaje. Este libro es mi intento de transmitir lo que he aprendido para que pueda comprender las complejidades de R tan rápido y sin dolor como sea posible. Leerlo te ayudará a evitar los errores que he cometido y los callejones sin salida en los que me he metido, y te enseñará herramientas, técnicas y modismos útiles que pueden ayudarte a atacar muchos tipos de problemas. En el proceso, espero mostrar que, a pesar de sus peculiaridades a veces frustrantes, R es, en el fondo, un lenguaje elegante y hermoso, bien adaptado para la ciencia de datos.
 
-## Why R?
+## ¿Por qué R?
 
-If you are new to R, you might wonder what makes learning such a quirky language worthwhile. To me, some of the best features are:
+Si es nuevo en R, es posible que se pregunte qué hace que valga la pena aprender un lenguaje tan peculiar. Para mí, algunas de las mejores características son:
 
-* It's free, open source, and available on every major platform. As a result, if 
-  you do your analysis in R, anyone can easily replicate it, regardless of 
-  where they live or how much money they earn.
+-   Es gratis, de código abierto y está disponible en todas las plataformas principales. Como resultado, si realiza su análisis en R, cualquiera puede replicarlo fácilmente, independientemente de dónde viva o cuánto dinero gane.
 
-* R has a diverse and welcoming community, both online (e.g. 
-  [the #rstats twitter community][rstats-twitter]) and in person (like the 
-  [many R meetups][r-meetups]). Two particularly inspiring community groups are
-  [rweekly newsletter][rweekly] which makes it easy to keep up to date with
-  R, and [R-Ladies][r-ladies] which has made a wonderfully welcoming community
-  for women and other minority genders.
-  
-* A massive set of packages for statistical modelling, machine learning,
-  visualisation, and importing and manipulating data. Whatever model or
-  graphic you're trying to do, chances are that someone has already tried
-  to do it and you can learn from their efforts.
+-   R tiene una comunidad diversa y acogedora, tanto en línea (por ejemplo, [la comunidad de Twitter #rstats](https://twitter.com/search?q=%23rstats)) como en persona (como las [muchas reuniones de R](https://www.meetup.com/topics/r-programming-language/)). Dos grupos comunitarios particularmente inspiradores son [rweekly newsletter](https://rweekly.org) que facilita mantenerse al día con R, y [R-Ladies](http://r-ladies.org) que ha creado una comunidad maravillosamente acogedora para mujeres y otros géneros minoritarios.
 
-* Powerful tools for communicating your results. [RMarkdown][rmarkdown] makes
-  it easy to turn your results into HTML files, PDFs, Word documents,
-  PowerPoint presentations, dashboards and more. [Shiny][shiny] allows you to
-  make beautiful interactive apps without any knowledge of HTML or javascript.
+-   Un conjunto masivo de paquetes para modelado estadístico, aprendizaje automático, visualización e importación y manipulación de datos. Sea cual sea el modelo o el gráfico que esté tratando de hacer, lo más probable es que alguien ya haya intentado hacerlo y pueda aprender de sus esfuerzos.
 
-* RStudio, [the IDE](http://www.rstudio.com/ide/), provides an integrated
-  development environment, tailored to the needs of data science, interactive 
-  data analysis, and statistical programming.
+-   Potentes herramientas para comunicar sus resultados. [Quarto](https://quarto.org/) facilita convertir sus resultados en archivos HTML, PDF, documentos de Word, presentaciones de PowerPoint, tableros y más. [Shiny](http://shiny.rstudio.com) le permite crear hermosas aplicaciones interactivas sin ningún conocimiento de HTML o javascript.
 
-* Cutting edge tools. Researchers in statistics and machine learning will often
-  publish an R package to accompany their articles. This means immediate
-  access to the very latest statistical techniques and implementations.
+-   [RStudio](https://posit.co/products/open-source/rstudio/), proporciona un entorno de desarrollo integrado, adaptado a las necesidades de la ciencia de datos, el análisis interactivo de datos y la programación estadística.
 
-* Deep-seated language support for data analysis. This includes features
-  like missing values, data frames, and vectorisation.
+-   Herramientas de vanguardia. Los investigadores en estadística y aprendizaje automático suelen publicar un paquete R para acompañar sus artículos. Esto significa acceso inmediato a las últimas técnicas e implementaciones estadísticas.
 
-* A strong foundation of functional programming. The ideas of functional
-  programming are well suited to the challenges of data science, and the 
-  R language is functional at heart, and provides many primitives needed
-  for effective functional programming.
-  
-* RStudio, [the company](https://www.rstudio.com), which makes money by 
-  selling professional products to teams of R users, and turns around and 
-  invests much of that money back into the open source community (over 50%
-  of software engineers at RStudio work on open source projects). I work for 
-  RStudio because I fundamentally believe in its mission.
-  
-* Powerful metaprogramming facilities. R's metaprogramming capabilities allow 
-  you to write magically succinct and concise functions and provide an excellent 
-  environment for designing domain-specific languages like ggplot2, dplyr,
-  data.table, and more.
+-   Soporte de lenguaje profundamente arraigado para el análisis de datos. Esto incluye funciones como valores perdidos, marcos de datos y vectorización.
 
-* The ease with which R can connect to high-performance programming languages 
-  like C, Fortran, and C++.
+-   Una base sólida de programación funcional. Las ideas de la programación funcional se adaptan bien a los desafíos de la ciencia de datos, y el lenguaje R es funcional en el fondo y proporciona muchas primitivas necesarias para una programación funcional efectiva.
 
-Of course, R is not perfect. R's biggest challenge (and opportunity!) is that most R users are not programmers. This means that:
+-   [Posit](https://posit.co/), que gana dinero vendiendo productos profesionales a equipos de usuarios de R, y da la vuelta e invierte gran parte de ese dinero en la comunidad de código abierto (más del 50 % de los ingenieros de software de Posit trabajan en proyectos de código abierto). Trabajo para Posit porque creo fundamentalmente en su misión.
 
-* Much of the R code you'll see in the wild is written in haste to solve
-  a pressing problem. As a result, code is not very elegant, fast, or easy to
-  understand. Most users do not revise their code to address these shortcomings.
+-   Potentes instalaciones de metaprogramación. Las capacidades de metaprogramación de R le permiten escribir funciones mágicamente sucintas y concisas y proporcionan un entorno excelente para diseñar lenguajes específicos de dominio como ggplot2, dplyr, data.table y más.
 
-* Compared to other programming languages, the R community is more focussed on 
-  results than processes. Knowledge of software engineering best practices is 
-  patchy. For example, not enough R programmers use source code control or
-  automated testing.
+-   La facilidad con la que R puede conectarse a lenguajes de programación de alto rendimiento como C, Fortran y C++.
 
-* Metaprogramming is a double-edged sword. Too many R functions use
-  tricks to reduce the amount of typing at the cost of making code that
-  is hard to understand and that can fail in unexpected ways.
+Por supuesto, R no es perfecto. El mayor desafío (¡y oportunidad!) de R es que la mayoría de los usuarios de R no son programadores. Esto significa que:
 
-* Inconsistency is rife across contributed packages, and even within base R.
-  You are confronted with over 25 years of evolution every time you use R,
-  and this can make learning R tough because there are so many special cases to 
-  remember.
+-   Gran parte del código R que verá en la naturaleza está escrito a toda prisa para resolver un problema apremiante. Como resultado, el código no es muy elegante, rápido o fácil de entender. La mayoría de los usuarios no revisan su código para abordar estas deficiencias.
 
-* R is not a particularly fast programming language, and poorly written R code
-  can be terribly slow. R is also a profligate user of memory. 
+-   En comparación con otros lenguajes de programación, la comunidad R está más enfocada en los resultados que en los procesos. El conocimiento de las mejores prácticas de ingeniería de software es irregular. Por ejemplo, no hay suficientes programadores de R que usen control de código fuente o pruebas automatizadas.
 
-Personally, I think these challenges create a great opportunity for experienced programmers to have a profound positive impact on R and the R community. R users do care about writing high quality code, particularly for reproducible research, but they don't yet have the skills to do so. I hope this book will not only help more R users to become R programmers, but also encourage programmers from other languages to contribute to R.
+-   La metaprogramación es un arma de doble filo. Demasiadas funciones de R usan trucos para reducir la cantidad de escritura a costa de crear un código que es difícil de entender y que puede fallar de formas inesperadas.
 
-## Who should read this book {#who-should-read}
+-   La incoherencia abunda entre los paquetes contribuidos, e incluso dentro de la base R. Cada vez que usa R, se enfrenta a más de 25 años de evolución, y esto puede dificultar el aprendizaje de R porque hay muchos casos especiales que recordar.
 
-This book is aimed at two complementary audiences:
+-   R no es un lenguaje de programación particularmente rápido, y el código R mal escrito puede ser terriblemente lento. R también es un usuario derrochador de la memoria.
 
-* Intermediate R programmers who want to dive deeper into R, understand how
-  the language works, and learn new strategies for solving diverse problems.
+Personalmente, creo que estos desafíos crean una gran oportunidad para que los programadores experimentados tengan un profundo impacto positivo en R y en la comunidad de R. Los usuarios de R se preocupan por escribir código de alta calidad, en particular para la investigación reproducible, pero aún no tienen las habilidades para hacerlo. Espero que este libro no solo ayude a más usuarios de R a convertirse en programadores de R, sino que también anime a los programadores de otros lenguajes a contribuir con R.
 
-* Programmers from other languages who are learning R and want to understand
-  why R works the way it does.
+## ¿Quién debería leer este libro? {#who-should-read}
 
-To get the most out of this book, you'll need to have written a decent amount of code in R or another programming language. You should be familiar with the basics of data analysis (i.e. data import, manipulation, and visualisation), have written a number of functions, and be familiar with the installation and use of CRAN packages.
+Este libro está dirigido a dos públicos complementarios:
 
-This book walks the narrow line between being a reference book (primarily used for lookup), and being linearly readable. This involves some tradeoffs, because it's difficult to linearise material while still keeping related materials together, and some concepts are much easier to explain if you're already familiar with specific technical vocabulary. I've tried to use footnotes and cross-references to make sure you can still make sense even if you just dip your toes in a chapter.  
+-   Programadores intermedios de R que quieran profundizar en R, comprender cómo funciona el lenguaje y aprender nuevas estrategias para resolver diversos problemas.
 
-## What you will get out of this book {#what-you-will-get}
+-   Programadores de otros lenguajes que están aprendiendo R y quieren entender por qué R funciona de la forma en que lo hace.
 
-This book delivers the knowledge that I think an advanced R programmer should possess: a deep understanding of the fundamentals coupled with a broad vocabulary that means that you can tactically learn more about a topic when needed.
+Para aprovechar al máximo este libro, deberá haber escrito una cantidad decente de código en R u otro lenguaje de programación. Debe estar familiarizado con los conceptos básicos del análisis de datos (es decir, importación, manipulación y visualización de datos), haber escrito una serie de funciones y estar familiarizado con la instalación y el uso de paquetes CRAN.
 
-After reading this book, you will:
+Este libro recorre la estrecha línea entre ser un libro de referencia (utilizado principalmente para búsquedas) y ser legible linealmente. Esto implica algunas compensaciones, porque es difícil linealizar el material sin dejar de mantener juntos los materiales relacionados, y algunos conceptos son mucho más fáciles de explicar si ya está familiarizado con el vocabulario técnico específico. He tratado de usar notas al pie y referencias cruzadas para asegurarme de que aún pueda tener sentido incluso si solo sumerge los dedos de los pies en un capítulo.
 
-* Be familiar with the foundations of R. You will understand complex data types
-  and the best ways to perform operations on them. You will have a deep
-  understanding of how functions work, you'll know what environments are, and 
-  how to make use of the condition system.
+## ¿Qué obtendrás de este libro? {#what-you-will-get}
 
-* Understand what functional programming means, and why it is a useful tool for
-  data science. You'll be able to quickly learn how to use existing tools, and
-  have the knowledge to create your own functional tools when needed.
+Este libro brinda el conocimiento que creo que un programador avanzado de R debe poseer: una comprensión profunda de los fundamentos junto con un amplio vocabulario que significa que puede aprender tácticamente más sobre un tema cuando sea necesario.
 
-* Know about R's rich variety of object-oriented systems. You'll be most 
-  familiar with S3, but you'll know of S4 and R6 and where to look for more
-  information when needed.
+Después de leer este libro, usted:
 
-* Appreciate the double-edged sword of metaprogramming. You'll be able to
-  create functions that use tidy evaluation, saving typing and creating elegant 
-  code to express important operations. You'll also understand the dangers 
-  and when to avoid it.
+-   Estará familiarizado con los fundamentos de R. Comprenderá los tipos de datos complejos y las mejores formas de realizar operaciones en ellos. Tendrá una comprensión profunda de cómo funcionan las funciones, sabrá qué son los entornos y cómo hacer uso del sistema de condiciones.
 
-* Have a good intuition for which operations in R are slow or use a lot of
-  memory. You'll know how to use profiling to pinpoint performance
-  bottlenecks, and you'll know enough C++ to convert slow R functions to
-  fast C++ equivalents.
+-   Comprenderá qué significa la programación funcional y por qué es una herramienta útil para la ciencia de datos. Podrá aprender rápidamente cómo usar las herramientas existentes y tener el conocimiento para crear sus propias herramientas funcionales cuando sea necesario.
 
-## What you will not learn
+-   Conocerá la rica variedad de sistemas orientados a objetos de R. Estará más familiarizado con S3, pero sabrá de S4 y R6 y dónde buscar más información cuando sea necesario.
 
-This book is about R the programming language, not R the data analysis tool. If you are looking to improve your data science skills, I instead recommend that you learn about the [tidyverse](https://www.tidyverse.org/), a collection of consistent packages developed by me and my colleagues. In this book you'll learn the techniques used to develop the tidyverse packages; if you want to instead learn how to use them, I recommend [_R for Data Science_](http://r4ds.had.co.nz/).
+-   Apreciará la espada de doble filo de la metaprogramación. Podrá crear funciones que utilicen una evaluación ordenada, ahorrando tipeo y creando código elegante para expresar operaciones importantes. También comprenderá los peligros y cuándo evitarlos.
 
-If you want to share your R code with others, you will need to make an R package. This allows you to bundle code along with documentation and unit tests, and easily distribute it via CRAN. In my opinion, the easiest way to develop packages is with [devtools](http://devtools.r-lib.org), [roxygen2](http://roxygen2.r-lib.org/), [testthat](http://testthat.r-lib.org), and [usethis](http://usethis.r-lib.org). You can learn about using these packages to make your own package in [_R packages_](http://r-pkgs.had.co.nz/).
+-   Tendrá una buena intuición para saber qué operaciones en R son lentas o usan mucha memoria. Sabrá cómo usar la creación de perfiles para identificar cuellos de botella en el rendimiento y sabrá lo suficiente de C++ para convertir funciones lentas de R en equivalentes rápidos de C++.
 
-## Meta-techniques {#meta-techniques}
+## ¿Qué no aprenderás?
 
-There are two meta-techniques that are tremendously helpful for improving your skills as an R programmer: reading source code and adopting a scientific mindset.
+Este libro trata sobre R, el lenguaje de programación, no sobre R, la herramienta de análisis de datos. Si está buscando mejorar sus habilidades en ciencia de datos, le recomiendo que aprenda sobre [tidyverse](https://www.tidyverse.org/), una colección de paquetes consistentes desarrollados por mis colegas y yo. En este libro aprenderá las técnicas utilizadas para desarrollar los paquetes tidyverse; si desea aprender a usarlos, le recomiendo [*R para la Ciencia de Datos*](http://r4ds.had.co.nz/).
 
-Reading source code is important because it will help you write better code. A great place to start developing this skill is to look at the source code of the functions and packages you use most often. You'll find things that are worth emulating in your own code and you'll develop a sense of taste for what makes good R code. You will also see things that you don't like, either because its virtues are not obvious or it offends your sensibilities. Such code is nonetheless valuable, because it helps make concrete your opinions on good and bad code.
+Si desea compartir su código R con otros, deberá crear un paquete R. Esto le permite agrupar el código junto con la documentación y las pruebas unitarias, y distribuirlo fácilmente a través de CRAN. En mi opinión, la forma más sencilla de desarrollar paquetes es con [devtools](http://devtools.r-lib.org), [roxygen2](http://roxygen2.r-lib.org/), [testthat](http://testthat.r-lib.org) y [usethis](http://usethis.r-lib.org). Puede aprender a usar estos paquetes para crear su propio paquete en [*Paquetes de R*](http://r-pkgs.had.co.nz/).
 
-A scientific mindset is extremely helpful when learning R. If you don't understand how something works, you should develop a hypothesis, design some experiments, run them, and record the results. This exercise is extremely useful since if you can't figure something out and need to get help, you can easily show others what you tried. Also, when you learn the right answer, you'll be mentally prepared to update your world view.
+## Meta-técnicas {#meta-techniques}
 
-## Recommended reading {#recommended-reading}
+Hay dos metatécnicas que son tremendamente útiles para mejorar tus habilidades como programador de R: leer el código fuente y adoptar una mentalidad científica.
 
-Because the R community mostly consists of data scientists, not computer scientists, there are relatively few books that go deep in the technical underpinnings of R. In my personal journey to understand R, I've found it particularly helpful to use resources from other programming languages. R has aspects of both functional and object-oriented (OO) programming languages. Learning how these concepts are expressed in R will help you leverage your existing knowledge of other programming languages, and will help you identify areas where you can improve.
+Leer el código fuente es importante porque te ayudará a escribir mejor código. Un excelente lugar para comenzar a desarrollar esta habilidad es mirar el código fuente de las funciones y paquetes que usa con más frecuencia. Encontrará cosas que vale la pena emular en su propio código y desarrollará un sentido del gusto por lo que hace un buen código R. También verás cosas que no te gustan, ya sea porque sus virtudes no son evidentes o porque ofende tu sensibilidad. No obstante, dicho código es valioso, porque ayuda a concretar sus opiniones sobre el código bueno y el malo.
 
-To understand why R's object systems work the way they do, I found _The Structure and Interpretation of Computer Programs_[^SICP] [@SICP] (SICP) to be particularly helpful. It's a concise but deep book, and after reading it, I felt for the first time that I could actually design my own object-oriented system. The book was my first introduction to the encapsulated paradigm of object-oriented programming found in R, and it helped me understand the strengths and weaknesses of this system. SICP also teaches the functional mindset where you create functions that are simple individually, and which become powerful when composed together.
+Una mentalidad científica es extremadamente útil cuando se aprende R. Si no comprende cómo funciona algo, debe desarrollar una hipótesis, diseñar algunos experimentos, ejecutarlos y registrar los resultados. Este ejercicio es extremadamente útil ya que si no puede resolver algo y necesita ayuda, puede mostrar fácilmente a otros lo que intentó. Además, cuando aprendas la respuesta correcta, estarás mentalmente preparado para actualizar tu visión del mundo.
 
-[^SICP]: You can read it online for free at <https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book.html>
+## Lectura recomendada {#recommended-reading}
 
-To understand the trade-offs that R has made compared to other programming languages, I found _Concepts, Techniques and Models of Computer Programming_ [@ctmcp] extremely helpful. It helped me understand that R's copy-on-modify semantics make it substantially easier to reason about code, and that while its current implementation is not particularly efficient, it is a solvable problem.
+Debido a que la comunidad de R se compone principalmente de científicos de datos, no de informáticos, hay relativamente pocos libros que profundicen en los fundamentos técnicos de R. En mi viaje personal para comprender R, he encontrado que es particularmente útil usar recursos de otros lenguajes de programación. R tiene aspectos de lenguajes de programación tanto funcionales como orientados a objetos (OO). Aprender cómo se expresan estos conceptos en R lo ayudará a aprovechar su conocimiento existente de otros lenguajes de programación y lo ayudará a identificar áreas en las que puede mejorar.
 
-If you want to learn to be a better programmer, there's no place better to turn than _The Pragmatic Programmer_ [@pragprog]. This book is language agnostic, and provides great advice for how to be a better programmer.
+Para comprender por qué los sistemas de objetos de R funcionan de la forma en que lo hacen, descubrí que *La estructura e interpretación de los programas informáticos*[^introducción-1][@SICP](SICP) es particularmente útil. Es un libro conciso pero profundo, y después de leerlo, sentí por primera vez que podía diseñar mi propio sistema orientado a objetos. El libro fue mi primera introducción al paradigma encapsulado de la programación orientada a objetos que se encuentra en R y me ayudó a comprender las fortalezas y debilidades de este sistema. SICP también enseña la mentalidad funcional en la que crea funciones que son simples individualmente y que se vuelven poderosas cuando se componen juntas.
 
-## Getting help {#getting-help}
-\index{help}
-\index{reprex}
+[^introduction-1]: Puedes leerlo en línea gratis en <https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book.html>
 
-Currently, there are three main venues to get help when you're stuck and can't figure out what's causing the problem: [RStudio Community](https://community.rstudio.com/), [StackOverflow](http://stackoverflow.com) and the [R-help mailing list][r-help]. You can get fantastic help in each venue, but they do have their own cultures and expectations. It's usually a good idea to spend a little time lurking, learning about community expectations, before you put up your first post. 
+Para comprender las compensaciones que ha hecho R en comparación con otros lenguajes de programación, encontré *Conceptos, técnicas y modelos de programación de computadoras* [@ctmcp] extremadamente útil. Me ayudó a comprender que la semántica de copiar al modificar de R hace que sea sustancialmente más fácil razonar sobre el código y que, si bien su implementación actual no es particularmente eficiente, es un problema solucionable.
 
-Some good general advice:
+Si quieres aprender a ser un mejor programador, no hay mejor lugar al que acudir que *El programador pragmático* [@pragprog]. Este libro es independiente del lenguaje y brinda excelentes consejos sobre cómo ser un mejor programador.
 
-* Make sure you have the latest version of R and of the package (or packages)
-  you are having problems with. It may be that your problem is the result of
-  a recently fixed bug.
+## Obteniendo ayuda {#getting-help}
 
-* Spend some time creating a **repr**oducible **ex**ample, or reprex.
-  This will help others help you, and often leads to a solution without
-  asking others, because in the course of making the problem reproducible you 
-  often figure out the root cause. I highly recommend learning and using
-  the [reprex](https://reprex.tidyverse.org/) package.
+\index{help} \index{reprex}
 
-<!-- GVW: is someone going to go through once you're done and create a glossary? If you've flagged things like "reprex" in bold, it ought to be easy to find terms. -->
+Actualmente, hay tres lugares principales para obtener ayuda cuando está atascado y no puede averiguar qué está causando el problema: [Comunidad Posit](https://community.rstudio.com/), [StackOverflow](http://stackoverflow.com) y la [lista de correo R-help](https://stat.ethz.ch/mailman/listinfo/r-help). Puede obtener ayuda fantástica en cada lugar, pero tienen sus propias culturas y expectativas. Por lo general, es una buena idea pasar un poco de tiempo investigando, aprendiendo sobre las expectativas de la comunidad, antes de publicar tu primera publicación.
 
-If you are looking for specific help solving the exercises in this book, solutions from Malte Grosser and Henning Bumann are available at <https://advanced-r-solutions.rbind.io>.
+Algunos buenos consejos generales:
 
-## Acknowledgments {#intro-ack}
+-   Algunos buenos consejos generales: asegúrese de tener la última versión de R y del paquete (o paquetes) con los que tiene problemas. Puede ser que su problema sea el resultado de un error solucionado recientemente.
 
-I would like to thank the many contributors to R-devel and R-help and, more recently, Stack Overflow and RStudio Community. There are too many to name individually, but I'd particularly like to thank Luke Tierney, John Chambers, JJ Allaire, and Brian Ripley for generously giving their time and correcting my countless misunderstandings.
+-   Dedique algún tiempo a crear un ejemplo reproducible o reprex (de sus siglas en inglés **repr**oducible **ex**ample). Esto ayudará a que otros te ayuden y, a menudo, conduce a una solución sin preguntar a otros, porque en el proceso de hacer que el problema sea reproducible, a menudo descubres la causa raíz. Recomiendo aprender y usar el paquete [reprex](https://reprex.tidyverse.org/).
 
-This book was [written in the open](https://github.com/hadley/adv-r/), and chapters were advertised on [twitter](https://twitter.com/hadleywickham) when complete. It is truly a community effort: many people read drafts, fixed typos, suggested improvements, and contributed content. Without those contributors, the book wouldn't be nearly as good as it is, and I'm deeply grateful for their help. Special thanks go to Jeff Hammerbacher,  Peter Li, Duncan Murdoch, and Greg Wilson, who all read the book from cover-to-cover and provided many fixes and suggestions.
+<!-- ¿alguien lo revisará una vez que haya terminado y creará un glosario? Si marcó cosas como "reprex" en negrita, debería ser fácil encontrar términos. -->
+
+Si está buscando ayuda específica para resolver los ejercicios de este libro, las soluciones de Malte Grosser y Henning Bumann están disponibles en <https://advanced-r-solutions.rbind.io>.
+
+## Reconocimientos {#intro-ack}
+
+Me gustaría agradecer a los muchos colaboradores de R-devel y R-help y, más recientemente, Stack Overflow y Posit Community. Hay demasiados para nombrarlos individualmente, pero me gustaría agradecer especialmente a Luke Tierney, John Chambers, JJ Allaire y Brian Ripley por brindarme generosamente su tiempo y corregir mis innumerables malentendidos.
+
+Este libro fue [escrito al aire libre](https://github.com/hadley/adv-r/), y los capítulos se anunciaron en [twitter](https://twitter.com/hadleywickham) cuando se completó. Es verdaderamente un esfuerzo de la comunidad: muchas personas leen borradores, corrigen errores tipográficos, sugieren mejoras y contribuyen con contenido. Sin esos colaboradores, el libro no sería tan bueno como es y estoy profundamente agradecido por su ayuda. Un agradecimiento especial a Jeff Hammerbacher, Peter Li, Duncan Murdoch y Greg Wilson, quienes leyeron el libro de cabo a rabo y proporcionaron muchas correcciones y sugerencias.
 
 ```{r, eval = FALSE, echo = FALSE}
 library(tidyverse)
@@ -234,20 +173,21 @@ cat(paste0(contributors$desc, collapse = ", "))
 cat(".\n")
 ```
 
-## Conventions {#conventions}
+## Convenciones {#conventions}
 
-Throughout this book I use `f()` to refer to functions, `g` to refer to variables and function parameters, and `h/` to paths. 
+A lo largo de este libro utilizo `f()` para referirme a funciones, `g` para referirme a variables y parámetros de funciones, y `h/` a rutas.
 
-Larger code blocks intermingle input and output. Output is commented (`#>`) so that if you have an electronic version of the book, e.g., <https://adv-r.hadley.nz/>, you can easily copy and paste examples into R.
+Los bloques de código más grandes entremezclan la entrada y la salida. La salida se comenta (`#>`) de modo que si tiene una versión electrónica del libro, por ejemplo, <https://adv-r.hadley.nz/>, puede copiar y pegar fácilmente ejemplos en R.
 
-Many examples use random numbers. These are made reproducible by `set.seed(1014)`, which is executed automatically at the start of each chapter.
+Muchos ejemplos usan números aleatorios. Estos se hacen reproducibles mediante `set.seed(1014)`, que se ejecuta automáticamente al comienzo de cada capítulo.
 
 \newpage
-## Colophon {#colophon}
 
-This book was written in [bookdown](http://bookdown.org/) inside [RStudio](http://www.rstudio.com/ide/). The [website](https://adv-r.hadley.nz/) is hosted with [netlify](http://netlify.com/), and automatically updated after every commit by [travis-ci](https://travis-ci.org/). The complete source is available from [GitHub](https://github.com/hadley/adv-r). Code in the printed book is set in [inconsolata](http://levien.com/type/myfonts/inconsolata.html). Emoji images in the printed book come from the open-licensed [Twitter Emoji](https://github.com/twitter/twemoji).
+## Colofón {#colophon}
 
-This version of the book was built with `r R.version.string` and the following packages.
+Este libro fue escrito en [bookdown](http://bookdown.org/) dentro de [RStudio](http://www.rstudio.com/ide/). El [sitio web](https://adv-r.hadley.nz/) está alojado en [netlify](http://netlify.com/), y [travis-ci](https://travis-ci.org/) lo actualiza automáticamente después de cada confirmación. La fuente completa está disponible en [GitHub](https://github.com/hadley/adv-r). El código del libro impreso se establece en [inconsolata](http://levien.com/type/myfonts/inconsolata.html). Las imágenes de emoji en el libro impreso provienen de [Twitter Emoji] con licencia abierta (https://github.com/twitter/twemoji).
+
+Esta versión del libro se creó con `r R.version.string` y los siguientes paquetes.
 
 ```{r, echo = FALSE, results="asis"}
 deps <- desc::desc_get_deps()$package[-1]
@@ -275,11 +215,3 @@ ruler <- function(width = getOption("width")) {
 
 ruler()
 ```
-
-[r-help]: https://stat.ethz.ch/mailman/listinfo/r-help
-[rstats-twitter]: https://twitter.com/search?q=%23rstats
-[r-meetups]: https://www.meetup.com/topics/r-programming-language/
-[rweekly]: https://rweekly.org
-[r-ladies]: http://r-ladies.org
-[rmarkdown]: https://rmarkdown.rstudio.com
-[shiny]: http://shiny.rstudio.com

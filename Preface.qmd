@@ -1,55 +1,55 @@
-# Preface {.unnumbered}
+# Prefacio {.unnumbered}
 
-Welcome to the second edition of *Advanced R*. I had three main goals for this edition:
+Bienvenido a la segunda edición de *R Avanzado*. Tenía tres objetivos principales para esta edición:
 
--   Improve coverage of important concepts that I fully understood only after the publication of the first edition.
+-   Mejorar la cobertura de conceptos importantes que entendí completamente solo después de la publicación de la primera edición.
 
--   Reduce coverage of topics time has shown to be less useful, or that I think are really exciting but turn out not to be that practical.
+- Reducir el tiempo de cobertura de temas que han demostrado ser menos útiles, o que creo que son realmente apasionantes pero resultan no ser tan prácticos.
 
--   Generally make the material easier to understand with better text, clearer code, and many more diagrams.
+- En general, hacer que el material sea más fácil de entender con un mejor texto, un código más claro y muchos más diagramas.
 
-If you're familiar with the first edition, this preface describes the major changes so that you can focus your reading on the new areas. If you're reading a printed version of this book you'll notice one big change very quickly: *Advanced R* is now in colour! This has considerably improved the syntax highlighting of code chunks, and made it much easier to create helpful diagrams. I have taken advantage of this and included over 100 new diagrams throughout the book.
+Si está familiarizado con la primera edición, este prefacio describe los principales cambios para que pueda enfocar su lectura en las nuevas áreas. Si está leyendo una versión impresa de este libro, notará un gran cambio muy rápidamente: ¡*R Avanzado* ahora está en color! Esto ha mejorado considerablemente el resaltado de sintaxis de los fragmentos de código y ha facilitado mucho la creación de diagramas útiles. Aproveché esto e incluí más de 100 diagramas nuevos en todo el libro.
 
-Another big change in this version is the use of new packages, particularly [rlang](http://rlang.r-lib.org), which provides a clean interface to low-level data structures and operations. The first edition used base R functions almost exclusively, which created some pedagogical challenges because many functions evolved independently over multiple years, making it hard to see the big underlying ideas hidden amongst the incidental variations in function names and arguments. I continue to show base equivalents in sidebars, footnotes, and where needed, in individual sections, but if you want to see the purest base R expression of the ideas in this book, I recommend reading the first edition, which you can find online at <http://adv-r.had.co.nz>.
+Otro gran cambio en esta versión es el uso de nuevos paquetes, particularmente [rlang](http://rlang.r-lib.org), que proporciona una interfaz limpia para operaciones y estructuras de datos de bajo nivel. La primera edición usó funciones base R casi exclusivamente, lo que creó algunos desafíos pedagógicos porque muchas funciones evolucionaron de forma independiente durante varios años, lo que dificulta ver las grandes ideas subyacentes ocultas entre las variaciones incidentales en los nombres y argumentos de las funciones. Continúo mostrando los equivalentes base en las barras laterales, notas al pie y, cuando sea necesario, en secciones individuales, pero si desea ver la expresión R base más pura de las ideas de este libro, le recomiendo leer la primera edición, que puede encontrar en línea en <http://adv-r.had.co.nz>.
 
-The foundations of R have not changed in the five years since the first edition, but my understanding of them certainly has. Thus, the overall structure of "Foundations" has remained roughly the same, but many of the individual chapters have been considerably improved:
+Los fundamentos de R no han cambiado en los cinco años desde la primera edición, pero mi comprensión de ellos ciertamente sí. Por lo tanto, la estructura general de "Fundamentos" se ha mantenido más o menos igual, pero muchos de los capítulos individuales se han mejorado considerablemente:
 
--   [Chapter -@sec-names-values], "Names and values", is a brand new chapter that helps you understand the difference between objects and names of objects. This helps you more accurately predict when R will make a copy of a data structure, and lays important groundwork to understand functional programming.
+-   [Chapter -@sec-names-values], "Nombres y valores ", es un capítulo completamente nuevo que lo ayuda a comprender la diferencia entre objetos y nombres de objetos. Esto lo ayuda a predecir con mayor precisión cuándo R hará una copia de una estructura de datos y sienta las bases importantes para comprender la programación funcional.
 
--   [Chapter -@sec-vectors-chap], "Vectors" (previously called data structures), has been rewritten to focus on vector types like integers, factors, and data frames. It contains more details of important S3 vectors (like dates and date-times), discusses the data frame variation provided by the tibble package [@tibble], and generally reflects my improved understanding of vector data types.
+-   [Chapter -@sec-vectors-chap], "Vectores" (anteriormente denominadas estructuras de datos), se ha reescrito para centrarse en tipos de vectores como números enteros, factores y marcos de datos. Contiene más detalles de vectores S3 importantes (como fechas y fechas-horas), analiza la variación del marco de datos proporcionado por el paquete tibble [@tibble] y, en general, refleja mi comprensión mejorada de los tipos de datos vectoriales.
 
--   [Chapter -@sec-subsetting], "Subsetting", now distinguishes between `[` and `[[` by their intention: `[` extracts many values and `[[` extracts a single value (previously they were characterised by whether they "simplified" or "preserved"). Section \@ref(subset-single) draws the "train" to help you understand how `[[` works with lists, and introduces new functions that provide more consistent behaviour for out-of-bounds indices.
+-   [Chapter -@sec-subsetting], "Subsetting", ahora distingue entre `[` y `[[` por su intención: `[` extrae muchos valores y `[[` extrae un solo valor (anteriormente se caracterizaban por si "simplificaban" o "conservaban"). La sección @sec-subset-single dibuja el "tren" para ayudarlo a comprender cómo funciona `[[` con listas e introduce nuevas funciones que brindan un comportamiento más consistente para índices fuera de los límites.
 
--   [Chapter -@sec-control-flow], "Control flow", is a new chapter: somehow I previously forgot about important tools like `if` statements and `for` loops!
+-   [Chapter -@sec-control-flow], "Flujo de control", es un nuevo capítulo: de alguna manera me olvidé de herramientas importantes como declaraciones `if` y bucles `for`.
 
--   [Chapter -@sec-functions], "Functions", has an improved ordering, introduces the pipe (`%>%`) as a third way to compose functions (Section \@ref(function-composition)), and has considerably improved coverage of function forms (Section \@ref(function-forms)).
+-   [Chapter -@sec-functions], "Funciones", tiene un ordenamiento mejorado, introduce las canalizaciones (`%>%` y `|>`) como una tercera forma de componer funciones (Sección @sec-function-composition) y ha mejorado considerablemente la cobertura de formas de funciones (Sección @sec-function-forms).
 
--   [Chapter -@sec-environments], "Environments", has a reorganised treatment of special environments @sec-special-environments, and a much improved discussion of the call stack @sec-call-stack.
+-   [Chapter -@sec-environments], "Entornos", tiene un tratamiento reorganizado de entornos especiales @sec-special-environments, y una discusión muy mejorada de la pila de llamadas @sec-call-stack.
 
--   [Chapter -@sec-conditions], "Conditions", contains material previously in "Exceptions and debugging", and much new content on how R's condition system works. It also shows you how to create your own custom condition classes @sec-custom-conditions.
+-   [Chapter -@sec-conditions], "Condiciones", contiene material previamente en "Excepciones y depuración", y mucho contenido nuevo sobre cómo funciona el sistema de condiciones de R. También le muestra cómo crear sus propias clases de condiciones personalizadas @sec-custom-conditions.
 
-The chapters following Part I, Foundations, have been re-organised around the three most important programming paradigms in R: functional programming, object-oriented programming, and metaprogramming.
+Los capítulos que siguen a la Parte I, Fundamentos, se han reorganizado en torno a los tres paradigmas de programación más importantes en R: programación funcional, programación orientada a objetos y metaprogramación.
 
--   Functional programming is now more cleanly divided into the three main techniques: "Functionals" ([Chapter -@sec-functionals]), "Function factories" ([Chapter -@sec-function-factories]), and "Function operators" ([Chapter -@sec-function-operators]). I've focussed in on ideas that have practical applications in data science and reduced the amount of pure theory.
+-   La programación funcional ahora se divide más claramente en las tres técnicas principales: "Funcionales" ([Chapter -@sec-functionals]), "Fábricas de funciones" ([Capítulo -@sec-function-factories]) y "Operadores de funciones" ([Capítulo -@sec-function-operators]). Me he centrado en ideas que tienen aplicaciones prácticas en la ciencia de datos y he reducido la cantidad de teoría pura.
 
-    These chapters now use functions provided by the purrr package [@purrr], which allow me to focus more on the underlying ideas and less on the incidental details. This led to a considerable simplification of the function operators chapter since a major use was to work around the absence of ellipses (`...`) in base functionals.
+    Estos capítulos ahora usan funciones provistas por el paquete purrr [@purrr], lo que me permite concentrarme más en las ideas subyacentes y menos en los detalles secundarios. Esto condujo a una simplificación considerable del capítulo de operadores de funciones, ya que un uso importante era evitar la ausencia de puntos suspensivos (`...`) en los funcionales base.
 
--   Object-oriented programming (OOP) now forms a major section of the book with completely new chapters on base types ([Chapter -@sec-base-types]), S3 ([Chapter -@sec-s3]), S4 ([Chapter -@sec-s4]), R6 ([Chapter -@sec-r6]), and the tradeoffs between the systems ([Chapter -@sec-oo-tradeoffs]).
+-   La programación orientada a objetos (POO) ahora forma una sección importante del libro con capítulos completamente nuevos sobre tipos base ([Chapter -@sec-base-types]), S3 ([Chapter -@sec-s3]), S4 ([Chapter -@sec-s4]), R6 ([Chapter -@sec-r6]) y las compensaciones entre los sistemas ([Chapter -@sec-oo-tradeoffs]).
 
-    These chapters focus on how the different object systems work, not how to use them effectively. This is unfortunate, but necessary, because many of the technical details are not described elsewhere, and effective use of OOP needs a whole book of its own.
+    Estos capítulos se enfocan en cómo funcionan los diferentes sistemas de objetos, no en cómo usarlos de manera efectiva. Esto es desafortunado, pero necesario, porque muchos de los detalles técnicos no se describen en otra parte, y el uso efectivo de OOP necesita un libro completo propio.
 
--   Metaprogramming (previously called "computing on the language") describes the suite of tools that you can use to generate code with code. Compared to the first edition this material has been substantially expanded and now focusses on "tidy evaluation", a set of ideas and theory that make metaprogramming safe, well-principled, and accessible to many more R programmers. [Chapter -@sec-meta-big-picture], "Big picture" coarsely lays out how all the pieces fit together; [Chapter -@sec-expressions], "Expressions", describes the underlying data structures; [Chapter -@sec-quasiquotation], "Quasiquotation", covers quoting and unquoting; [Chapter -@sec-evaluation], "Evaluation", explains evaluation of code in special environments; and [Chapter -@sec-translation], "Translations", pulls all the themes together to show how you might translate from one (programming) language to another.
+-   La metaprogramación (anteriormente llamada "computación en el lenguaje") describe el conjunto de herramientas que puede usar para generar código con código. En comparación con la primera edición, este material se ha ampliado sustancialmente y ahora se centra en la "evaluación ordenada", un conjunto de ideas y teorías que hacen que la metaprogramación sea segura, tenga buenos principios y sea accesible para muchos más programadores de R. [Chapter -@sec-meta-big-picture], "Panorama general" establece de forma aproximada cómo encajan todas las piezas; [Chapter -@sec-expressions], "Expresiones", describe las estructuras de datos subyacentes; [Chapter -@sec-quasiquotation], "Cuasicotización", cubre las citas y las no comillas; [Chapter -@sec-evaluation], "Evaluación", explica la evaluación del código en entornos especiales; y [Chapter -@sec-translation], "Traducciones", reúne todos los temas para mostrar cómo puede traducir de un lenguaje (de programación) a otro.
 
-The final section of the book pulls together the chapters on programming techniques: profiling, measuring and improving performance, and Rcpp. The contents are very similar to the first edition, although the organisation is a little different. I have made light updates throughout these chapters particularly to use newer packages (microbenchmark -\> bench, lineprof -\> profvis), but the majority of the text is the same.
+La sección final del libro reúne los capítulos sobre técnicas de programación: creación de perfiles, medición y mejora del rendimiento y Rcpp. Los contenidos son muy similares a la primera edición, aunque la organización es un poco diferente. He realizado ligeras actualizaciones a lo largo de estos capítulos, especialmente para usar paquetes más nuevos (microbenchmark -\> bench, lineprof -\> profvis), pero la mayor parte del texto es el mismo.
 
-While the second edition has mostly expanded coverage of existing material, five chapters have been removed:
+Si bien la segunda edición ha ampliado principalmente la cobertura del material existente, se han eliminado cinco capítulos:
 
--   The vocabulary chapter has been removed because it was always a bit of an odd duck, and there are more effective ways to present vocabulary lists than in a book chapter.
+-   El capítulo de vocabulario se eliminó porque siempre fue un poco extraño, y hay formas más efectivas de presentar listas de vocabulario que en un capítulo de libro.
 
--   The style chapter has been replaced with an online style guide, <http://style.tidyverse.org/>. The style guide is paired with the new styler package [@styler] which can automatically apply many of the rules.
+-   El capítulo de estilo ha sido reemplazado por una guía de estilo en línea, <http://style.tidyverse.org/>. La guía de estilo se combina con el nuevo paquete styler [@styler] que puede aplicar automáticamente muchas de las reglas.
 
--   The C chapter has been moved to <https://github.com/hadley/r-internals>, which, over time, will provide a guide to writing C code that works with R's data structures.
+-   El capítulo de C se ha movido a <https://github.com/hadley/r-internals>, que, con el tiempo, proporcionará una guía para escribir código C que funcione con las estructuras de datos de R.
 
--   The memory chapter has been removed. Much of the material has been integrated into [Chapter -@sec-names-values] and the remainder felt excessively technical and not that important to understand.
+-   El capítulo de memoria ha sido eliminado. Gran parte del material se ha integrado en [Chapter -@sec-names-values] y el resto se sintió demasiado técnico y no tan importante de entender.
 
--   The chapter on R's performance as a language was removed. It delivered few actionable insights, and became dated as R changed.
+-   Se eliminó el capítulo sobre el desempeño de R como lenguaje. Proporcionó pocas ideas procesables y se volvió anticuado a medida que cambiaba R.

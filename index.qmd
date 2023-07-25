@@ -2,29 +2,29 @@
 `r '<!--'`
 :::
 
-# Welcome {.unnumbered}
+# Bienvenida {.unnumbered}
 
-This is the website for 2nd edition of **"[Advanced R](https://amzn.to/2WoabjB)"**, a book in Chapman & Hall's R Series. The book is designed primarily for R users who want to improve their programming skills and understanding of the language. It should also be useful for programmers coming to R from other languages, as help you to understand why R works the way it does.
+Este es el sitio web de la segunda edición de **"[R Avanzado](https://amzn.to/2WoabjB)"**, un libro de la Serie R de Chapman & Hall. El libro está diseñado principalmente para usuarios de R que desean mejorar sus habilidades de programación y comprensión del lenguaje. También debería ser útil para los programadores que llegan a R desde otros lenguajes, ya que les ayuda a comprender por qué R funciona de la forma en que lo hace.
 
-If you're looking for the 1st edition, you can find it at <http://adv-r.had.co.nz/>.
+Si está buscando la primera edición, puede encontrarla en <http://adv-r.had.co.nz/>.
 
-## License {.unnumbered}
+## Licencia {.unnumbered}
 
 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="Creative Commons Licence" style="border-width:0"/></a>
 
-This work, as a whole, is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+Este trabajo, en su conjunto, está licenciado bajo la licencia <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 
-The code contained in this book is simultaneously available under the [MIT license](https://opensource.org/licenses/MIT); this means that you are free to use it in your own packages, as long as you cite the source.
+El código contenido en este libro está disponible simultáneamente bajo la [licencia MIT](https://opensource.org/licenses/MIT); esto significa que puede usarlo en sus propios paquetes, siempre que cite la fuente.
 
-## Other books {.unnumbered}
+## Otros libros {.unnumbered}
 
-You may also be interested in:
+Usted también podría estar interesado en:
 
--   **"[Advanced R Solutions](https://advanced-r-solutions.rbind.io/)"** by Malte Grosser and Henning Bumann, provides worked solutions to the exercises in this book.
+-   **"[Advanced R Solutions](https://advanced-r-solutions.rbind.io/)"** de Malte Grosser y Henning Bumann, proporciona soluciones elaboradas para los ejercicios de este libro.
 
--   **"[R for Data Science](https://r4ds.had.co.nz/)"** which introduces you to R as a tool for doing data science, focussing on a consistent set of packages known as the tidyverse.
+-   **"[R para ciencia de datos](https://r4ds.had.co.nz/)"** que le presenta R como una herramienta para hacer ciencia de datos, centrándose en un conjunto consistente de paquetes conocido como tidyverse.
 
--   **"[R Packages](https://r-pkgs.org/)"** which teaches you how to make the most of R's fantastic package system.
+-   **"[R Packages](https://r-pkgs.org/)"** que le enseña cómo aprovechar al máximo el fantástico sistema de paquetes de R.
 
 ::: {.content-hidden unless-format="latex"}
 `r '-->'`
