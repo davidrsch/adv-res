@@ -1,4 +1,4 @@
-# Names and values {#sec-names-values}
+# Nombres y valores {#sec-names-values}
 
 ```{r, include = FALSE}
 source("common.R")
@@ -9,35 +9,35 @@ id <- function() {
 }
 ```
 
-## Introduction
+## Introducción
 
-In R, it is important to understand the distinction between an object and its name. Doing so will help you:
+En R, es importante comprender la distinción entre un objeto y su nombre. Si lo hace, le ayudará a:
 
--   More accurately predict the performance and memory usage of your code.
--   Write faster code by avoiding accidental copies, a major source of slow code.
--   Better understand R's functional programming tools.
+-   Predecir con mayor precisión el rendimiento y el uso de memoria de su código.
+-   Escribir código más rápido evitando copias accidentales, una fuente importante de código lento.
+-   Comprender mejor las herramientas de programación funcional de R.
 
-The goal of this chapter is to help you understand the distinction between names and values, and when R will copy an object.
+El objetivo de este capítulo es ayudarlo a comprender la distinción entre nombres y valores, y cuándo R copiará un objeto.
 
-### Quiz {.unnumbered}
+### Prueba {.unnumbered}
 
-Answer the following questions to see if you can safely skip this chapter. You can find the answers at the end of the chapter in Section \@ref(names-values-answers).
+Responda las siguientes preguntas para ver si puede omitir este capítulo con seguridad. Puede encontrar las respuestas al final del capítulo en la @sec-names-values-answers.
 
-1.  Given the following data frame, how do I create a new column called "3" that contains the sum of `1` and `2`? You may only use `$`, not `[[`. What makes `1`, `2`, and `3` challenging as variable names?
+1.  Dado el siguiente data frame, ¿cómo creo una nueva columna llamada "3" que contenga la suma de `1` y `2`? Solo puede usar `$`, no `[[`. ¿Qué hace que `1`, `2` y `3` sean desafiantes como nombres de variables?
 
     ```{r}
     df <- data.frame(runif(3), runif(3))
     names(df) <- c(1, 2)
     ```
 
-2.  In the following code, how much memory does `y` occupy?
+2.  En el siguiente código, ¿cuánta memoria ocupa `y`?
 
     ```{r}
     x <- runif(1e6)
     y <- list(x, x, x)
     ```
 
-3.  On which line does `a` get copied in the following example?
+3.  ¿En qué línea se copia `a` en el siguiente ejemplo?
 
     ```{r}
     a <- c(1, 5, 3, 2)
@@ -45,56 +45,56 @@ Answer the following questions to see if you can safely skip this chapter. You c
     b[[1]] <- 10
     ```
 
-### Outline {.unnumbered}
+### Estructura {.unnumbered}
 
--   Section \@ref(binding-basics) introduces you to the distinction between names and values, and discusses how `<-` creates a binding, or reference, between a name and a value.
+-   La @sec-binding-basics lo introduce a la distinción entre nombres y valores, y explica cómo `<-` crea un vínculo, o referencia, entre un nombre y un valor.
 
--   Section \@ref(copy-on-modify) describes when R makes a copy: whenever you modify a vector, you're almost certainly creating a new, modified vector. You'll learn how to use `tracemem()` to figure out when a copy actually occurs. Then you'll explore the implications as they apply to function calls, lists, data frames, and character vectors.
+-   La @sec-copy-on-modify describe cuándo R hace una copia: cada vez que modificas un vector, es casi seguro que estás creando un nuevo vector modificado. Aprenderá a usar `tracemem()` para averiguar cuándo se produce realmente una copia. Luego, explorará las implicaciones que se aplican a las llamadas a funciones, listas, data frames y vectores de caracteres.
 
--   Section \@ref(object-size) explores the implications of the previous two sections on how much memory an object occupies. Since your intuition may be profoundly wrong and since `utils::object.size()` is unfortunately inaccurate, you'll learn how to use `lobstr::obj_size()`.
+-   La @sec-object-size explora las implicaciones de las dos secciones anteriores sobre cuánta memoria ocupa un objeto. Dado que su intuición puede estar profundamente equivocada y dado que `utils::object.size()` es lamentablemente inexacto, aprenderá a usar `lobstr::obj_size()`.
 
--   Section \@ref(modify-in-place) describes the two important exceptions to copy-on-modify: with environments and values with a single name, objects are actually modified in place.
+-   La @sec-modify-in-place describe las dos excepciones importantes para copiar al modificar: con entornos y valores con un solo nombre, los objetos se modifican en su lugar.
 
--   Section \@ref(gc) concludes the chapter with a discussion of the garbage collector, which frees up the memory used by objects no longer referenced by a name.
+-   La @sec-gc concluye el capítulo con una discusión sobre el recolector de basura, que libera la memoria utilizada por objetos que ya no están referenciados por un nombre.
 
-### Prerequisites {.unnumbered}
+### Requisitos previos {.unnumbered}
 
-We'll use the [lobstr](https://github.com/r-lib/lobstr) package to dig into the internal representation of R objects.
+Usaremos el paquete [lobstr](https://github.com/r-lib/lobstr) para profundizar en la representación interna de los objetos R.
 
 ```{r setup}
 library(lobstr)
 ```
 
-### Sources {.unnumbered}
+### Fuentes {.unnumbered}
 
-The details of R's memory management are not documented in a single place. Much of the information in this chapter was gleaned from a close reading of the documentation (particularly `?Memory` and `?gc`), the [memory profiling](http://cran.r-project.org/doc/manuals/R-exts.html#Profiling-R-code-for-memory-use) section of *Writing R extensions* [@r-exts], and the [SEXPs](http://cran.r-project.org/doc/manuals/R-ints.html#SEXPs) section of *R internals* [@r-ints]. The rest I figured out by reading the C source code, performing small experiments, and asking questions on R-devel. Any mistakes are entirely mine.
+Los detalles de la gestión de memoria de R no están documentados en un solo lugar. Gran parte de la información de este capítulo se obtuvo de una lectura atenta de la documentación (en particular `?Memory` y `?gc`), la sección [perfilado de memoria](http://cran.r-project.org/doc/manuals/R-exts.html#Profiling-R-code-for-memory-use) de *Escribiendo extensiones R* [@r-exts] y [SEXPs](http://cran.r-project.%20org/doc/manuals/R-ints.html#SEXPs) de *R internals* [@r-ints]. El resto lo descubrí leyendo el código fuente de C, realizando pequeños experimentos y haciendo preguntas sobre R-devel. Cualquier error es enteramente mío.
 
-## Binding basics
+## Binding basics {#sec-binding-basics}
 
 \index{bindings|seealso {assignment}} \index{assignment} \indexc{obj\_addr()}
 
-Consider this code:
+Considere este código:
 
 ```{r bind1}
 x <- c(1, 2, 3)
 ```
 
-It's easy to read it as: "create an object named 'x', containing the values 1, 2, and 3". Unfortunately, that's a simplification that will lead to inaccurate predictions about what R is actually doing behind the scenes. It's more accurate to say that this code is doing two things:
+Es fácil leerlo como: "crear un objeto llamado 'x', que contenga los valores 1, 2 y 3". Desafortunadamente, esa es una simplificación que conducirá a predicciones inexactas sobre lo que R realmente está haciendo detrás de escena. Es más exacto decir que este código está haciendo dos cosas:
 
--   It's creating an object, a vector of values, `c(1, 2, 3)`.
--   And it's binding that object to a name, `x`.
+-   Está creando un objeto, un vector de valores, `c(1, 2, 3)`.
+-   Y vincula ese objeto a un nombre, `x`.
 
-In other words, the object, or value, doesn't have a name; it's actually the name that has a value.
+En otras palabras, el objeto, o valor, no tiene nombre; en realidad es el nombre el que tiene un valor.
 
-To further clarify this distinction, I'll draw diagrams like this:
+Para aclarar aún más esta distinción, dibujaré diagramas como este:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/name-value/binding-1.png")
 ```
 
-The name, `x`, is drawn with a rounded rectangle. It has an arrow that points to (or binds or references) the value, the vector `c(1, 2, 3)`. The arrow points in opposite direction to the assignment arrow: `<-` creates a binding from the name on the left-hand side to the object on the right-hand side.
+El nombre, `x`, se dibuja con un rectángulo redondeado. Tiene una flecha que apunta (o une o hace referencia) al valor, el vector `c(1, 2, 3)`. La flecha apunta en dirección opuesta a la flecha de asignación: `<-` crea un enlace desde el nombre en el lado izquierdo hasta el objeto en el lado derecho.
 
-Thus, you can think of a name as a reference to a value. For example, if you run this code, you don't get another copy of the value `c(1, 2, 3)`, you get another binding to the existing object:
+Por lo tanto, puede pensar en un nombre como una referencia a un valor. Por ejemplo, si ejecuta este código, no obtiene otra copia del valor `c(1, 2, 3)`, obtiene otro enlace al objeto existente:
 
 ```{r bind2, dependson = "bind1"}
 y <- x
@@ -104,26 +104,26 @@ y <- x
 knitr::include_graphics("diagrams/name-value/binding-2.png")
 ```
 
-You might have noticed that the value `c(1, 2, 3)` has a label: `0x74b`. While the vector doesn't have a name, I'll occasionally need to refer to an object independent of its bindings. To make that possible, I'll label values with a unique identifier. These identifiers have a special form that looks like the object's memory "address", i.e. the location in memory where the object is stored. But because the actual memory addresses changes every time the code is run, we use these identifiers instead.
+Es posible que hayas notado que el valor `c(1, 2, 3)` tiene una etiqueta: `0x74b`. Si bien el vector no tiene nombre, ocasionalmente necesitaré referirme a un objeto independiente de sus enlaces. Para que eso sea posible, etiquetaré los valores con un identificador único. Estos identificadores tienen una forma especial que se parece a la "dirección" de la memoria del objeto, es decir, la ubicación en la memoria donde se almacena el objeto. Pero debido a que las direcciones de memoria reales cambian cada vez que se ejecuta el código, usamos estos identificadores en su lugar.
 
-You can access an object's identifier with `lobstr::obj_addr()`. Doing so allows you to see that both `x` and `y` point to the same identifier:
+Puede acceder al identificador de un objeto con `lobstr::obj_addr()`. Hacerlo te permite ver que tanto `x` como `y` apuntan al mismo identificador:
 
 ```{r bind3, dependson = "bind2"}
 obj_addr(x)
 obj_addr(y)
 ```
 
-These identifiers are long, and change every time you restart R.
+Estos identificadores son largos y cambian cada vez que reinicia R.
 
-It can take some time to get your head around the distinction between names and values, but understanding this is really helpful in functional programming where functions can have different names in different contexts.
+Puede tomar algún tiempo comprender la distinción entre nombres y valores, pero comprender esto es realmente útil en la programación funcional, donde las funciones pueden tener diferentes nombres en diferentes contextos.
 
-### Non-syntactic names {#non-syntactic}
+### Nombres no sintácticos {#sec-non-syntactic}
 
 \index{reserved names} \index{'@\texttt{`}} \index{non-syntactic names}
 
-R has strict rules about what constitutes a valid name. A **syntactic** name must consist of letters[^names-values-1], digits, `.` and `_` but can't begin with `_` or a digit. Additionally, you can't use any of the **reserved words** like `TRUE`, `NULL`, `if`, and `function` (see the complete list in `?Reserved`). A name that doesn't follow these rules is a **non-syntactic** name; if you try to use them, you'll get an error:
+R tiene reglas estrictas sobre lo que constituye un nombre válido. Un nombre **sintáctico** debe constar de letras[^names-values-1], dígitos, `.` y `_` pero no puede comenzar con `_` o un dígito. Además, no puede usar ninguna de las **palabras reservadas** como `TRUE`, `NULL`, `if` y `function` (vea la lista completa en `?Reserved`). Un nombre que no sigue estas reglas es un nombre **no sintáctico**; si intenta usarlos, obtendrá un error:
 
-[^names-values-1]: Surprisingly, precisely what constitutes a letter is determined by your current locale. That means that the syntax of R code can actually differ from computer to computer, and that it's possible for a file that works on one computer to not even parse on another! Avoid this problem by sticking to ASCII characters (i.e. A-Z) as much as possible.
+[^names-values-1]: Sorprendentemente, precisamente lo que constituye una letra está determinado por su ubicación actual. Eso significa que la sintaxis del código R en realidad puede diferir de una computadora a otra, y que es posible que un archivo que funciona en una computadora ni siquiera se analice en otra. Evite este problema apegado a los caracteres ASCII (es decir, A-Z) tanto como sea posible.
 
 ```{r, eval = FALSE}
 _abc <- 1
@@ -133,7 +133,7 @@ if <- 10
 #> Error: unexpected assignment in "if <-"
 ```
 
-It's possible to override these rules and use any name, i.e., any sequence of characters, by surrounding it with backticks:
+Es posible anular estas reglas y usar cualquier nombre, es decir, cualquier secuencia de caracteres, rodeándolo con acentos graves:
 
 ```{r}
 `_abc` <- 1
@@ -143,15 +143,15 @@ It's possible to override these rules and use any name, i.e., any sequence of ch
 `if`
 ```
 
-While it's unlikely you'd deliberately create such crazy names, you need to understand how these crazy names work because you'll come across them, most commonly when you load data that has been created outside of R.
+Si bien es poco probable que cree deliberadamente nombres tan locos, debe comprender cómo funcionan estos nombres locos porque los encontrará, más comúnmente cuando carga datos que se han creado fuera de R.
 
 ::: sidebar
-You *can* also create non-syntactic bindings using single or double quotes (e.g. `"_abc" <- 1`) instead of backticks, but you shouldn't, because you'll have to use a different syntax to retrieve the values. The ability to use strings on the left hand side of the assignment arrow is an historical artefact, used before R supported backticks.
+*Puede* también crear enlaces no sintácticos usando comillas simples o dobles (por ejemplo, `"_abc" <- 1`) en lugar de acentos graves, pero no debería, porque tendrá que usar una sintaxis diferente para recuperar los valores. La capacidad de usar cadenas en el lado izquierdo de la flecha de asignación es un artefacto histórico, usado antes de que R admitiera los acentos graves.
 :::
 
-### Exercises
+### Ejercicios
 
-1.  Explain the relationship between `a`, `b`, `c` and `d` in the following code:
+1.  Explique la relación entre `a`, `b`, `c` y `d` en el siguiente código:
 
     ```{r}
     a <- 1:10
@@ -160,7 +160,7 @@ You *can* also create non-syntactic bindings using single or double quotes (e.g.
     d <- 1:10
     ```
 
-2.  The following code accesses the mean function in multiple ways. Do they all point to the same underlying function object? Verify this with `lobstr::obj_addr()`.
+2.  El siguiente código accede a la función de media de varias maneras. ¿Todos apuntan al mismo objeto de función subyacente? Verifique esto con `lobstr::obj_addr()`.
 
     ```{r, eval = FALSE}
     mean
@@ -170,19 +170,19 @@ You *can* also create non-syntactic bindings using single or double quotes (e.g.
     match.fun("mean")
     ```
 
-3.  By default, base R data import functions, like `read.csv()`, will automatically convert non-syntactic names to syntactic ones. Why might this be problematic? What option allows you to suppress this behaviour?
+3.  De forma predeterminada, las funciones de importación de datos base R, como `read.csv()`, convertirán automáticamente los nombres no sintácticos en sintácticos. ¿Por qué podría ser esto problemático? ¿Qué opción le permite suprimir este comportamiento?
 
-4.  What rules does `make.names()` use to convert non-syntactic names into syntactic ones?
+4.  ¿Qué reglas usa `make.names()` para convertir nombres no sintácticos en sintácticos?
 
-5.  I slightly simplified the rules that govern syntactic names. Why is `.123e1` not a syntactic name? Read `?make.names` for the full details.
+5.  Simplifiqué ligeramente las reglas que rigen los nombres sintácticos. ¿Por qué `.123e1` no es un nombre sintáctico? Lea `?make.names` para obtener todos los detalles.
 
-## Copy-on-modify
+## Copiar al modificar {#sec-copy-on-modify}
 
 \index{copy-on-modify}
 
-Consider the following code. It binds `x` and `y` to the same underlying value, then modifies `y`[^names-values-2].
+Considere el siguiente código. Vincula `x` e `y` al mismo valor subyacente, luego modifica `y`[^names-values-2].
 
-[^names-values-2]: You may be surprised to see `[[` used to subset a numeric vector. We'll come back to this in Section \@ref(subset-single), but in brief, I think you should always use `[[` when you are getting or setting a single element.
+[^names-values-2]: Es posible que se sorprenda al ver que `[[` se usa para crear un subconjunto de un vector numérico. Volveremos a esto en la @sec-subset-single, pero en resumen, creo que siempre debes usar `[[` cuando obtienes o configuras un solo elemento.
 
 ```{r}
 x <- c(1, 2, 3)
@@ -192,21 +192,21 @@ y[[3]] <- 4
 x
 ```
 
-Modifying `y` clearly didn't modify `x`. So what happened to the shared binding? While the value associated with `y` changed, the original object did not. Instead, R created a new object, `0xcd2`, a copy of `0x74b` with one value changed, then rebound `y` to that object.
+Modificar `y` claramente no modificó `x`. Entonces, ¿qué pasó con el enlace compartido? Mientras que el valor asociado con `y` cambió, el objeto original no lo hizo. En su lugar, R creó un nuevo objeto, '0xcd2', una copia de '0x74b' con un valor cambiado, y luego rebotó 'y' a ese objeto.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/name-value/binding-3.png")
 ```
 
-This behaviour is called **copy-on-modify**. Understanding it will radically improve your intuition about the performance of R code. A related way to describe this behaviour is to say that R objects are unchangeable, or **immutable**. However, I'll generally avoid that term because there are a couple of important exceptions to copy-on-modify that you'll learn about in Section \@ref(modify-in-place).
+Este comportamiento se llama **copiar al modificar**. Comprenderlo mejorará radicalmente su intuición sobre el rendimiento del código R. Una forma relacionada de describir este comportamiento es decir que los objetos R no se pueden modificar o **inmutables**. Sin embargo, generalmente evitaré ese término porque hay un par de excepciones importantes para copiar al modificar que aprenderá en la @sec-modify-in-place.
 
-When exploring copy-on-modify behaviour interactively, be aware that you'll get different results inside of RStudio. That's because the environment pane must make a reference to each object in order to display information about it. This distorts your interactive exploration but doesn't affect code inside of functions, and so doesn't affect performance during data analysis. For experimentation, I recommend either running R directly from the terminal, or using RMarkdown (like this book).
+Al explorar el comportamiento de copiar al modificar de forma interactiva, tenga en cuenta que obtendrá diferentes resultados dentro de RStudio. Esto se debe a que el panel de entorno debe hacer una referencia a cada objeto para mostrar información sobre él. Esto distorsiona su exploración interactiva pero no afecta el código dentro de las funciones y, por lo tanto, no afecta el rendimiento durante el análisis de datos. Para experimentar, recomiendo ejecutar R directamente desde la terminal o usar Quarto (como este libro).
 
 ### `tracemem()`
 
 \indexc{tracemem()}
 
-You can see when an object gets copied with the help of `base::tracemem()`. Once you call that function with an object, you'll get the object's current address:
+Puedes ver cuándo se copia un objeto con la ayuda de `base::tracemem()`. Una vez que llame a esa función con un objeto, obtendrá la dirección actual del objeto:
 
 ```{r trace1, eval = FALSE}
 x <- c(1, 2, 3)
@@ -214,7 +214,7 @@ cat(tracemem(x), "\n")
 #> <0x7f80c0e0ffc8> 
 ```
 
-From then on, whenever that object is copied, `tracemem()` will print a message telling you which object was copied, its new address, and the sequence of calls that led to the copy:
+A partir de ese momento, cada vez que se copie ese objeto, `tracemem()` imprimirá un mensaje que le indicará qué objeto se copió, su nueva dirección y la secuencia de llamadas que llevaron a la copia:
 
 ```{r trace2, dependson = "trace1", eval = FALSE}
 y <- x
@@ -222,7 +222,7 @@ y[[3]] <- 4L
 #> tracemem[0x7f80c0e0ffc8 -> 0x7f80c4427f40]: 
 ```
 
-If you modify `y` again, it won't get copied. That's because the new object now only has a single name bound to it, so R applies modify-in-place optimisation. We'll come back to this in Section \@ref(modify-in-place).
+Si modifica `y` de nuevo, no se copiará. Esto se debe a que el nuevo objeto ahora solo tiene un único nombre vinculado, por lo que R aplica la optimización de modificación en el lugar. Volveremos a esto en la @sec-modify-in-place.
 
 ```{r trace3, dependson = "trace2"}
 y[[3]] <- 5L
@@ -230,11 +230,11 @@ y[[3]] <- 5L
 untracemem(x)
 ```
 
-`untracemem()` is the opposite of `tracemem()`; it turns tracing off.
+`untracemem()` es lo contrario de `tracemem()`; apaga el rastreo.
 
-### Function calls
+### Llamadas de función
 
-The same rules for copying also apply to function calls. Take this code:
+Las mismas reglas para copiar también se aplican a las llamadas a funciones. Toma este código:
 
 ```{r}
 f <- function(a) {
@@ -250,39 +250,39 @@ z <- f(x)
 untracemem(x)
 ```
 
-While `f()` is running, the `a` inside the function points to the same value as the `x` does outside the function:
+Mientras `f()` se está ejecutando, `a` dentro de la función apunta al mismo valor que `x` fuera de la función:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/name-value/binding-f1.png")
 ```
 
-You'll learn more about the conventions used in this diagram in Section \@ref(execution-environments). In brief: the function `f()` is depicted by the yellow object on the right. It has a formal argument, `a`, which becomes a binding (indicated by dotted black line) in the execution environment (the gray box) when the function is run.
+Aprenderá más sobre las convenciones utilizadas en este diagrama en la @sec-execution-environments. En resumen: la función `f()` está representada por el objeto amarillo a la derecha. Tiene un argumento formal, `a`, que se convierte en un enlace (indicado por una línea negra punteada) en el entorno de ejecución (el cuadro gris) cuando se ejecuta la función.
 
-Once `f()` completes, `x` and `z` will point to the same object. `0x74b` never gets copied because it never gets modified. If `f()` did modify `x`, R would create a new copy, and then `z` would bind that object.
+Una vez que `f()` se complete, `x` y `z` apuntarán al mismo objeto. `0x74b` nunca se copia porque nunca se modifica. Si `f()` modificara `x`, R crearía una nueva copia y luego `z` vincularía ese objeto.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/name-value/binding-f2.png")
 ```
 
-### Lists {#list-references}
+### Listas {#sec-list-references}
 
 \indexc{ref()}
 
 \index{lists}
 
-It's not just names (i.e. variables) that point to values; elements of lists do too. Consider this list, which is superficially very similar to the numeric vector above:
+No son solo los nombres (es decir, las variables) los que apuntan a los valores; los elementos de las listas también lo hacen. Considere esta lista, que es superficialmente muy similar al vector numérico anterior:
 
 ```{r list1}
 l1 <- list(1, 2, 3)
 ```
 
-This list is more complex because instead of storing the values itself, it stores references to them:
+Esta lista es más compleja porque en lugar de almacenar los valores en sí, almacena referencias a ellos:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/name-value/list.png")
 ```
 
-This is particularly important when we modify a list:
+Esto es particularmente importante cuando modificamos una lista:
 
 ```{r list2, dependson = "list1"}
 l2 <- l1
@@ -300,17 +300,17 @@ l2[[3]] <- 4
 knitr::include_graphics("diagrams/name-value/l-modify-2.png")
 ```
 
-Like vectors, lists use copy-on-modify behaviour; the original list is left unchanged, and R creates a modified copy. This, however, is a **shallow** copy: the list object and its bindings are copied, but the values pointed to by the bindings are not. The opposite of a shallow copy is a deep copy where the contents of every reference are copied. Prior to R 3.1.0, copies were always deep copies.
+Al igual que los vectores, las listas utilizan el comportamiento de copiar al modificar; la lista original no se modifica y R crea una copia modificada. Esto, sin embargo, es una copia **superficial**: el objeto de la lista y sus enlaces se copian, pero los valores a los que apuntan los enlaces no. Lo opuesto a una copia superficial es una copia profunda donde se copian los contenidos de cada referencia. Antes de R 3.1.0, las copias siempre eran copias profundas.
 
-To see values that are shared across lists, use `lobstr::ref()`. `ref()` prints the memory address of each object, along with a local ID so that you can easily cross-reference shared components.
+Para ver los valores que se comparten en las listas, use `lobstr::ref()`. `ref()` imprime la dirección de memoria de cada objeto, junto con una identificación local para que pueda cruzar fácilmente los componentes compartidos.
 
 ```{r list4, dependson = "list3"}
 ref(l1, l2)
 ```
 
-### Data frames {#df-modify}
+### Data frames {#sec-df-modify}
 
-Data frames are lists of vectors, so copy-on-modify has important consequences when you modify a data frame. Take this data frame as an example:
+Los data frames son listas de vectores, por lo que copiar al modificar tiene consecuencias importantes cuando modifica un data frame. Tome este data frame como un ejemplo:
 
 ```{r}
 d1 <- data.frame(x = c(1, 5, 6), y = c(2, 4, 3))
@@ -320,7 +320,7 @@ d1 <- data.frame(x = c(1, 5, 6), y = c(2, 4, 3))
 knitr::include_graphics("diagrams/name-value/dataframe.png")
 ```
 
-If you modify a column, only *that* column needs to be modified; the others will still point to their original references:
+Si modifica una columna, solo *esa* columna debe modificarse; los otros seguirán apuntando a sus referencias originales:
 
 ```{r}
 d2 <- d1
@@ -331,7 +331,7 @@ d2[, 2] <- d2[, 2] * 2
 knitr::include_graphics("diagrams/name-value/d-modify-c.png")
 ```
 
-However, if you modify a row, every column is modified, which means every column must be copied:
+Sin embargo, si modifica una fila, se modifican todas las columnas, lo que significa que se deben copiar todas las columnas:
 
 ```{r}
 d3 <- d1
@@ -342,13 +342,13 @@ d3[1, ] <- d3[1, ] * 3
 knitr::include_graphics("diagrams/name-value/d-modify-r.png")
 ```
 
-### Character vectors
+### Vectores de caracteres
 
 \index{string pool}
 
-The final place that R uses references is with character vectors[^names-values-3]. I usually draw character vectors like this:
+El último lugar donde R usa referencias es con vectores de caracteres [^names-values-3]. Normalmente dibujo vectores de caracteres como este:
 
-[^names-values-3]: Confusingly, a character vector is a vector of strings, not individual characters.
+[^names-values-3]: Confusamente, un vector de caracteres es un vector de cadenas, no de caracteres individuales.
 
 ```{r}
 x <- c("a", "a", "abc", "d")
@@ -358,25 +358,25 @@ x <- c("a", "a", "abc", "d")
 knitr::include_graphics("diagrams/name-value/character.png")
 ```
 
-But this is a polite fiction. R actually uses a **global string pool** where each element of a character vector is a pointer to a unique string in the pool:
+Pero esto es una ficción educada. R en realidad usa un **grupo de cadenas global** donde cada elemento de un vector de caracteres es un puntero a una cadena única en el grupo:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/name-value/character-2.png")
 ```
 
-You can request that `ref()` show these references by setting the `character` argument to `TRUE`:
+Puede solicitar que `ref()` muestre estas referencias configurando el argumento `character` en `TRUE`:
 
 ```{r}
 ref(x, character = TRUE)
 ```
 
-This has a profound impact on the amount of memory a character vector uses but is otherwise generally unimportant, so elsewhere in the book I'll draw character vectors as if the strings lived inside a vector.
+Esto tiene un impacto profundo en la cantidad de memoria que usa un vector de caracteres, pero por lo demás generalmente no es importante, por lo que en otras partes del libro dibujaré vectores de caracteres como si las cadenas vivieran dentro de un vector.
 
-### Exercises
+### Ejercicios
 
-1.  Why is `tracemem(1:10)` not useful?
+1.  ¿Por qué `tracemem(1:10)` no es útil?
 
-2.  Explain why `tracemem()` shows two copies when you run this code. Hint: carefully look at the difference between this code and the code shown earlier in the section.
+2.  Explique por qué `tracemem()` muestra dos copias cuando ejecuta este código. Sugerencia: mire cuidadosamente la diferencia entre este código y el código que se muestra en la sección anterior.
 
     ```{r, results = FALSE}
     x <- c(1L, 2L, 3L)
@@ -385,7 +385,7 @@ This has a profound impact on the amount of memory a character vector uses but i
     x[[3]] <- 4
     ```
 
-3.  Sketch out the relationship between the following objects:
+3.  Esboza la relación entre los siguientes objetos:
 
     ```{r}
     a <- 1:10
@@ -393,16 +393,16 @@ This has a profound impact on the amount of memory a character vector uses but i
     c <- list(b, a, 1:10)
     ```
 
-4.  What happens when you run this code?
+4.  ¿Qué sucede cuando ejecutas este código?
 
     ```{r}
     x <- list(1:10)
     x[[2]] <- x
     ```
 
-    Draw a picture.
+    Dibuja una imagen.
 
-## Object size
+## Tamaño del objeto {#sec-object-size}
 
 ```{=tex}
 \indexc{object.size} 
@@ -411,16 +411,16 @@ This has a profound impact on the amount of memory a character vector uses but i
 ```
 \index{memory usage}
 
-You can find out how much memory an object takes with `lobstr::obj_size()`[^names-values-4]:
+Puedes averiguar cuánta memoria ocupa un objeto con `lobstr::obj_size()`[^names-values-4]:
 
-[^names-values-4]: Beware of the `utils::object.size()` function. It does not correctly account for shared references and will return sizes that are too large.
+[^names-values-4]: Tenga cuidado con la función `utils::object.size()`. No tiene en cuenta correctamente las referencias compartidas y devolverá tamaños que son demasiado grandes.
 
 ```{r}
 obj_size(letters)
 obj_size(ggplot2::diamonds)
 ```
 
-Since the elements of lists are references to values, the size of a list might be much smaller than you expect:
+Dado que los elementos de las listas son referencias a valores, el tamaño de una lista puede ser mucho más pequeño de lo esperado:
 
 ```{r}
 x <- runif(1e6)
@@ -430,15 +430,15 @@ y <- list(x, x, x)
 obj_size(y)
 ```
 
-`y` is only 80 bytes[^names-values-5] bigger than `x`. That's the size of an empty list with three elements:
+`y` es sólo 80 bytes[^names-values-5] mayor que `x`. Ese es el tamaño de una lista vacía con tres elementos:
 
-[^names-values-5]: If you're running 32-bit R, you'll see slightly different sizes.
+[^names-values-5]: Si está ejecutando R de 32 bits, verá tamaños ligeramente diferentes.
 
 ```{r}
 obj_size(list(NULL, NULL, NULL))
 ```
 
-Similarly, because R uses a global string pool character vectors take up less memory than you might expect: repeating a string 100 times does not make it take up 100 times as much memory.
+Del mismo modo, debido a que R usa un grupo de cadenas global, los vectores de caracteres ocupan menos memoria de lo que cabría esperar: repetir una cadena 100 veces no hace que ocupe 100 veces más memoria.
 
 ```{r}
 banana <- "bananas bananas bananas"
@@ -446,13 +446,13 @@ obj_size(banana)
 obj_size(rep(banana, 100))
 ```
 
-References also make it challenging to think about the size of individual objects. `obj_size(x) + obj_size(y)` will only equal `obj_size(x, y)` if there are no shared values. Here, the combined size of `x` and `y` is the same as the size of `y`:
+Las referencias también dificultan pensar en el tamaño de los objetos individuales. `obj_size(x) + obj_size(y)` solo será igual a `obj_size(x, y)` si no hay valores compartidos. Aquí, el tamaño combinado de `x` e `y` es el mismo que el tamaño de `y`:
 
 ```{r}
 obj_size(x, y)
 ```
 
-Finally, R 3.5.0 and later versions have a feature that might lead to surprises: ALTREP, short for **alternative representation**. This allows R to represent certain types of vectors very compactly. The place you are most likely to see this is with `:` because instead of storing every single number in the sequence, R just stores the first and last number. This means that every sequence, no matter how large, is the same size:
+Finalmente, R 3.5.0 y las versiones posteriores tienen una función que podría generar sorpresas: ALTREP, abreviatura de **representación alternativa**. Esto permite que R represente ciertos tipos de vectores de forma muy compacta. El lugar donde es más probable que vea esto es con `:` porque en lugar de almacenar cada número en la secuencia, R solo almacena el primer y el último número. Esto significa que cada secuencia, sin importar cuán grande sea, tiene el mismo tamaño:
 
 ```{r}
 obj_size(1:3)
@@ -461,9 +461,9 @@ obj_size(1:1e6)
 obj_size(1:1e9)
 ```
 
-### Exercises
+### Ejercicios
 
-1.  In the following example, why are `object.size(y)` and `obj_size(y)` so radically different? Consult the documentation of `object.size()`.
+1.  En el siguiente ejemplo, ¿por qué `object.size(y)` y `obj_size(y)` son tan radicalmente diferentes? Consulta la documentación de `object.size()`.
 
     ```{r}
     y <- rep(list(runif(1e4)), 100)
@@ -472,14 +472,14 @@ obj_size(1:1e9)
     obj_size(y)
     ```
 
-2.  Take the following list. Why is its size somewhat misleading?
+2.  Toma la siguiente lista. ¿Por qué su tamaño es algo engañoso?
 
     ```{r}
     funs <- list(mean, sd, var)
     obj_size(funs)
     ```
 
-3.  Predict the output of the following code:
+3.  Prediga la salida del siguiente código:
 
     ```{r, results = FALSE}
     a <- runif(1e6)
@@ -498,21 +498,21 @@ obj_size(1:1e9)
     obj_size(a, b)
     ```
 
-## Modify-in-place
+## Modificar en el lugar {#sec-modify-in-place}
 
 \index{modify-in-place}
 
-As we've seen above, modifying an R object usually creates a copy. There are two exceptions:
+Como hemos visto anteriormente, modificar un objeto R generalmente crea una copia. Hay dos excepciones:
 
--   Objects with a single binding get a special performance optimisation.
+-   Los objetos con un solo enlace obtienen una optimización de rendimiento especial.
 
--   Environments, a special type of object, are always modified in place.
+-   Los entornos, un tipo especial de objeto, siempre se modifican en su lugar.
 
-### Objects with a single binding {#single-binding}
+### Objetos con un solo enlace {#sec-single-binding}
 
 \index{loops!avoiding copies in}
 
-If an object has a single name bound to it, R will modify it in place:
+Si un objeto tiene un solo nombre vinculado, R lo modificará en su lugar:
 
 ```{r}
 v <- c(1, 2, 3)
@@ -530,19 +530,19 @@ v[[3]] <- 4
 knitr::include_graphics("diagrams/name-value/v-inplace-2.png")
 ```
 
-(Note the object IDs here: `v` continues to bind to the same object, `0x207`.)
+(Tenga en cuenta los ID de objeto aquí: `v` continúa enlazando con el mismo objeto, `0x207`).
 
-Two complications make predicting exactly when R applies this optimisation challenging:
+Dos complicaciones hacen que predecir exactamente cuándo R aplica esta optimización sea un desafío:
 
--   When it comes to bindings, R can currently[^names-values-6] only count 0, 1, or many. That means that if an object has two bindings, and one goes away, the reference count does not go back to 1: one less than many is still many. In turn, this means that R will make copies when it sometimes doesn't need to.
+-   Cuando se trata de enlaces, R actualmente puede [^names-values-6] solo contar 0, 1 o muchos. Eso significa que si un objeto tiene dos enlaces y uno desaparece, el recuento de referencias no vuelve a 1: uno menos que muchos sigue siendo muchos. A su vez, esto significa que R hará copias cuando a veces no sea necesario.
 
--   Whenever you call the vast majority of functions, it makes a reference to the object. The only exception are specially written "primitive" C functions. These can only be written by R-core and occur mostly in the base package.
+-   Cada vez que llama a la gran mayoría de las funciones, hace una referencia al objeto. La única excepción son las funciones C "primitivas" especialmente escritas. Estos solo pueden ser escritos por R-core y ocurren principalmente en el paquete base.
 
-[^names-values-6]: By the time you read this, this may have changed, as plans are afoot to improve reference counting: https://developer.r-project.org/Refcnt.html
+[^names-values-6]: Para cuando lea esto, es posible que esto haya cambiado, ya que hay planes en marcha para mejorar el conteo de referencias: https://developer.r-project.org/Refcnt.html
 
-Together, these two complications make it hard to predict whether or not a copy will occur. Instead, it's better to determine it empirically with `tracemem()`.
+Juntas, estas dos complicaciones hacen que sea difícil predecir si se producirá o no una copia. En cambio, es mejor determinarlo empíricamente con `tracemem()`.
 
-\index{loops!performance} \index{for loops|see {loops}} Let's explore the subtleties with a case study using for loops. For loops have a reputation for being slow in R, but often that slowness is caused by every iteration of the loop creating a copy. Consider the following code. It subtracts the median from each column of a large data frame:
+\index{loops!performance} \index{for loops|see {loops}} Exploremos las sutilezas con un caso de estudio usando bucles for. Los bucles for tienen la reputación de ser lentos en R, pero a menudo esa lentitud se debe a que cada iteración del bucle crea una copia. Considere el siguiente código. Resta la mediana de cada columna de un data frame grande:
 
 ```{r, cache = TRUE}
 x <- data.frame(matrix(runif(5 * 1e4), ncol = 5))
@@ -553,7 +553,7 @@ for (i in seq_along(medians)) {
 }
 ```
 
-This loop is surprisingly slow because each iteration of the loop copies the data frame. You can see this by using `tracemem()`:
+Este ciclo es sorprendentemente lento porque cada iteración del ciclo copia el data frame. Puedes ver esto usando `tracemem()`:
 
 ```{r, eval = FALSE}
 cat(tracemem(x), "\n")
@@ -581,11 +581,11 @@ for (i in 1:5) {
 untracemem(x)
 ```
 
-In fact, each iteration copies the data frame not once, not twice, but three times! Two copies are made by `[[.data.frame`, and a further copy[^names-values-7] is made because `[[.data.frame` is a regular function that increments the reference count of `x`.
+De hecho, cada iteración copia el data frame no una, ni dos, ¡sino tres veces! Se hacen dos copias con `[[.data.frame`, y se hace otra copia[^names-values-7] porque `[[.data.frame` es una función normal que incrementa el recuento de referencias de `x`.
 
-[^names-values-7]: These copies are shallow: they only copy the reference to each individual column, not the contents of the columns. This means the performance isn't terrible, but it's obviously not as good as it could be.
+[^names-values-7]: Estas copias son superficiales: solo copian la referencia a cada columna individual, no el contenido de las columnas. Esto significa que el rendimiento no es terrible, pero obviamente no es tan bueno como podría ser.
 
-We can reduce the number of copies by using a list instead of a data frame. Modifying a list uses internal C code, so the references are not incremented and no copy is made:
+Podemos reducir el número de copias usando una lista en lugar de un data frame. La modificación de una lista utiliza código C interno, por lo que las referencias no se incrementan y no se realiza ninguna copia:
 
 ```{r, eval = FALSE}
 y <- as.list(x)
@@ -597,15 +597,15 @@ for (i in 1:5) {
 }
 ```
 
-While it's not hard to determine when a copy is made, it is hard to prevent it. If you find yourself resorting to exotic tricks to avoid copies, it may be time to rewrite your function in C++, as described in Chapter \@ref(rcpp).
+Si bien no es difícil determinar cuándo se realiza una copia, es difícil evitarlo. Si se encuentra recurriendo a trucos exóticos para evitar copias, puede ser hora de reescribir su función en C++, como se describe en el @sec-rcpp.
 
-### Environments {#env-modify}
+### Entornos {#sec-env-modify}
 
 \index{reference semantics} \index{environments}
 
-You'll learn more about environments in Chapter \@ref(environments), but it's important to mention them here because their behaviour is different from that of other objects: environments are always modified in place. This property is sometimes described as **reference semantics** because when you modify an environment all existing bindings to that environment continue to have the same reference.
+Aprenderá más sobre los entornos en el @sec-environments, pero es importante mencionarlos aquí porque su comportamiento es diferente al de otros objetos: los entornos siempre se modifican en su lugar. Esta propiedad a veces se describe como **semántica de referencia** porque cuando modifica un entorno, todos los enlaces existentes a ese entorno continúan teniendo la misma referencia.
 
-Take this environment, which we bind to `e1` and `e2`:
+Tome este entorno, que vinculamos a `e1` y `e2`:
 
 ```{r}
 e1 <- rlang::env(a = 1, b = 2, c = 3)
@@ -616,7 +616,7 @@ e2 <- e1
 knitr::include_graphics("diagrams/name-value/e-modify-1.png")
 ```
 
-If we change a binding, the environment is modified in place:
+Si cambiamos un enlace, el entorno se modifica en su lugar:
 
 ```{r}
 e1$c <- 4
@@ -627,9 +627,9 @@ e2$c
 knitr::include_graphics("diagrams/name-value/e-modify-2.png")
 ```
 
-This basic idea can be used to create functions that "remember" their previous state. See Section \@ref(stateful-funs) for more details. This property is also used to implement the R6 object-oriented programming system, the topic of Chapter \@ref(r6).
+Esta idea básica se puede utilizar para crear funciones que "recuerden" su estado anterior. Consulte la @sec-stateful-funs para obtener más detalles. Esta propiedad también se usa para implementar el sistema de programación orientado a objetos R6, el tema del @sec-r6.
 
-One consequence of this is that environments can contain themselves:
+Una consecuencia de esto es que los entornos pueden contenerse a sí mismos:
 
 ```{r}
 e <- rlang::env()
@@ -642,26 +642,26 @@ ref(e)
 knitr::include_graphics("diagrams/name-value/e-self.png")
 ```
 
-This is a unique property of environments!
+¡Esta es una propiedad única de los entornos!
 
-### Exercises
+### Ejercicios
 
-1.  Explain why the following code doesn't create a circular list.
+1.  Explique por qué el siguiente código no crea una lista circular.
 
     ```{r}
     x <- list()
     x[[1]] <- x
     ```
 
-2.  Wrap the two methods for subtracting medians into two functions, then use the 'bench' package [@bench] to carefully compare their speeds. How does performance change as the number of columns increase?
+2.  Envuelva los dos métodos para restar medianas en dos funciones, luego use el paquete `bench`[@bench] para comparar cuidadosamente sus velocidades. ¿Cómo cambia el rendimiento a medida que aumenta el número de columnas?
 
-3.  What happens if you attempt to use `tracemem()` on an environment?
+3.  ¿Qué sucede si intenta usar `tracemem()` en un entorno?
 
-## Unbinding and the garbage collector {#gc}
+## Desvincular y el recolector de basura. {#sec-gc}
 
 \index{garbage collector} \index{unbinding} \indexc{rm()}
 
-Consider this code:
+Considere este código:
 
 ```{r}
 x <- 1:3
@@ -687,37 +687,37 @@ rm(x)
 knitr::include_graphics("diagrams/name-value/unbinding-3.png")
 ```
 
-We created two objects, but by the time the code finishes, neither object is bound to a name. How do these objects get deleted? That's the job of the **garbage collector**, or GC for short. The GC frees up memory by deleting R objects that are no longer used, and by requesting more memory from the operating system if needed.
+Creamos dos objetos, pero cuando finaliza el código, ninguno de los objetos está vinculado a un nombre. ¿Cómo se eliminan estos objetos? Ese es el trabajo del **recolector de basura**, o GC para abreviar. El GC libera memoria eliminando objetos R que ya no se usan y solicitando más memoria del sistema operativo si es necesario.
 
-R uses a **tracing** GC. This means it traces every object that's reachable from the global[^names-values-8] environment, and all objects that are, in turn, reachable from those objects (i.e. the references in lists and environments are searched recursively). The garbage collector does not use the modify-in-place reference count described above. While these two ideas are closely related, the internal data structures are optimised for different use cases.
+R utiliza un GC de **trazado**. Esto significa que rastrea todos los objetos a los que se puede acceder desde el entorno global[^names-values-8] y todos los objetos a los que, a su vez, se puede acceder desde esos objetos (es decir, las referencias en listas y entornos se buscan de forma recursiva). El recolector de elementos no utilizados no utiliza el recuento de referencias de modificación en el lugar descrito anteriormente. Si bien estas dos ideas están estrechamente relacionadas, las estructuras de datos internas están optimizadas para diferentes casos de uso.
 
-[^names-values-8]: And every environment in the current call stack.
+[^names-values-8]: Y todos los entornos de la pila de llamadas actual.
 
-The garbage collector (GC) runs automatically whenever R needs more memory to create a new object. Looking from the outside, it's basically impossible to predict when the GC will run. In fact, you shouldn't even try. If you want to find out when the GC runs, call `gcinfo(TRUE)` and GC will print a message to the console every time it runs.
+El recolector de basura (GC) se ejecuta automáticamente cada vez que R necesita más memoria para crear un nuevo objeto. Mirando desde el exterior, es básicamente imposible predecir cuándo se ejecutará el GC. De hecho, ni siquiera deberías intentarlo. Si desea saber cuándo se ejecuta GC, llame a `gcinfo(TRUE)` y GC imprimirá un mensaje en la consola cada vez que se ejecute.
 
-\index{garbage collector!gc@\texttt{gc()}} You can force garbage collection by calling `gc()`. But despite what you might have read elsewhere, there's never any *need* to call `gc()` yourself. The only reasons you might *want* to call `gc()` is to ask R to return memory to your operating system so other programs can use it, or for the side-effect that tells you how much memory is currently being used:
+\index{garbage collector!gc@\texttt{gc()}} Puedes forzar la recolección de basura llamando a `gc()`. Pero a pesar de lo que hayas leído en otros lugares, nunca hay *necesidad* de llamar a `gc()` tú mismo. Las únicas razones por las que podría *querer* llamar a `gc()` es para pedirle a R que devuelva la memoria a su sistema operativo para que otros programas puedan usarla, o por el efecto secundario que le dice cuánta memoria se está usando actualmente:
 
 ```{r}
 gc() 
 ```
 
-`lobstr::mem_used()` is a wrapper around `gc()` that prints the total number of bytes used:
+`lobstr::mem_used()` es un envoltorio alrededor de `gc()` que imprime el número total de bytes utilizados:
 
 ```{r}
 mem_used()
 ```
 
-This number won't agree with the amount of memory reported by your operating system. There are three reasons:
+Este número no coincidirá con la cantidad de memoria informada por su sistema operativo. Hay tres razones:
 
-1.  It includes objects created by R but not by the R interpreter.
+1.  Incluye objetos creados por R pero no por el intérprete de R.
 
-2.  Both R and the operating system are lazy: they won't reclaim memory until it's actually needed. R might be holding on to memory because the OS hasn't yet asked for it back.
+2.  Tanto R como el sistema operativo son perezosos: no reclamarán memoria hasta que realmente se necesite. R podría estar reteniendo la memoria porque el sistema operativo aún no la ha solicitado.
 
-3.  R counts the memory occupied by objects but there may be empty gaps due to deleted objects. This problem is known as memory fragmentation.
+3.  R cuenta la memoria ocupada por objetos, pero puede haber espacios vacíos debido a objetos eliminados. Este problema se conoce como fragmentación de la memoria.
 
-## Quiz answers {#names-values-answers}
+## Respuestas de la prueba {#sec-names-values-answers}
 
-1.  You must quote non-syntactic names with backticks: `` ` ``: for example, the variables `1`, `2`, and `3`.
+1.  Debe citar nombres no sintácticos con acentos graves: `` ` ``: por ejemplo, las variables `1`, `2` y `3`.
 
     ```{r}
     df <- data.frame(runif(3), runif(3))
@@ -726,7 +726,7 @@ This number won't agree with the amount of memory reported by your operating sys
     df$`3` <- df$`1` + df$`2`
     ```
 
-2.  It occupies about 8 MB.
+2.  Ocupa unos 8 MB.
 
     ```{r}
     x <- runif(1e6)
@@ -734,4 +734,4 @@ This number won't agree with the amount of memory reported by your operating sys
     obj_size(y)
     ```
 
-3.  `a` is copied when `b` is modified, `b[[1]] <- 10`.
+3.  `a` se copia cuando se modifica `b`, `b[[1]] <- 10`.
