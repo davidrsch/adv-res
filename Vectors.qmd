@@ -74,7 +74,7 @@ Cada uno de los cuatro tipos principales tiene una sintaxis especial para crear 
 
 -   Los enteros se escriben de forma similar a los dobles, pero deben ir seguidos de `L`[^vectors-5] (`1234L`, `1e4L` o `0xcafeL`), y no pueden contener valores fraccionarios.
 
-- Las cadenas están rodeadas por `"` (`"hola"`) o `'` (`'adiós'`). Los caracteres especiales se escapan con `\`; consulte `?Quotes` para obtener detalles completos.
+-   Las cadenas están rodeadas por `"` (`"hola"`) o `'` (`'adiós'`). Los caracteres especiales se escapan con `\`; consulte `?Quotes` para obtener detalles completos.
 
 [^vectors-5]: `L` no es intuitivo, y puede que te preguntes de dónde viene. En el momento en que se agregó `L` a R, el tipo de entero de R era equivalente a un entero largo en C, y el código C podía usar un sufijo de `l` o `L` para obligar a un número a ser un entero largo. Se decidió que `l` era demasiado similar visualmente a `i` (usado para números complejos en R), dejando `L`.
 
@@ -317,7 +317,7 @@ z
 
 Muchas de las funciones para trabajar con vectores tienen generalizaciones para matrices y arreglos:
 
-| Vector            | Matriz                     | Arreglo            |
+| Vector            | Matriz                     | Arreglo          |
 |-------------------|----------------------------|------------------|
 | `names()`         | `rownames()`, `colnames()` | `dimnames()`     |
 | `length()`        | `nrow()`, `ncol()`         | `dim()`          |
@@ -413,7 +413,7 @@ grade <- ordered(c("b", "b", "a", "c"), levels = c("c", "b", "a"))
 grade
 ```
 
-En base R[^vectors-9], tiende a encontrar factores con mucha frecuencia porque muchas funciones de base R (como `read.csv()` y `data.frame()`) convierten automáticamente los vectores de caracteres en factores. Esto es subóptimo porque no hay forma de que esas funciones conozcan el conjunto de todos los niveles posibles o su orden correcto: los niveles son una propiedad de la teoría o el diseño experimental, no de los datos. En su lugar, utilice el argumento `stringsAsFactors = FALSE` para suprimir este comportamiento y luego convierta manualmente los vectores de caracteres en factores usando su conocimiento de los datos "teóricos". Para conocer el contexto histórico de este comportamiento, recomiendo [*stringsAsFactors: Una biografía no autorizada*](https://simplystatistics.org/posts/2015-07-24-stringsasfactors-an-unauthorized-biography) de Roger Peng, y [*stringsAsFactors = \<sigh\>*](http://notstatschat.tumblr.com/post/124987394001/stringsas factores-suspiro) de Thomas Lumley.
+En base R[^vectors-9], tiende a encontrar factores con mucha frecuencia porque muchas funciones de base R (como `read.csv()` y `data.frame()`) convierten automáticamente los vectores de caracteres en factores. Esto es subóptimo porque no hay forma de que esas funciones conozcan el conjunto de todos los niveles posibles o su orden correcto: los niveles son una propiedad de la teoría o el diseño experimental, no de los datos. En su lugar, utilice el argumento `stringsAsFactors = FALSE` para suprimir este comportamiento y luego convierta manualmente los vectores de caracteres en factores usando su conocimiento de los datos "teóricos". Para conocer el contexto histórico de este comportamiento, recomiendo [*stringsAsFactors: Una biografía no autorizada*](https://simplystatistics.org/posts/2015-07-24-stringsasfactors-an-unauthorized-biography) de Roger Peng, y [*stringsAsFactors = \<sigh\>*](http://notstatschat.tumblr.com/post/124987394001/stringsas%20factores-suspiro) de Thomas Lumley.
 
 [^vectors-9]: El tidyverse nunca fuerza automáticamente a los personajes a factores, y proporciona el paquete forcats [@forcats] específicamente para trabajar con factores.
 
@@ -627,9 +627,9 @@ attributes(df1)
 
 A diferencia de una lista regular, un data frame tiene una restricción adicional: la longitud de cada uno de sus vectores debe ser la misma. Esto le da a los data frames su estructura rectangular y explica por qué comparten las propiedades de las matrices y las listas:
 
-- Un data frame tiene `rownames()`[^vectors-13] y `colnames()`. Los `names()` de un data frame son los nombres de las columnas.
+-   Un data frame tiene `rownames()`[^vectors-13] y `colnames()`. Los `names()` de un data frame son los nombres de las columnas.
 
-- Un data frame tiene filas `nrow()` y columnas `ncol()`. La `longitud()` de un data frame da el número de columnas.
+-   Un data frame tiene filas `nrow()` y columnas `ncol()`. La `longitud()` de un data frame da el número de columnas.
 
 [^vectors-13]: técnicamente, se recomienda usar `row.names()`, no `rownames()` con data frames, pero esta distinción rara vez es importante.
 
@@ -928,7 +928,7 @@ is.null(NULL)
 
 Hay dos usos comunes de `NULL`:
 
-- Representar un vector vacío (un vector de longitud cero) de tipo arbitrario. Por ejemplo, si usas `c()` pero no incluyes ningún argumento, obtienes `NULL`, y concatenar `NULL` a un vector lo dejará sin cambios:
+-   Representar un vector vacío (un vector de longitud cero) de tipo arbitrario. Por ejemplo, si usas `c()` pero no incluyes ningún argumento, obtienes `NULL`, y concatenar `NULL` a un vector lo dejará sin cambios:
 
     ```{r}
     c()
@@ -946,6 +946,6 @@ Si está familiarizado con SQL, conocerá el `NULL` relacional y puede esperar q
 
 3.  Los elementos de una lista pueden ser de cualquier tipo (incluso una lista); los elementos de un vector atómico son todos del mismo tipo. De manera similar, todos los elementos de una matriz deben ser del mismo tipo; en un data frame, diferentes columnas pueden tener diferentes tipos.
 
-4. Puede crear una matriz de lista asignando dimensiones a una lista. Puede convertir una matriz en una columna de un data frame con `df$x <- matrix()`, o usando `I()` al crear un nuevo data frame `data.frame(x = I(matrix()))`.
+4.  Puede crear una matriz de lista asignando dimensiones a una lista. Puede convertir una matriz en una columna de un data frame con `df$x <- matrix()`, o usando `I()` al crear un nuevo data frame `data.frame(x = I(matrix()))`.
 
-5. Los Tibbles tienen un método de impresión mejorado, nunca obligan a las cadenas a factores y proporcionan métodos de subconjunto más estrictos.
+5.  Los Tibbles tienen un método de impresión mejorado, nunca obligan a las cadenas a factores y proporcionan métodos de subconjunto más estrictos.
