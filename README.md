@@ -12,9 +12,12 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
 
 ## Traducido hasta ahora
 
- -  Bienvenida
- -  Prefacio
- -  Introducción
+-   Bienvenida
+-   Prefacio
+-   Introducción
+-   Fundamentos
+    -   Nombres y valores
+    -   Vectores
 
 # Más información acerca del repositorio
 
@@ -82,9 +85,12 @@ The translation was done using Google Translate and some grammar and coherence e
 
 ## Translated so far
 
- -  Welcome
- -  Preface
- -  Introduction
+-   Welcome
+-   Preface
+-   Introduction
+-   Foundations
+    -   Names and values
+    -   Vectors
 
 # More info about the repository
 

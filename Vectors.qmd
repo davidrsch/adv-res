@@ -1,91 +1,91 @@
-# Vectors {#sec-vectors-chap}
+# Vectores {#sec-vectors-chap}
 
 ```{r setup, include = FALSE}
 source("common.R")
 ```
 
-## Introduction
+## Introducción
 
 \index{vectors} \index{nodes}
 
-This chapter discusses the most important family of data types in base R: vectors[^vectors-1]. While you've probably already used many (if not all) of the different types of vectors, you may not have thought deeply about how they're interrelated. In this chapter, I won't cover individual vectors types in too much detail, but I will show you how all the types fit together as a whole. If you need more details, you can find them in R's documentation.
+Este capítulo analiza la familia más importante de tipos de datos en base R: vectores[^vectors-1]. Si bien es probable que ya haya usado muchos (si no todos) de los diferentes tipos de vectores, es posible que no haya pensado profundamente en cómo están interrelacionados. En este capítulo, no cubriré los tipos de vectores individuales con demasiado detalle, pero le mostraré cómo encajan todos los tipos como un todo. Si necesita más detalles, puede encontrarlos en la documentación de R.
 
-[^vectors-1]: Collectively, all the other data types are known as "node" types, which include things like functions and environments. You're most likely to come across this highly technical term when using `gc()`: the "N" in `Ncells` stands for nodes and the "V" in `Vcells` stands for vectors.
+[^vectors-1]: En conjunto, todos los demás tipos de datos se conocen como tipos de "nodo", que incluyen cosas como funciones y entornos. Lo más probable es que te encuentres con este término altamente técnico cuando uses `gc()`: la "N" en `Ncells` significa nodos y la "V" en `Vcells` significa vectores.
 
-Vectors come in two flavours: atomic vectors and lists[^vectors-2]. They differ in terms of their elements' types: for atomic vectors, all elements must have the same type; for lists, elements can have different types. While not a vector, `NULL` is closely related to vectors and often serves the role of a generic zero length vector. This diagram, which we'll be expanding on throughout this chapter, illustrates the basic relationships:
+Los vectores vienen en dos sabores: vectores atómicos y listas [^vectors-2]. Se diferencian en cuanto a los tipos de sus elementos: para los vectores atómicos, todos los elementos deben tener el mismo tipo; para las listas, los elementos pueden tener diferentes tipos. Si bien no es un vector, `NULL` está estrechamente relacionado con los vectores y, a menudo, cumple la función de un vector genérico de longitud cero. Este diagrama, que ampliaremos a lo largo de este capítulo, ilustra las relaciones básicas:
 
-[^vectors-2]: A few places in R's documentation call lists generic vectors to emphasise their difference from atomic vectors.
+[^vectors-2]: Algunos lugares en la documentación de R llaman a listas de vectores genéricos para enfatizar su diferencia con los vectores atómicos.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/vectors/summary-tree.png")
 ```
 
-Every vector can also have **attributes**, which you can think of as a named list of arbitrary metadata. Two attributes are particularly important. The **dimension** attribute turns vectors into matrices and arrays and the **class** attribute powers the S3 object system. While you'll learn how to use S3 in Chapter \@ref(s3), here you'll learn about some of the most important S3 vectors: factors, date and times, data frames, and tibbles. And while 2D structures like matrices and data frames are not necessarily what come to mind when you think of vectors, you'll also learn why R considers them to be vectors.
+Cada vector también puede tener **atributos**, que puede considerar como una lista con nombre de metadatos arbitrarios. Dos atributos son particularmente importantes. El atributo **dimensión** convierte los vectores en matrices y arreglos y el atributo **clase** impulsa el sistema de objetos S3. Si bien aprenderá a usar S3 en el @sec-s3, aquí aprenderá sobre algunos de los vectores S3 más importantes: factores, fecha y hora, data frames y tibbles. Y aunque las estructuras 2D como matrices y data frames no son necesariamente lo que le viene a la mente cuando piensa en vectores, también aprenderá por qué R los considera vectores.
 
-### Quiz {.unnumbered}
+### Prueba {.unnumbered}
 
-Take this short quiz to determine if you need to read this chapter. If the answers quickly come to mind, you can comfortably skip this chapter. You can check your answers in Section \@ref(data-structure-answers).
+Responda este breve cuestionario para determinar si necesita leer este capítulo. Si las respuestas le vienen a la mente rápidamente, puede saltarse cómodamente este capítulo. Puede comprobar sus respuestas en la @sec-data-structure-answers.
 
-1.  What are the four common types of atomic vectors? What are the two rare types?
+1.  ¿Cuáles son los cuatro tipos comunes de vectores atómicos? ¿Cuáles son los dos tipos raros?
 
-2.  What are attributes? How do you get them and set them?
+2.  ¿Qué son los atributos? ¿Cómo los consigues y los configuras?
 
-3.  How is a list different from an atomic vector? How is a matrix different from a data frame?
+3.  ¿En qué se diferencia una lista de un vector atómico? ¿En qué se diferencia una matriz de un data frame?
 
-4.  Can you have a list that is a matrix? Can a data frame have a column that is a matrix?
+4.  ¿Puedes tener una lista que sea una matriz? ¿Puede un data frame tener una columna que sea una matriz?
 
-5.  How do tibbles behave differently from data frames?
+5.  ¿En qué se diferencian los tibbles de los data frames?
 
-### Outline {.unnumbered}
+### Estructura {.unnumbered}
 
--   Section \@ref(atomic-vectors) introduces you to the atomic vectors: logical, integer, double, and character. These are R's simplest data structures.
+-   La @sec-atomic-vectors te introduce a los vectores atómicos: lógico, entero, doble y de carácter. Estas son las estructuras de datos más simples de R.
 
--   Section \@ref(attributes) takes a small detour to discuss attributes, R's flexible metadata specification. The most important attributes are names, dimensions, and class.
+-   La @sec-attributes toma un pequeño desvío para discutir los atributos, la especificación de metadatos flexibles de R. Los atributos más importantes son los nombres, las dimensiones y la clase.
 
--   Section \@ref(s3-atomic-vectors) discusses the important vector types that are built by combining atomic vectors with special attributes. These include factors, dates, date-times, and durations.
+-   La @sec-s3-atomic-vectors analiza los tipos de vectores importantes que se construyen combinando vectores atómicos con atributos especiales. Estos incluyen factores, fechas, fechas-horas y duraciones.
 
--   Section \@ref(lists) dives into lists. Lists are very similar to atomic vectors, but have one key difference: an element of a list can be any data type, including another list. This makes them suitable for representing hierarchical data.
+-   La @sec-lists se sumerge en las listas. Las listas son muy similares a los vectores atómicos, pero tienen una diferencia clave: un elemento de una lista puede ser cualquier tipo de datos, incluida otra lista. Esto los hace adecuados para representar datos jerárquicos.
 
--   Section \@ref(tibble) teaches you about data frames and tibbles, which are used to represent rectangular data. They combine the behaviour of lists and matrices to make a structure ideally suited for the needs of statistical data.
+-   La @sec-tibble te enseña sobre data frames y tibbles, que se utilizan para representar datos rectangulares. Combinan el comportamiento de listas y matrices para crear una estructura ideal para las necesidades de los datos estadísticos.
 
-## Atomic vectors
+## Vectores atómicos {#sec-atomic-vectors}
 
 \index{atomic vectors} \index{vectors!atomic|see {atomic vectors}} \index{logical vectors} \index{integer vectors} \index{double vectors} \index{numeric vectors} \index{character vectors}
 
-There are four primary types of atomic vectors: logical, integer, double, and character (which contains strings). Collectively integer and double vectors are known as numeric vectors[^vectors-3]. There are two rare types: complex and raw. I won't discuss them further because complex numbers are rarely needed in statistics, and raw vectors are a special type that's only needed when handling binary data.
+Hay cuatro tipos principales de vectores atómicos: lógico, entero, doble y carácter (que contiene cadenas). En conjunto, los vectores enteros y dobles se conocen como vectores numéricos [^vectors-3]. Hay dos tipos raros: complejos y crudos. No los discutiré más porque los números complejos rara vez se necesitan en las estadísticas, y los vectores sin procesar son un tipo especial que solo se necesita cuando se manejan datos binarios.
 
-[^vectors-3]: This is a slight simplification as R does not use "numeric" consistently, which we'll come back to in Section \@ref(numeric-type).
+[^vectors-3]: Esta es una ligera simplificación ya que R no usa "numérico" de manera consistente, a lo que volveremos en la @sec-numeric-type.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/vectors/summary-tree-atomic.png")
 ```
 
-### Scalars
+### Escalares
 
 \index{scalars} \indexc{NaN} \indexc{Inf} \indexc{L} \indexc{""} \indexc{'}
 
-Each of the four primary types has a special syntax to create an individual value, AKA a **scalar**[^vectors-4]:
+Cada uno de los cuatro tipos principales tiene una sintaxis especial para crear un valor individual, también conocido como **escalar**[^vectors-4]:
 
-[^vectors-4]: Technically, the R language does not possess scalars. Everything that looks like a scalar is actually a vector of length one. This is mostly a theoretical distinction, but it does mean that expressions like `1[1]` work.
+[^vectors-4]: Técnicamente, el lenguaje R no posee escalares. Todo lo que parece un escalar es en realidad un vector de longitud uno. Esta es principalmente una distinción teórica, pero significa que expresiones como `1[1]` funcionan.
 
--   Logicals can be written in full (`TRUE` or `FALSE`), or abbreviated (`T` or `F`).
+-   Los lógicos se pueden escribir completos (`TRUE` o `FALSE`) o abreviados (`T` o `F`).
 
--   Doubles can be specified in decimal (`0.1234`), scientific (`1.23e4`), or hexadecimal (`0xcafe`) form. There are three special values unique to doubles: `Inf`, `-Inf`, and `NaN` (not a number). These are special values defined by the floating point standard.
+-   Los dobles se pueden especificar en formato decimal (`0.1234`), científico (`1.23e4`) o hexadecimal (`0xcafe`). Hay tres valores especiales únicos para los dobles: `Inf`, `-Inf` y `NaN` (no es un número). Estos son valores especiales definidos por el estándar de punto flotante.
 
--   Integers are written similarly to doubles but must be followed by `L`[^vectors-5] (`1234L`, `1e4L`, or `0xcafeL`), and can not contain fractional values.
+-   Los enteros se escriben de forma similar a los dobles, pero deben ir seguidos de `L`[^vectors-5] (`1234L`, `1e4L` o `0xcafeL`), y no pueden contener valores fraccionarios.
 
--   Strings are surrounded by `"` (`"hi"`) or `'` (`'bye'`). Special characters are escaped with `\`; see `?Quotes` for full details.
+- Las cadenas están rodeadas por `"` (`"hola"`) o `'` (`'adiós'`). Los caracteres especiales se escapan con `\`; consulte `?Quotes` para obtener detalles completos.
 
-[^vectors-5]: `L` is not intuitive, and you might wonder where it comes from. At the time `L` was added to R, R's integer type was equivalent to a long integer in C, and C code could use a suffix of `l` or `L` to force a number to be a long integer. It was decided that `l` was too visually similar to `i` (used for complex numbers in R), leaving `L`.
+[^vectors-5]: `L` no es intuitivo, y puede que te preguntes de dónde viene. En el momento en que se agregó `L` a R, el tipo de entero de R era equivalente a un entero largo en C, y el código C podía usar un sufijo de `l` o `L` para obligar a un número a ser un entero largo. Se decidió que `l` era demasiado similar visualmente a `i` (usado para números complejos en R), dejando `L`.
 
-### Making longer vectors with `c()` {#atomic-constructing}
+### Crear vectores más largos con `c()` {#sec-atomic-constructing}
 
 ```{=tex}
 \indexc{typeof()}
 \indexc{length()}
 \indexc{c()}
 ```
-To create longer vectors from shorter ones, use `c()`, short for combine:
+Para crear vectores más largos a partir de otros más cortos, use `c()`, abreviatura de combinar:
 
 ```{r}
 lgl_var <- c(TRUE, FALSE)
@@ -94,21 +94,21 @@ dbl_var <- c(1, 2.5, 4.5)
 chr_var <- c("these are", "some strings")
 ```
 
-When the inputs are atomic vectors, `c()` always creates another atomic vector; i.e. it flattens:
+Cuando las entradas son vectores atómicos, `c()` siempre crea otro vector atómico; es decir, se aplana:
 
 ```{r}
 c(c(1, 2), c(3, 4))
 ```
 
-In diagrams, I'll depict vectors as connected rectangles, so the above code could be drawn as follows:
+En los diagramas, representaré los vectores como rectángulos conectados, por lo que el código anterior podría dibujarse de la siguiente manera:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/vectors/atomic.png")
 ```
 
-You can determine the type of a vector with `typeof()`[^vectors-6] and its length with `length()`.
+Puedes determinar el tipo de un vector con `typeof()`[^vectors-6] y su longitud con `length()`.
 
-[^vectors-6]: You may have heard of the related `mode()` and `storage.mode()` functions. Do not use them: they exist only for compatibility with S.
+[^vectors-6]: Es posible que haya oído hablar de las funciones `mode()` y `storage.mode()` relacionadas. No los uses: existen solo por compatibilidad con S.
 
 ```{r}
 typeof(lgl_var)
@@ -117,7 +117,7 @@ typeof(dbl_var)
 typeof(chr_var)
 ```
 
-### Missing values
+### Valores Faltantes
 
 ```{=tex}
 \indexc{NA}
@@ -125,7 +125,7 @@ typeof(chr_var)
 ```
 \index{missing values|see {\texttt{NA}}}
 
-R represents missing, or unknown values, with special sentinel value: `NA` (short for not applicable). Missing values tend to be infectious: most computations involving a missing value will return another missing value.
+R representa valores faltantes o desconocidos, con un valor centinela especial: `NA` (abreviatura de no aplicable). Los valores faltantes tienden a ser infecciosos: la mayoría de los cálculos que involucran un valor faltante devolverán otro valor faltante.
 
 ```{r}
 NA > 5
@@ -133,7 +133,7 @@ NA > 5
 !NA
 ```
 
-There are only a few exceptions to this rule. These occur when some identity holds for all possible inputs:
+Sólo hay unas pocas excepciones a esta regla. Estos ocurren cuando alguna identidad se mantiene para todas las entradas posibles:
 
 ```{r}
 NA ^ 0
@@ -141,59 +141,59 @@ NA | TRUE
 NA & FALSE
 ```
 
-Propagation of missingness leads to a common mistake when determining which values in a vector are missing:
+La propagación de faltantes conduce a un error común al determinar qué valores faltan en un vector:
 
 ```{r}
 x <- c(NA, 5, NA, 10)
 x == NA
 ```
 
-This result is correct (if a little surprising) because there's no reason to believe that one missing value has the same value as another. Instead, use `is.na()` to test for the presence of missingness:
+Este resultado es correcto (aunque un poco sorprendente) porque no hay motivo para creer que un valor faltante tiene el mismo valor que otro. En su lugar, use `is.na()` para probar la presencia de ausencias:
 
 ```{r}
 is.na(x)
 ```
 
-NB: Technically there are four missing values[^vectors-7], one for each of the atomic types: `NA` (logical), `NA_integer_` (integer), `NA_real_` (double), and `NA_character_` (character). This distinction is usually unimportant because `NA` will be automatically coerced to the correct type when needed.
+NB: Técnicamente, hay cuatro valores faltantes[^vectors-7], uno para cada uno de los tipos atómicos: `NA` (lógico), `NA_integer_` (entero), `NA_real_` (doble) y `NA_character_` (carácter). Esta distinción generalmente no es importante porque 'NA' será forzado automáticamente al tipo correcto cuando sea necesario.
 
-[^vectors-7]: Well, technically, five if we include `NA_complex_`, but we ignore this "rare" type, as mentioned above.
+[^vectors-7]: Bueno, técnicamente, cinco si incluimos `NA_complex_`, pero ignoramos este tipo "raro", como se mencionó anteriormente.
 
-### Testing and coercion
+### Pruebas y coerción
 
 \index{coercion} \indexc{is.vector()} \indexc{is.atomic()} \indexc{is.numeric()}
 
-Generally, you can **test** if a vector is of a given type with an `is.*()` function, but these functions need to be used with care. `is.logical()`, `is.integer()`, `is.double()`, and `is.character()` do what you might expect: they test if a vector is a character, double, integer, or logical. Avoid `is.vector()`, `is.atomic()`, and `is.numeric()`: they don't test if you have a vector, atomic vector, or numeric vector; you'll need to carefully read the documentation to figure out what they actually do.
+En general, puede **probar** si un vector es de un tipo dado con una función `is.*()`, pero estas funciones deben usarse con cuidado. `is.logical()`, `is.integer()`, `is.double()` y `is.character()` hacen lo que cabría esperar: prueban si un vector es un carácter, doble, entero o lógico. Evite `is.vector()`, `is.atomic()` y `is.numeric()`: no comprueban si tiene un vector, un vector atómico o un vector numérico; deberá leer detenidamente la documentación para descubrir qué es lo que realmente hacen.
 
-For atomic vectors, type is a property of the entire vector: all elements must be the same type. When you attempt to combine different types they will be **coerced** in a fixed order: character → double → integer → logical. For example, combining a character and an integer yields a character:
+Para los vectores atómicos, el tipo es una propiedad de todo el vector: todos los elementos deben ser del mismo tipo. Cuando intente combinar diferentes tipos, se **coaccionarán** en un orden fijo: carácter → doble → entero → lógico. Por ejemplo, la combinación de un carácter y un número entero produce un carácter:
 
 ```{r}
 str(c("a", 1))
 ```
 
-Coercion often happens automatically. Most mathematical functions (`+`, `log`, `abs`, etc.) will coerce to numeric. This coercion is particularly useful for logical vectors because `TRUE` becomes 1 and `FALSE` becomes 0.
+La coerción a menudo ocurre automáticamente. La mayoría de las funciones matemáticas (`+`, `log`, `abs`, etc.) se convertirán en numéricas. Esta coerción es particularmente útil para vectores lógicos porque `TRUE` se convierte en 1 y `FALSE` se convierte en 0.
 
 ```{r}
 x <- c(FALSE, FALSE, TRUE)
 as.numeric(x)
 
-# Total number of TRUEs
+# Número total de VERDADEROS
 sum(x)
 
-# Proportion that are TRUE
+# Proporción que son VERDADERAS
 mean(x)
 ```
 
-Generally, you can deliberately coerce by using an `as.*()` function, like `as.logical()`, `as.integer()`, `as.double()`, or `as.character()`. Failed coercion of strings generates a warning and a missing value:
+En general, puede forzar deliberadamente usando una función `as.*()`, como `as.logical()`, `as.integer()`, `as.double()` o `as.character()`. La coerción fallida de cadenas genera una advertencia y un valor faltante:
 
 ```{r}
 as.integer(c("1", "1.5", "a"))
 ```
 
-### Exercises
+### Ejercicios
 
-1.  How do you create raw and complex scalars? (See `?raw` and `?complex`.)
+1.  ¿Cómo se crean escalares crudos y complejos? (Ver `?raw` y `?complex`.)
 
-2.  Test your knowledge of the vector coercion rules by predicting the output of the following uses of `c()`:
+2.  Pon a prueba tu conocimiento de las reglas de coerción de vectores prediciendo el resultado de los siguientes usos de `c()`:
 
     ```{r, eval=FALSE}
     c(1, FALSE)
@@ -201,27 +201,27 @@ as.integer(c("1", "1.5", "a"))
     c(TRUE, 1L)
     ```
 
-3.  Why is `1 == "1"` true? Why is `-1 < FALSE` true? Why is `"one" < 2` false?
+3.  ¿Por qué `1 == "1"` es verdadero? ¿Por qué `-1 < FALSE` es verdadero? ¿Por qué `"one" < 2` es falso?
 
-4.  Why is the default missing value, `NA`, a logical vector? What's special about logical vectors? (Hint: think about `c(FALSE, NA_character_)`.)
+4.  ¿Por qué el valor faltante predeterminado, `NA`, es un vector lógico? ¿Qué tienen de especial los vectores lógicos? (Pista: piensa en `c(FALSE, NA_character_)`.)
 
-5.  Precisely what do `is.atomic()`, `is.numeric()`, and `is.vector()` test for?
+5.  Precisamente, ¿qué prueban `is.atomic()`, `is.numeric()` y `is.vector()`?
 
-## Attributes {#attributes}
+## Atributos {#sec-attributes}
 
 \index{attributes}
 
-You might have noticed that the set of atomic vectors does not include a number of important data structures like matrices, arrays, factors, or date-times. These types are built on top of atomic vectors by adding attributes. In this section, you'll learn the basics of attributes, and how the dim attribute makes matrices and arrays. In the next section you'll learn how the class attribute is used to create S3 vectors, including factors, dates, and date-times.
+Es posible que haya notado que el conjunto de vectores atómicos no incluye una serie de estructuras de datos importantes como matrices, arreglos, factores o fechas y horas. Estos tipos se construyen sobre vectores atómicos agregando atributos. En esta sección, aprenderá los conceptos básicos de los atributos y cómo el atributo dim crea matrices y arreglos. En la siguiente sección, aprenderá cómo se usa el atributo de clase para crear vectores de S3, incluidos factores, fechas y fechas y horas.
 
-### Getting and setting
+### Conseguir y configurar
 
 \indexc{attr()}
 
 \index{attributes!attributes@\texttt{attributes()}} \indexc{structure()}
 
-You can think of attributes as name-value pairs[^vectors-8] that attach metadata to an object. Individual attributes can be retrieved and modified with `attr()`, or retrieved en masse with `attributes()`, and set en masse with `structure()`.
+Puede pensar en los atributos como pares de nombre-valor [^vectors-8] que adjuntan metadatos a un objeto. Los atributos individuales pueden recuperarse y modificarse con `attr()`, o recuperarse en masa con `attributes()`, y establecerse en masa con `structure()`.
 
-[^vectors-8]: Attributes behave like named lists, but are actually pairlists. Pairlists are functionally indistinguishable from lists, but are profoundly different under the hood. You'll learn more about them in Section \@ref(pairlists).
+[^vectors-8]: Los atributos se comportan como listas con nombre, pero en realidad son listas de pares. Las listas de pares son funcionalmente indistinguibles de las listas, pero son profundamente diferentes bajo el capó. Aprenderá más sobre ellos en la @sec-pairlists.
 
 ```{r}
 a <- 1:3
@@ -244,80 +244,80 @@ str(attributes(a))
 knitr::include_graphics("diagrams/vectors/attr.png")
 ```
 
-Attributes should generally be thought of as ephemeral. For example, most attributes are lost by most operations:
+En general, los atributos deben considerarse efímeros. Por ejemplo, la mayoría de los atributos se pierden en la mayoría de las operaciones:
 
 ```{r}
 attributes(a[1])
 attributes(sum(a))
 ```
 
-There are only two attributes that are routinely preserved:
+Solo hay dos atributos que se conservan de forma rutinaria:
 
--   **names**, a character vector giving each element a name.
--   **dim**, short for dimensions, an integer vector, used to turn vectors into matrices or arrays.
+-   **names**, un vector de caracteres que da a cada elemento un nombre.
+-   **dim**, abreviatura de dimensiones, un vector entero, que se utiliza para convertir vectores en matrices o arreglos.
 
-To preserve other attributes, you'll need to create your own S3 class, the topic of Chapter \@ref(s3).
+Para conservar otros atributos, deberá crear su propia clase S3, el tema del @sec-s3.
 
-### Names {#attr-names}
+### Nombres {#sec-attr-names}
 
 \index{attributes!names} \indexc{names()} \indexc{setNames()}
 
-You can name a vector in three ways:
+Puede nombrar un vector de tres maneras:
 
 ```{r}
-# When creating it: 
+# Cuando lo crea: 
 x <- c(a = 1, b = 2, c = 3)
 
-# By assigning a character vector to names()
+# Al asignar un vector de caracteres a names()
 x <- 1:3
 names(x) <- c("a", "b", "c")
 
-# Inline, with setNames():
+# En línea con setNames():
 x <- setNames(1:3, c("a", "b", "c"))
 ```
 
-Avoid using `attr(x, "names")` as it requires more typing and is less readable than `names(x)`. You can remove names from a vector by using `x <- unname(x)` or `names(x) <- NULL`.
+Evite usar `attr(x, "names")` ya que requiere escribir más y es menos legible que `names(x)`. Puede eliminar nombres de un vector usando `x <- unname(x)` o `names(x) <- NULL`.
 
-To be technically correct, when drawing the named vector `x`, I should draw it like so:
+Para ser técnicamente correcto, al dibujar el vector nombrado `x`, debería dibujarlo así:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/vectors/attr-names-1.png")
 ```
 
-However, names are so special and so important, that unless I'm trying specifically to draw attention to the attributes data structure, I'll use them to label the vector directly:
+Sin embargo, los nombres son tan especiales e importantes que, a menos que intente llamar la atención específicamente sobre la estructura de datos de los atributos, los usaré para etiquetar el vector directamente:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/vectors/attr-names-2.png")
 ```
 
-To be useful with character subsetting (e.g. Section \@ref(lookup-tables)) names should be unique, and non-missing, but this is not enforced by R. Depending on how the names are set, missing names may be either `""` or `NA_character_`. If all names are missing, `names()` will return `NULL`.
+Para que sea útil con subconjuntos de caracteres (p. ej., la @sec-lookup-tables), los nombres deben ser únicos y no faltantes, pero R no impone esto. Dependiendo de cómo se establezcan los nombres, los nombres faltantes pueden ser `""` o `NA_character_`. Si faltan todos los nombres, `names()` devolverá `NULL`.
 
-### Dimensions {#attr-dims}
+### Dimensiones {#sec-attr-dims}
 
 \index{arrays} \index{matrices|see {arrays}} \index{attributes!dimensions}
 
-Adding a `dim` attribute to a vector allows it to behave like a 2-dimensional **matrix** or a multi-dimensional **array**. Matrices and arrays are primarily mathematical and statistical tools, not programming tools, so they'll be used infrequently and only covered briefly in this book. Their most important feature is multidimensional subsetting, which is covered in Section \@ref(matrix-subsetting).
+Agregar un atributo `dim` a un vector le permite comportarse como una **matriz** bidimensional o una **matriz** multidimensional. Las matrices y los arreglos son principalmente herramientas matemáticas y estadísticas, no herramientas de programación, por lo que se usarán con poca frecuencia y solo se tratarán brevemente en este libro. Su característica más importante es el subconjunto multidimensional, que se trata en la @sec-matrix-subsetting.
 
-You can create matrices and arrays with `matrix()` and `array()`, or by using the assignment form of `dim()`:
+Puede crear matrices y arreglos con `matrix()` y `array()`, o usando el formulario de asignación de `dim()`:
 
 ```{r}
-# Two scalar arguments specify row and column sizes
+# Dos argumentos escalares especifican tamaños de fila y columna
 x <- matrix(1:6, nrow = 2, ncol = 3)
 x
 
-# One vector argument to describe all dimensions
+# Un argumento vectorial para describir todas las dimensiones
 y <- array(1:12, c(2, 3, 2))
 y
 
-# You can also modify an object in place by setting dim()
+# También puede modificar un objeto en su lugar configurando dim()
 z <- 1:6
 dim(z) <- c(3, 2)
 z
 ```
 
-Many of the functions for working with vectors have generalisations for matrices and arrays:
+Muchas de las funciones para trabajar con vectores tienen generalizaciones para matrices y arreglos:
 
-| Vector            | Matrix                     | Array            |
+| Vector            | Matriz                     | Arreglo            |
 |-------------------|----------------------------|------------------|
 | `names()`         | `rownames()`, `colnames()` | `dimnames()`     |
 | `length()`        | `nrow()`, `ncol()`         | `dim()`          |
@@ -325,7 +325,7 @@ Many of the functions for working with vectors have generalisations for matrices
 | ---               | `t()`                      | `aperm()`        |
 | `is.null(dim(x))` | `is.matrix()`              | `is.array()`     |
 
-A vector without a `dim` attribute set is often thought of as 1-dimensional, but actually has `NULL` dimensions. You also can have matrices with a single row or single column, or arrays with a single dimension. They may print similarly, but will behave differently. The differences aren't too important, but it's useful to know they exist in case you get strange output from a function (`tapply()` is a frequent offender). As always, use `str()` to reveal the differences.
+Un vector sin un conjunto de atributos "dim" a menudo se considera unidimensional, pero en realidad tiene dimensiones `NULL`. También puede tener matrices con una sola fila o una sola columna, o arreglos con una sola dimensión. Pueden imprimir de manera similar, pero se comportarán de manera diferente. Las diferencias no son demasiado importantes, pero es útil saber que existen en caso de que obtenga un resultado extraño de una función (`tapply()` es un infractor frecuente). Como siempre, usa `str()` para revelar las diferencias.
 
 ```{r}
 str(1:3)                   # 1d vector
@@ -334,13 +334,13 @@ str(matrix(1:3, nrow = 1)) # row vector
 str(array(1:3, 3))         # "array" vector
 ```
 
-### Exercises
+### Ejercicios
 
-1.  How is `setNames()` implemented? How is `unname()` implemented? Read the source code.
+1.  ¿Cómo se implementa `setNames()`? ¿Cómo se implementa `unname()`? Lee el código fuente.
 
-2.  What does `dim()` return when applied to a 1-dimensional vector? When might you use `NROW()` or `NCOL()`?
+2.  ¿Qué devuelve `dim()` cuando se aplica a un vector unidimensional? ¿Cuándo podría usar `NROW()` o `NCOL()`?
 
-3.  How would you describe the following three objects? What makes them different from `1:5`?
+3.  ¿Cómo describirías los siguientes tres objetos? ¿Qué los hace diferentes de `1:5`?
 
     ```{r}
     x1 <- array(1:5, c(1, 1, 5))
@@ -348,41 +348,41 @@ str(array(1:3, 3))         # "array" vector
     x3 <- array(1:5, c(5, 1, 1))
     ```
 
-4.  An early draft used this code to illustrate `structure()`:
+4.  Un borrador inicial usó este código para ilustrar `structure()`:
 
     ```{r}
     structure(1:5, comment = "my attribute")
     ```
 
-    But when you print that object you don't see the comment attribute. Why? Is the attribute missing, or is there something else special about it? (Hint: try using help.)
+    Pero cuando imprime ese objeto, no ve el atributo de comentario. ¿Por qué? ¿Falta el atributo o hay algo más especial en él? (Sugerencia: intente usar la ayuda).
 
-## S3 atomic vectors
+## Vectores atómicos S3 {#sec-s3-atomic-vectors}
 
 \index{attributes!S3} \index{S3!vectors}
 
-One of the most important vector attributes is `class`, which underlies the S3 object system. Having a class attribute turns an object into an **S3 object**, which means it will behave differently from a regular vector when passed to a **generic** function. Every S3 object is built on top of a base type, and often stores additional information in other attributes. You'll learn the details of the S3 object system, and how to create your own S3 classes, in Chapter \@ref(s3).
+Uno de los atributos vectoriales más importantes es la `clase`, que subyace en el sistema de objetos S3. Tener un atributo de clase convierte un objeto en un **objeto S3**, lo que significa que se comportará de manera diferente a un vector regular cuando se pasa a una función **genérica**. Cada objeto de S3 se crea sobre un tipo base y, a menudo, almacena información adicional en otros atributos. Aprenderá los detalles del sistema de objetos de S3 y cómo crear sus propias clases de S3 en el @sec-s3.
 
-In this section, we'll discuss four important S3 vectors used in base R:
+En esta sección, analizaremos cuatro vectores S3 importantes que se utilizan en la base R:
 
--   Categorical data, where values come from a fixed set of levels recorded in **factor** vectors.
+-   Datos categóricos, donde los valores provienen de un conjunto fijo de niveles registrados en vectores de **factores**.
 
--   Dates (with day resolution), which are recorded in **Date** vectors.
+-   Fechas (con resolución de día), que se registran en vectores **Fecha**.
 
--   Date-times (with second or sub-second resolution), which are stored in **POSIXct** vectors.
+-   Fechas-horas (con resolución de segundos o subsegundos), que se almacenan en vectores **POSIXct**.
 
--   Durations, which are stored in **difftime** vectors.
+-   Duraciones, que se almacenan en vectores **difftime**.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/vectors/summary-tree-s3-1.png")
 ```
 
-### Factors
+### Factores
 
 ```{=tex}
 \indexc{factor}
 \indexc{stringsAsFactors}
 ```
-A factor is a vector that can contain only predefined values. It is used to store categorical data. Factors are built on top of an integer vector with two attributes: a `class`, "factor", which makes it behave differently from regular integer vectors, and `levels`, which defines the set of allowed values.
+Un factor es un vector que solo puede contener valores predefinidos. Se utiliza para almacenar datos categóricos. Los factores se construyen sobre un vector entero con dos atributos: una `class`, "factor", que hace que se comporte de manera diferente a los vectores enteros normales, y `levels`, que define el conjunto de valores permitidos.
 
 ```{r}
 x <- factor(c("a", "b", "b", "a"))
@@ -396,7 +396,7 @@ attributes(x)
 knitr::include_graphics("diagrams/vectors/factor.png")
 ```
 
-Factors are useful when you know the set of possible values but they're not all present in a given dataset. In contrast to a character vector, when you tabulate a factor you'll get counts of all categories, even unobserved ones:
+Los factores son útiles cuando conoce el conjunto de valores posibles, pero no todos están presentes en un conjunto de datos determinado. A diferencia de un vector de caracteres, cuando tabula un factor obtendrá recuentos de todas las categorías, incluso las no observadas:
 
 ```{r}
 sex_char <- c("m", "m", "m")
@@ -406,24 +406,24 @@ table(sex_char)
 table(sex_factor)
 ```
 
-**Ordered** factors are a minor variation of factors. In general, they behave like regular factors, but the order of the levels is meaningful (low, medium, high) (a property that is automatically leveraged by some modelling and visualisation functions).
+Los factores **ordenados** son una variación menor de los factores. En general, se comportan como factores regulares, pero el orden de los niveles es significativo (bajo, medio, alto) (una propiedad que algunas funciones de modelado y visualización aprovechan automáticamente).
 
 ```{r}
 grade <- ordered(c("b", "b", "a", "c"), levels = c("c", "b", "a"))
 grade
 ```
 
-In base R[^vectors-9] you tend to encounter factors very frequently because many base R functions (like `read.csv()` and `data.frame()`) automatically convert character vectors to factors. This is suboptimal because there's no way for those functions to know the set of all possible levels or their correct order: the levels are a property of theory or experimental design, not of the data. Instead, use the argument `stringsAsFactors = FALSE` to suppress this behaviour, and then manually convert character vectors to factors using your knowledge of the "theoretical" data. To learn about the historical context of this behaviour, I recommend [*stringsAsFactors: An unauthorized biography*](https://simplystatistics.org/posts/2015-07-24-stringsasfactors-an-unauthorized-biography) by Roger Peng, and [*stringsAsFactors = \<sigh\>*](http://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh) by Thomas Lumley.
+En base R[^vectors-9], tiende a encontrar factores con mucha frecuencia porque muchas funciones de base R (como `read.csv()` y `data.frame()`) convierten automáticamente los vectores de caracteres en factores. Esto es subóptimo porque no hay forma de que esas funciones conozcan el conjunto de todos los niveles posibles o su orden correcto: los niveles son una propiedad de la teoría o el diseño experimental, no de los datos. En su lugar, utilice el argumento `stringsAsFactors = FALSE` para suprimir este comportamiento y luego convierta manualmente los vectores de caracteres en factores usando su conocimiento de los datos "teóricos". Para conocer el contexto histórico de este comportamiento, recomiendo [*stringsAsFactors: Una biografía no autorizada*](https://simplystatistics.org/posts/2015-07-24-stringsasfactors-an-unauthorized-biography) de Roger Peng, y [*stringsAsFactors = \<sigh\>*](http://notstatschat.tumblr.com/post/124987394001/stringsas factores-suspiro) de Thomas Lumley.
 
-[^vectors-9]: The tidyverse never automatically coerces characters to factors, and provides the forcats [@forcats] package specifically for working with factors.
+[^vectors-9]: El tidyverse nunca fuerza automáticamente a los personajes a factores, y proporciona el paquete forcats [@forcats] específicamente para trabajar con factores.
 
-While factors look like (and often behave like) character vectors, they are built on top of integers. So be careful when treating them like strings. Some string methods (like `gsub()` and `grepl()`) will automatically coerce factors to strings, others (like `nchar()`) will throw an error, and still others will (like `c()`) use the underlying integer values. For this reason, it's usually best to explicitly convert factors to character vectors if you need string-like behaviour.
+Si bien los factores se ven (y a menudo se comportan como) vectores de caracteres, se construyen sobre números enteros. Así que tenga cuidado al tratarlos como cadenas. Algunos métodos de cadena (como `gsub()` y `grepl()`) forzarán automáticamente los factores a cadenas, otros (como `nchar()`) generarán un error y otros (como `c()`) usarán los valores enteros subyacentes. Por esta razón, normalmente es mejor convertir explícitamente los factores en vectores de caracteres si necesita un comportamiento similar al de una cadena.
 
-### Dates
+### Fechas
 
 \indexc{Date}
 
-Date vectors are built on top of double vectors. They have class "Date" and no other attributes:
+Los vectores de fecha se construyen sobre vectores dobles. Tienen clase "Date" y ningún otro atributo:
 
 ```{r}
 today <- Sys.Date()
@@ -432,22 +432,22 @@ typeof(today)
 attributes(today)
 ```
 
-The value of the double (which can be seen by stripping the class), represents the number of days since 1970-01-01[^vectors-10]:
+El valor del doble (que se puede ver quitando la clase), representa el número de días desde 1970-01-01[^vectors-10]:
 
-[^vectors-10]: This special date is known as the Unix Epoch.
+[^vectors-10]: Esta fecha especial se conoce como la Época Unix.
 
 ```{r}
 date <- as.Date("1970-02-01")
 unclass(date)
 ```
 
-### Date-times
+### Fecha-Hora
 
 \index{date-times|see {\texttt{POSIXct}}} \indexc{POSIXct}
 
-Base R[^vectors-11] provides two ways of storing date-time information, POSIXct, and POSIXlt. These are admittedly odd names: "POSIX" is short for Portable Operating System Interface, which is a family of cross-platform standards. "ct" stands for calendar time (the `time_t` type in C), and "lt" for local time (the `struct tm` type in C). Here we'll focus on `POSIXct`, because it's the simplest, is built on top of an atomic vector, and is most appropriate for use in data frames. POSIXct vectors are built on top of double vectors, where the value represents the number of seconds since 1970-01-01.
+Base R[^vectors-11] proporciona dos formas de almacenar información de fecha y hora, POSIXct y POSIXlt. Estos son nombres ciertamente extraños: "POSIX" es la abreviatura de Portable Operating System Interface, que es una familia de estándares multiplataforma. "ct" representa la hora del calendario (el tipo `time_t` en C), y "lt" la hora local (el tipo `struct tm` en C). Aquí nos centraremos en `POSIXct`, porque es el más simple, está construido sobre un vector atómico y es más apropiado para usar en tramas de datos. Los vectores POSIXct se construyen sobre vectores dobles, donde el valor representa la cantidad de segundos desde 1970-01-01.
 
-[^vectors-11]: The tidyverse provides the lubridate [@lubridate] package for working with date-times. It provides a number of convenient helpers that work with the base POSIXct type.
+[^vectors-11]: tidyverse proporciona el paquete lubridate [@lubridate] para trabajar con fechas y horas. Proporciona una serie de útiles ayudantes que funcionan con el tipo POSIXct base.
 
 ```{r}
 now_ct <- as.POSIXct("2018-08-01 22:00", tz = "UTC")
@@ -457,7 +457,7 @@ typeof(now_ct)
 attributes(now_ct)
 ```
 
-The `tzone` attribute controls only how the date-time is formatted; it does not control the instant of time represented by the vector. Note that the time is not printed if it is midnight.
+El atributo `tzone` controla solo cómo se formatea la fecha y la hora; no controla el instante de tiempo representado por el vector. Tenga en cuenta que la hora no se imprime si es medianoche.
 
 ```{r}
 structure(now_ct, tzone = "Asia/Tokyo")
@@ -466,11 +466,11 @@ structure(now_ct, tzone = "Australia/Lord_Howe")
 structure(now_ct, tzone = "Europe/Paris")
 ```
 
-### Durations
+### Duraciones
 
 \index{durations|see {difftime}} \indexc{difftime}
 
-Durations, which represent the amount of time between pairs of dates or date-times, are stored in difftimes. Difftimes are built on top of doubles, and have a `units` attribute that determines how the integer should be interpreted:
+Las duraciones, que representan la cantidad de tiempo entre pares de fechas o fechas-horas, se almacenan en difftimes. Los tiempos de diferencia se construyen sobre los dobles y tienen un atributo de `unidades` que determina cómo se debe interpretar el número entero:
 
 ```{r}
 one_week_1 <- as.difftime(1, units = "weeks")
@@ -486,18 +486,18 @@ typeof(one_week_2)
 attributes(one_week_2)
 ```
 
-### Exercises
+### Ejercicios
 
-1.  What sort of object does `table()` return? What is its type? What attributes does it have? How does the dimensionality change as you tabulate more variables?
+1.  ¿Qué tipo de objeto devuelve `table()`? ¿Cuál es su tipo? ¿Qué atributos tiene? ¿Cómo cambia la dimensionalidad a medida que tabula más variables?
 
-2.  What happens to a factor when you modify its levels?
+2.  ¿Qué le sucede a un factor cuando modificas sus niveles?
 
     ```{r, results = FALSE}
     f1 <- factor(letters)
     levels(f1) <- rev(levels(f1))
     ```
 
-3.  What does this code do? How do `f2` and `f3` differ from `f1`?
+3.  ¿Qué hace este código? ¿En qué se diferencian `f2` y `f3` de `f1`?
 
     ```{r, results = FALSE}
     f2 <- rev(factor(letters))
@@ -505,17 +505,17 @@ attributes(one_week_2)
     f3 <- factor(letters, levels = rev(letters))
     ```
 
-## Lists
+## Listas {#sec-lists}
 
 \index{lists} \index{vectors!recursive|see {lists}} \index{vectors!generic|see {lists}}
 
-Lists are a step up in complexity from atomic vectors: each element can be any type, not just vectors. Technically speaking, each element of a list is actually the same type because, as you saw in Section \@ref(list-references), each element is really a *reference* to another object, which can be any type.
+Las listas son un paso más en complejidad que los vectores atómicos: cada elemento puede ser de cualquier tipo, no solo vectores. Técnicamente hablando, cada elemento de una lista es en realidad del mismo tipo porque, como viste en la @sec-list-references, cada elemento es realmente una *referencia* a otro objeto, que puede ser de cualquier tipo.
 
-### Creating {#list-creating}
+### Creando {#sec-list-creating}
 
 \indexc{list()}
 
-You construct lists with `list()`:
+Construyes listas con `list()`:
 
 ```{r}
 l1 <- list(
@@ -530,7 +530,7 @@ typeof(l1)
 str(l1)
 ```
 
-Because the elements of a list are references, creating a list does not involve copying the components into the list. For this reason, the total size of a list might be smaller than you might expect.
+Dado que los elementos de una lista son referencias, crear una lista no implica copiar los componentes en la lista. Por esta razón, el tamaño total de una lista puede ser más pequeño de lo esperado.
 
 ```{r}
 lobstr::obj_size(mtcars)
@@ -539,13 +539,13 @@ l2 <- list(mtcars, mtcars, mtcars, mtcars)
 lobstr::obj_size(l2)
 ```
 
-Lists can contain complex objects so it's not possible to pick a single visual style that works for every list. Generally I'll draw lists like vectors, using colour to remind you of the hierarchy.
+Las listas pueden contener objetos complejos, por lo que no es posible elegir un único estilo visual que funcione para todas las listas. En general, dibujaré listas como vectores, usando colores para recordarle la jerarquía.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/vectors/list.png")
 ```
 
-Lists are sometimes called **recursive** vectors because a list can contain other lists. This makes them fundamentally different from atomic vectors.
+Las listas a veces se denominan vectores **recursivos** porque una lista puede contener otras listas. Esto los hace fundamentalmente diferentes de los vectores atómicos.
 
 ```{r}
 l3 <- list(list(list(1)))
@@ -556,7 +556,7 @@ str(l3)
 knitr::include_graphics("diagrams/vectors/list-recursive.png")
 ```
 
-`c()` will combine several lists into one. If given a combination of atomic vectors and lists, `c()` will coerce the vectors to lists before combining them. Compare the results of `list()` and `c()`:
+`c()` combinará varias listas en una sola. Si se le da una combinación de vectores atómicos y listas, `c()` convertirá los vectores en listas antes de combinarlos. Compara los resultados de `list()` y `c()`:
 
 ```{r}
 l4 <- list(list(1, 2), c(3, 4))
@@ -569,22 +569,22 @@ str(l5)
 knitr::include_graphics("diagrams/vectors/list-c.png")
 ```
 
-### Testing and coercion {#list-types}
+### Pruebas y coerción {#sec-list-types}
 
-The `typeof()` a list is `list`. You can test for a list with `is.list()`, and coerce to a list with `as.list()`.
+El `typeof()` una lista es `list`. Puede probar una lista con `is.list()` y obligar a una lista con `as.list()`.
 
 ```{r}
 list(1:3)
 as.list(1:3)
 ```
 
-You can turn a list into an atomic vector with `unlist()`. The rules for the resulting type are complex, not well documented, and not always equivalent to what you'd get with `c()`.
+Puedes convertir una lista en un vector atómico con `unlist()`. Las reglas para el tipo resultante son complejas, no están bien documentadas y no siempre son equivalentes a lo que obtendría con `c()`.
 
-### Matrices and arrays {#list-array}
+### Matrices y arreglos {#sec-list-array}
 
 \index{lists!list-arrays} \index{arrays!list-arrays}
 
-With atomic vectors, the dimension attribute is commonly used to create matrices. With lists, the dimension attribute can be used to create list-matrices or list-arrays:
+Con vectores atómicos, el atributo de dimensión se usa comúnmente para crear matrices. Con las listas, el atributo de dimensión se puede usar para crear matrices de listas o arreglos de listas:
 
 ```{r}
 l <- list(1:3, "a", TRUE, 1.0)
@@ -594,29 +594,29 @@ l
 l[[1, 1]]
 ```
 
-These data structures are relatively esoteric but they can be useful if you want to arrange objects in a grid-like structure. For example, if you're running models on a spatio-temporal grid, it might be more intuitive to store the models in a 3D array that matches the grid structure.
+Estas estructuras de datos son relativamente esotéricas, pero pueden ser útiles si desea organizar objetos en una estructura similar a una cuadrícula. Por ejemplo, si está ejecutando modelos en una cuadrícula espacio-temporal, podría ser más intuitivo almacenar los modelos en una matriz 3D que coincida con la estructura de la cuadrícula.
 
-### Exercises
+### Ejercicios
 
-1.  List all the ways that a list differs from an atomic vector.
+1.  Enumere todas las formas en que una lista difiere de un vector atómico.
 
-2.  Why do you need to use `unlist()` to convert a list to an atomic vector? Why doesn't `as.vector()` work?
+2.  ¿Por qué necesita usar `unlist()` para convertir una lista en un vector atómico? ¿Por qué no funciona `as.vector()`?
 
-3.  Compare and contrast `c()` and `unlist()` when combining a date and date-time into a single vector.
+3.  Compare y contraste `c()` y `unlist()` al combinar una fecha y una fecha y hora en un solo vector.
 
-## Data frames and tibbles {#tibble}
+## Data frames y tibbles {#sec-tibble}
 
 \index{data frames} \index{tibbles|see {data frames}} \indexc{row.names}
 
-The two most important S3 vectors built on top of lists are data frames and tibbles.
+Los dos vectores S3 más importantes construidos sobre las listas son los data frames y los tibbles.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/vectors/summary-tree-s3-2.png")
 ```
 
-If you do data analysis in R, you're going to be using data frames. A data frame is a named list of vectors with attributes for (column) `names`, `row.names`[^vectors-12], and its class, "data.frame":
+Si realiza análisis de datos en R, utilizará data frames. Un data frame es una lista con nombre de vectores con atributos para (columna) `nombres`, `fila.nombres` [^vectors-12], y su clase, "data.frame":
 
-[^vectors-12]: Row names are one of the most surprisingly complex data structures in R. They've also been a persistent source of performance issues over the years. The most straightforward implementation is a character or integer vector, with one element for each row. But there's also a compact representation for "automatic" row names (consecutive integers), created by `.set_row_names()`. R 3.5 has a special way of deferring integer to character conversion that is specifically designed to speed up `lm()`; see <https://svn.r-project.org/R/branches/ALTREP/ALTREP.html#deferred_string_conversions> for details.
+[^vectors-12]: Los nombres de fila son una de las estructuras de datos más sorprendentemente complejas en R. También han sido una fuente persistente de problemas de rendimiento a lo largo de los años. La implementación más sencilla es un vector de caracteres o entero, con un elemento para cada fila. Pero también hay una representación compacta para nombres de fila "automáticos" (enteros consecutivos), creada por `.set_row_names()`. R 3.5 tiene una forma especial de diferir la conversión de enteros a caracteres que está diseñada específicamente para acelerar `lm()`; consulte <https://svn.r-project.org/R/branches/ALTREP/ALTREP.html#deferred_string_conversions> para obtener detalles.
 
 ```{r}
 df1 <- data.frame(x = 1:3, y = letters[1:3])
@@ -625,19 +625,19 @@ typeof(df1)
 attributes(df1)
 ```
 
-In contrast to a regular list, a data frame has an additional constraint: the length of each of its vectors must be the same. This gives data frames their rectangular structure and explains why they share the properties of both matrices and lists:
+A diferencia de una lista regular, un data frame tiene una restricción adicional: la longitud de cada uno de sus vectores debe ser la misma. Esto le da a los data frames su estructura rectangular y explica por qué comparten las propiedades de las matrices y las listas:
 
--   A data frame has `rownames()`[^vectors-13] and `colnames()`. The `names()` of a data frame are the column names.
+- Un data frame tiene `rownames()`[^vectors-13] y `colnames()`. Los `names()` de un data frame son los nombres de las columnas.
 
--   A data frame has `nrow()` rows and `ncol()` columns. The `length()` of a data frame gives the number of columns.
+- Un data frame tiene filas `nrow()` y columnas `ncol()`. La `longitud()` de un data frame da el número de columnas.
 
-[^vectors-13]: Technically, you are encouraged to use `row.names()`, not `rownames()` with data frames, but this distinction is rarely important.
+[^vectors-13]: técnicamente, se recomienda usar `row.names()`, no `rownames()` con data frames, pero esta distinción rara vez es importante.
 
-Data frames are one of the biggest and most important ideas in R, and one of the things that make R different from other programming languages. However, in the over 20 years since their creation, the ways that people use R have changed, and some of the design decisions that made sense at the time data frames were created now cause frustration.
+Los data frames son una de las ideas más grandes e importantes de R, y una de las cosas que diferencian a R de otros lenguajes de programación. Sin embargo, en los más de 20 años desde su creación, las formas en que las personas usan R han cambiado y algunas de las decisiones de diseño que tenían sentido en el momento en que se crearon los data frames ahora causan frustración.
 
-This frustration lead to the creation of the tibble [@tibble], a modern reimagining of the data frame. Tibbles are designed to be (as much as possible) drop-in replacements for data frames that fix those frustrations. A concise, and fun, way to summarise the main differences is that tibbles are lazy and surly: they do less and complain more. You'll see what that means as you work through this section.
+Esta frustración condujo a la creación del tibble [@tibble], una reinvención moderna del data frame. Los Tibbles están diseñados para ser (en la medida de lo posible) reemplazos directos de los data frames que solucionan esas frustraciones. Una forma concisa y divertida de resumir las principales diferencias es que los tibbles son vagos y hoscos: hacen menos y se quejan más. Verá lo que eso significa a medida que avance en esta sección.
 
-Tibbles are provided by the tibble package and share the same structure as data frames. The only difference is that the class vector is longer, and includes `tbl_df`. This allows tibbles to behave differently in the key ways which we'll discuss below.
+Los tibbles son proporcionados por el paquete tibble y comparten la misma estructura que los data frames. La única diferencia es que el vector de clase es más largo e incluye `tbl_df`. Esto permite que los tibbles se comporten de manera diferente en las formas clave que discutiremos a continuación.
 
 ```{r}
 library(tibble)
@@ -648,13 +648,13 @@ typeof(df2)
 attributes(df2)
 ```
 
-### Creating {#df-create}
+### Creando {#sec-df-create}
 
 \indexc{stringsAsFactors}
 
 \index{data frames!data.frame@\texttt{data.frame()}}
 
-You create a data frame by supplying name-vector pairs to `data.frame()`:
+Creas un data frame proporcionando pares de vector de nombre a `data.frame()`:
 
 ```{r}
 df <- data.frame(
@@ -664,7 +664,7 @@ df <- data.frame(
 str(df)
 ```
 
-If you are using a version of R before 4.0.0, beware of the default conversion of strings to factors. Use `stringsAsFactors = FALSE` to suppress this and keep character vectors as character vectors:
+Si está utilizando una versión de R anterior a la 4.0.0, tenga cuidado con la conversión predeterminada de cadenas a factores. Use `stringsAsFactors = FALSE` para suprimir esto y mantener los vectores de caracteres como vectores de caracteres:
 
 ```{r}
 df1 <- data.frame(
@@ -675,7 +675,7 @@ df1 <- data.frame(
 str(df1)
 ```
 
-Creating a tibble is similar to creating a data frame. The difference between the two is that tibbles never coerce their input (this is one feature that makes them lazy):
+Crear un tibble es similar a crear un data frame. La diferencia entre los dos es que los tibbles nunca coaccionan su entrada (esta es una característica que los hace perezosos):
 
 ```{r}
 df2 <- tibble(
@@ -685,7 +685,7 @@ df2 <- tibble(
 str(df2)
 ```
 
-Additionally, while data frames automatically transform non-syntactic names (unless `check.names = FALSE`), tibbles do not (although they do print non-syntactic names surrounded by `` ` ``).
+Además, mientras que los data frames transforman automáticamente los nombres no sintácticos (a menos que `check.names = FALSE`), los tibbles no lo hacen (aunque sí imprimen nombres no sintácticos rodeados por `` ` ``).
 
 ```{r}
 names(data.frame(`1` = 1))
@@ -693,7 +693,7 @@ names(data.frame(`1` = 1))
 names(tibble(`1` = 1))
 ```
 
-While every element of a data frame (or tibble) must have the same length, both `data.frame()` and `tibble()` will recycle shorter inputs. However, while data frames automatically recycle columns that are an integer multiple of the longest column, tibbles will only recycle vectors of length one.
+Si bien cada elemento de un data frame (o tibble) debe tener la misma longitud, tanto `data.frame()` como `tibble()` reciclarán entradas más cortas. Sin embargo, mientras que los data frames reciclan automáticamente las columnas que son múltiplos enteros de la columna más larga, los tibbles solo reciclan vectores de longitud uno.
 
 ```{r, error = TRUE}
 data.frame(x = 1:4, y = 1:2)
@@ -703,7 +703,7 @@ tibble(x = 1:4, y = 1)
 tibble(x = 1:4, y = 1:2)
 ```
 
-There is one final difference: `tibble()` allows you to refer to variables created during construction:
+Hay una última diferencia: `tibble()` te permite referirte a las variables creadas durante la construcción:
 
 ```{r}
 tibble(
@@ -712,25 +712,25 @@ tibble(
 )
 ```
 
-(Inputs are evaluated left-to-right.)
+(Las entradas se evalúan de izquierda a derecha).
 
-When drawing data frames and tibbles, rather than focussing on the implementation details, i.e. the attributes:
+Al dibujar data frames y tibbles, en lugar de centrarse en los detalles de implementación, es decir, los atributos:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/vectors/data-frame-1.png")
 ```
 
-I'll draw them the same way as a named list, but arrange them to emphasise their columnar structure.
+Los dibujaré de la misma manera que una lista con nombre, pero los ordenaré para enfatizar su estructura en columnas.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/vectors/data-frame-2.png")
 ```
 
-### Row names {#rownames}
+### Nombres de filas {#sec-rownames}
 
 \indexc{row.names}
 
-Data frames allow you to label each row with a name, a character vector containing only unique values:
+Los data frames le permiten etiquetar cada fila con un nombre, un vector de caracteres que contiene solo valores únicos:
 
 ```{r}
 df3 <- data.frame(
@@ -741,7 +741,7 @@ df3 <- data.frame(
 df3
 ```
 
-You can get and set row names with `rownames()`, and you can use them to subset rows:
+Puede obtener y establecer nombres de fila con `rownames()`, y puede usarlos para crear subconjuntos de filas:
 
 ```{r}
 rownames(df3)
@@ -749,55 +749,55 @@ rownames(df3)
 df3["Bob", ]
 ```
 
-Row names arise naturally if you think of data frames as 2D structures like matrices: columns (variables) have names so rows (observations) should too. Most matrices are numeric, so having a place to store character labels is important. But this analogy to matrices is misleading because matrices possess an important property that data frames do not: they are transposable. In matrices the rows and columns are interchangeable, and transposing a matrix gives you another matrix (transposing again gives you the original matrix). With data frames, however, the rows and columns are not interchangeable: the transpose of a data frame is not a data frame.
+Los nombres de las filas surgen naturalmente si piensa en los data frames como estructuras 2D como matrices: las columnas (variables) tienen nombres, por lo que las filas (observaciones) también deberían tenerlos. La mayoría de las matrices son numéricas, por lo que es importante tener un lugar para almacenar etiquetas de caracteres. Pero esta analogía con las matrices es engañosa porque las matrices poseen una propiedad importante que los data frames no tienen: son transponibles. En las matrices, las filas y las columnas son intercambiables, y la transposición de una matriz da como resultado otra matriz (la transposición nuevamente da como resultado la matriz original). Sin embargo, con los data frames, las filas y las columnas no son intercambiables: la transposición de un data frame no es un data frame.
 
-There are three reasons why row names are undesirable:
+Hay tres razones por las que los nombres de las filas no son deseables:
 
--   Metadata is data, so storing it in a different way to the rest of the data is fundamentally a bad idea. It also means that you need to learn a new set of tools to work with row names; you can't use what you already know about manipulating columns.
+-   Los metadatos son datos, por lo que almacenarlos de manera diferente al resto de los datos es fundamentalmente una mala idea. También significa que necesita aprender un nuevo conjunto de herramientas para trabajar con nombres de fila; no puede usar lo que ya sabe sobre la manipulación de columnas.
 
--   Row names are a poor abstraction for labelling rows because they only work when a row can be identified by a single string. This fails in many cases, for example when you want to identify a row by a non-character vector (e.g. a time point), or with multiple vectors (e.g. position, encoded by latitude and longitude).
+-   Los nombres de fila son una abstracción deficiente para etiquetar filas porque solo funcionan cuando una fila se puede identificar con una sola cadena. Esto falla en muchos casos, por ejemplo, cuando desea identificar una fila por un vector que no es un carácter (por ejemplo, un punto de tiempo), o con múltiples vectores (por ejemplo, posición, codificado por latitud y longitud).
 
--   Row names must be unique, so any duplication of rows (e.g. from bootstrapping) will create new row names. If you want to match rows from before and after the transformation, you'll need to perform complicated string surgery.
+-   Los nombres de las filas deben ser únicos, por lo que cualquier duplicación de filas (por ejemplo, de arranque) creará nuevos nombres de fila. Si desea hacer coincidir las filas de antes y después de la transformación, deberá realizar una complicada cirugía de hilo.
 
     ```{r}
     df3[c(1, 1, 1), ]
     ```
 
-For these reasons, tibbles do not support row names. Instead the tibble package provides tools to easily convert row names into a regular column with either `rownames_to_column()`, or the `rownames` argument in `as_tibble()`:
+Por estas razones, los tibbles no admiten nombres de fila. En cambio, el paquete tibble proporciona herramientas para convertir fácilmente los nombres de las filas en una columna regular con `rownames_to_column()`, o el argumento `rownames` en `as_tibble()`:
 
 ```{r}
 as_tibble(df3, rownames = "name")
 ```
 
-### Printing
+### Imprimir
 
-One of the most obvious differences between tibbles and data frames is how they print. I assume that you're already familiar with how data frames are printed, so here I'll highlight some of the biggest differences using an example dataset included in the dplyr package:
+Una de las diferencias más obvias entre tibbles y data frames es cómo se imprimen. Supongo que ya está familiarizado con la forma en que se imprimen los data frames, por lo que aquí resaltaré algunas de las mayores diferencias utilizando un conjunto de datos de ejemplo incluido en el paquete dplyr:
 
 ```{r}
 dplyr::starwars
 ```
 
--   Tibbles only show the first 10 rows and all the columns that will fit on screen. Additional columns are shown at the bottom.
+-   Tibbles solo muestra las primeras 10 filas y todas las columnas que caben en la pantalla. Las columnas adicionales se muestran en la parte inferior.
 
--   Each column is labelled with its type, abbreviated to three or four letters.
+-   Cada columna está etiquetada con su tipo, abreviado en tres o cuatro letras.
 
--   Wide columns are truncated to avoid having a single long string occupy an entire row. (This is still a work in progress: it's a tricky tradeoff between showing as many columns as possible and showing columns in their entirety.)
+-   Las columnas anchas se truncan para evitar que una sola cadena larga ocupe una fila completa. (Esto todavía es un trabajo en progreso: es un compromiso complicado entre mostrar tantas columnas como sea posible y mostrar las columnas en su totalidad).
 
--   When used in console environments that support it, colour is used judiciously to highlight important information, and de-emphasise supplemental details.
+-   Cuando se usa en entornos de consola que lo admiten, el color se usa juiciosamente para resaltar información importante y restar énfasis a los detalles complementarios.
 
-### Subsetting {#safe-subsetting}
+### Subconjunto {#sec-safe-subsetting}
 
-As you will learn in Chapter \@ref(subsetting), you can subset a data frame or a tibble like a 1D structure (where it behaves like a list), or a 2D structure (where it behaves like a matrix).
+Como aprenderá en el @sec-subsetting, puede crear un subconjunto de un data frame o un tibble como una estructura 1D (donde se comporta como una lista), o una estructura 2D (donde se comporta como una matriz).
 
-In my opinion, data frames have two undesirable subsetting behaviours:
+En mi opinión, los data frames tienen dos comportamientos de subconjunto no deseados:
 
--   When you subset columns with `df[, vars]`, you will get a vector if `vars` selects one variable, otherwise you'll get a data frame. This is a frequent source of bugs when using `[` in a function, unless you always remember to use `df[, vars, drop = FALSE]`.
+-   Cuando crea subconjuntos de columnas con `df[, vars]`, obtendrá un vector si `vars` selecciona una variable; de lo contrario, obtendrá un data frame. Esta es una fuente frecuente de errores cuando se usa `[` en una función, a menos que siempre recuerde usar `df[, vars, drop = FALSE]`.
 
--   When you attempt to extract a single column with `df$x` and there is no column `x`, a data frame will instead select any variable that starts with `x`. If no variable starts with `x`, `df$x` will return `NULL`. This makes it easy to select the wrong variable or to select a variable that doesn't exist[^vectors-14].
+-   Cuando intenta extraer una sola columna con `df$x` y no hay ninguna columna `x`, un data frame seleccionará cualquier variable que comience con `x`. Si ninguna variable comienza con `x`, `df$x` devolverá `NULL`. Esto facilita seleccionar la variable incorrecta o seleccionar una variable que no existe[^vectors-14].
 
-[^vectors-14]: We can make R warn about this behavior (called partial matching) by setting `options(warnPartialMatchDollar = TRUE)`.
+[^vectors-14]: Podemos hacer que R advierta sobre este comportamiento (llamado coincidencia parcial) configurando `options(warnPartialMatchDollar = TRUE)`.
 
-Tibbles tweak these behaviours so that a `[` always returns a tibble, and a `$` doesn't do partial matching and warns if it can't find a variable (this is what makes tibbles surly).
+Tibbles modifica estos comportamientos para que un `[` siempre devuelva un tibble, y un `$` no haga coincidencias parciales y advierta si no puede encontrar una variable (esto es lo que hace que Tibbles sea hosco).
 
 ```{r opts, include = FALSE}
 opts <- options(warnPartialMatchDollar = FALSE)
@@ -816,35 +816,35 @@ if (!is.null(opts$warnPartialMatchDollar))
   options(opts)
 ```
 
-A tibble's insistence on returning a data frame from `[` can cause problems with legacy code, which often uses `df[, "col"]` to extract a single column. If you want a single column, I recommend using `df[["col"]]`. This clearly communicates your intent, and works with both data frames and tibbles.
+La insistencia de un tibble en devolver un data frame de `[` puede causar problemas con el código heredado, que a menudo usa `df[, "col"]` para extraer una sola columna. Si desea una sola columna, le recomiendo usar `df[["col"]]`. Esto comunica claramente su intención y funciona tanto con data frames como con tibbles.
 
-### Testing and coercing {#df-test-coerce}
+### Pruebas y coacción {#sec-df-test-coerce}
 
-To check if an object is a data frame or tibble, use `is.data.frame()`:
+Para verificar si un objeto es un data frame o tibble, use `is.data.frame()`:
 
 ```{r}
 is.data.frame(df1)
 is.data.frame(df2)
 ```
 
-Typically, it should not matter if you have a tibble or data frame, but if you need to be certain, use `is_tibble()`:
+Por lo general, no debería importar si tiene un tibble o un data frame, pero si necesita estar seguro, use `is_tibble()`:
 
 ```{r}
 is_tibble(df1)
 is_tibble(df2)
 ```
 
-You can coerce an object to a data frame with `as.data.frame()` or to a tibble with `as_tibble()`.
+Puede convertir un objeto en un data frame con `as.data.frame()` o en un tibble con `as_tibble()`.
 
-### List columns
+### Columnas de lista
 
 \index{data frames!list-columns} \indexc{I()}
 
-Since a data frame is a list of vectors, it is possible for a data frame to have a column that is a list. This is very useful because a list can contain any other object: this means you can put any object in a data frame. This allows you to keep related objects together in a row, no matter how complex the individual objects are. You can see an application of this in the "Many Models" chapter of *R for Data Science*, <http://r4ds.had.co.nz/many-models.html>.
+Dado que un data frame es una lista de vectores, es posible que un data frame tenga una columna que sea una lista. Esto es muy útil porque una lista puede contener cualquier otro objeto: esto significa que puede colocar cualquier objeto en un data frame. Esto le permite mantener los objetos relacionados juntos en una fila, sin importar cuán complejos sean los objetos individuales. Puede ver una aplicación de esto en el capítulo "Muchos modelos" de *R para la Ciencia de Datos*, <http://r4ds.had.co.nz/many-models.html>.
 
-List-columns are allowed in data frames but you have to do a little extra work by either adding the list-column after creation or wrapping the list in `I()`[^vectors-15].
+Las columnas de lista están permitidas en data frames, pero debe hacer un poco de trabajo adicional agregando la columna de lista después de la creación o envolviendo la lista en `I()`[^vectors-15].
 
-[^vectors-15]: `I()` is short for identity and is often used to indicate that an input should be left as is, and not automatically transformed.
+[^vectors-15]: `I()` es la abreviatura de identidad y se usa a menudo para indicar que una entrada debe dejarse como está y no transformarse automáticamente.
 
 ```{r}
 df <- data.frame(x = 1:3)
@@ -860,7 +860,7 @@ data.frame(
 knitr::include_graphics("diagrams/vectors/data-frame-list.png")
 ```
 
-List columns are easier to use with tibbles because they can be directly included inside `tibble()` and they will be printed tidily:
+Las columnas de lista son más fáciles de usar con tibbles porque se pueden incluir directamente dentro de `tibble()` y se imprimirán ordenadamente:
 
 ```{r}
 tibble(
@@ -869,11 +869,11 @@ tibble(
 )
 ```
 
-### Matrix and data frame columns
+### Columnas de matriz y data frame
 
 \index{data frames!matrix-columns}
 
-As long as the number of rows matches the data frame, it's also possible to have a matrix or array as a column of a data frame. (This requires a slight extension to our definition of a data frame: it's not the `length()` of each column that must be equal, but the `NROW()`.) As for list-columns, you must either add it after creation, or wrap it in `I()`.
+Siempre que el número de filas coincida con el data frame, también es posible tener una matriz o arreglo como columna de un data frame. (Esto requiere una ligera extensión a nuestra definición de data frame: no es la longitud, `length()`, de cada columna lo que debe ser igual, sino el `NROW()`.) En cuanto a las columnas de lista, debe agregarlas después de la creación o envolverlas en `I()`.
 
 ```{r}
 dfm <- data.frame(
@@ -889,27 +889,27 @@ str(dfm)
 knitr::include_graphics("diagrams/vectors/data-frame-matrix.png")
 ```
 
-Matrix and data frame columns require a little caution. Many functions that work with data frames assume that all columns are vectors. Also, the printed display can be confusing.
+Las columnas de matrices y data frames requieren un poco de precaución. Muchas funciones que trabajan con data frames asumen que todas las columnas son vectores. Además, la pantalla impresa puede resultar confusa.
 
 ```{r}
 dfm[1, ]
 ```
 
-### Exercises
+### Ejercicios
 
-1.  Can you have a data frame with zero rows? What about zero columns?
+1.  ¿Puede tener un data frame con cero filas? ¿Qué pasa con las columnas cero?
 
-2.  What happens if you attempt to set rownames that are not unique?
+2.  ¿Qué sucede si intenta establecer nombres de fila que no son únicos?
 
-3.  If `df` is a data frame, what can you say about `t(df)`, and `t(t(df))`? Perform some experiments, making sure to try different column types.
+3.  Si `df` es un data frame, ¿qué puede decir acerca de `t(df)` y `t(t(df))`? Realice algunos experimentos, asegurándose de probar diferentes tipos de columnas.
 
-4.  What does `as.matrix()` do when applied to a data frame with columns of different types? How does it differ from `data.matrix()`?
+4.  ¿Qué hace `as.matrix()` cuando se aplica a un data frame con columnas de diferentes tipos? ¿En qué se diferencia de `data.matrix()`?
 
 ## `NULL`
 
 \indexc{NULL}
 
-To finish up this chapter, I want to talk about one final important data structure that's closely related to vectors: `NULL`. `NULL` is special because it has a unique type, is always length zero, and can't have any attributes:
+Para terminar este capítulo, quiero hablar sobre una última estructura de datos importante que está estrechamente relacionada con los vectores: `NULL`. `NULL` es especial porque tiene un tipo único, siempre tiene una longitud cero y no puede tener ningún atributo:
 
 ```{r, error = TRUE}
 typeof(NULL)
@@ -920,32 +920,32 @@ x <- NULL
 attr(x, "y") <- 1
 ```
 
-You can test for `NULL`s with `is.null()`:
+Puedes probar `NULL`s con `is.null()`:
 
 ```{r}
 is.null(NULL)
 ```
 
-There are two common uses of `NULL`:
+Hay dos usos comunes de `NULL`:
 
--   To represent an empty vector (a vector of length zero) of arbitrary type. For example, if you use `c()` but don't include any arguments, you get `NULL`, and concatenating `NULL` to a vector will leave it unchanged:
+- Representar un vector vacío (un vector de longitud cero) de tipo arbitrario. Por ejemplo, si usas `c()` pero no incluyes ningún argumento, obtienes `NULL`, y concatenar `NULL` a un vector lo dejará sin cambios:
 
     ```{r}
     c()
     ```
 
--   To represent an absent vector. For example, `NULL` is often used as a default function argument, when the argument is optional but the default value requires some computation (see Section \@ref(missing-arguments) for more on this). Contrast this with `NA` which is used to indicate that an *element* of a vector is absent.
+-   Para representar un vector ausente. Por ejemplo, `NULL` a menudo se usa como argumento de función predeterminado, cuando el argumento es opcional pero el valor predeterminado requiere algún cálculo (consulte la @sec-missing-arguments para obtener más información al respecto). Contraste esto con `NA` que se usa para indicar que un *elemento* de un vector está ausente.
 
-If you're familiar with SQL, you'll know about relational `NULL` and might expect it to be the same as R's. However, the database `NULL` is actually equivalent to R's `NA`.
+Si está familiarizado con SQL, conocerá el `NULL` relacional y puede esperar que sea igual que el de R. Sin embargo, la base de datos `NULL` es en realidad equivalente a `NA` de R.
 
-## Quiz answers {#data-structure-answers}
+## Respuestas de la prueba {#sec-data-structure-answers}
 
-1.  The four common types of atomic vector are logical, integer, double and character. The two rarer types are complex and raw.
+1.  Los cuatro tipos comunes de vectores atómicos son lógicos, enteros, dobles y de carácter. Los dos tipos más raros son complejos y crudos.
 
-2.  Attributes allow you to associate arbitrary additional metadata to any object. You can get and set individual attributes with `attr(x, "y")` and `attr(x, "y") <- value`; or you can get and set all attributes at once with `attributes()`.
+2.  Los atributos le permiten asociar metadatos adicionales arbitrarios a cualquier objeto. Puede obtener y establecer atributos individuales con `attr(x, "y")` y `attr(x, "y") <- value`; o puede obtener y establecer todos los atributos a la vez con `attributes()`.
 
-3.  The elements of a list can be any type (even a list); the elements of an atomic vector are all of the same type. Similarly, every element of a matrix must be the same type; in a data frame, different columns can have different types.
+3.  Los elementos de una lista pueden ser de cualquier tipo (incluso una lista); los elementos de un vector atómico son todos del mismo tipo. De manera similar, todos los elementos de una matriz deben ser del mismo tipo; en un data frame, diferentes columnas pueden tener diferentes tipos.
 
-4.  You can make a list-array by assigning dimensions to a list. You can make a matrix a column of a data frame with `df$x <- matrix()`, or by using `I()` when creating a new data frame `data.frame(x = I(matrix()))`.
+4. Puede crear una matriz de lista asignando dimensiones a una lista. Puede convertir una matriz en una columna de un data frame con `df$x <- matrix()`, o usando `I()` al crear un nuevo data frame `data.frame(x = I(matrix()))`.
 
-5.  Tibbles have an enhanced print method, never coerce strings to factors, and provide stricter subsetting methods.
+5. Los Tibbles tienen un método de impresión mejorado, nunca obligan a las cadenas a factores y proporcionan métodos de subconjunto más estrictos.
