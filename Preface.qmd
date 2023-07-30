@@ -4,9 +4,9 @@ Bienvenido a la segunda edición de *R Avanzado*. Tenía tres objetivos principa
 
 -   Mejorar la cobertura de conceptos importantes que entendí completamente solo después de la publicación de la primera edición.
 
-- Reducir el tiempo de cobertura de temas que han demostrado ser menos útiles, o que creo que son realmente apasionantes pero resultan no ser tan prácticos.
+-   Reducir el tiempo de cobertura de temas que han demostrado ser menos útiles, o que creo que son realmente apasionantes pero resultan no ser tan prácticos.
 
-- En general, hacer que el material sea más fácil de entender con un mejor texto, un código más claro y muchos más diagramas.
+-   En general, hacer que el material sea más fácil de entender con un mejor texto, un código más claro y muchos más diagramas.
 
 Si está familiarizado con la primera edición, este prefacio describe los principales cambios para que pueda enfocar su lectura en las nuevas áreas. Si está leyendo una versión impresa de este libro, notará un gran cambio muy rápidamente: ¡*R Avanzado* ahora está en color! Esto ha mejorado considerablemente el resaltado de sintaxis de los fragmentos de código y ha facilitado mucho la creación de diagramas útiles. Aproveché esto e incluí más de 100 diagramas nuevos en todo el libro.
 
@@ -14,31 +14,31 @@ Otro gran cambio en esta versión es el uso de nuevos paquetes, particularmente 
 
 Los fundamentos de R no han cambiado en los cinco años desde la primera edición, pero mi comprensión de ellos ciertamente sí. Por lo tanto, la estructura general de "Fundamentos" se ha mantenido más o menos igual, pero muchos de los capítulos individuales se han mejorado considerablemente:
 
--   [Chapter -@sec-names-values], "Nombres y valores ", es un capítulo completamente nuevo que lo ayuda a comprender la diferencia entre objetos y nombres de objetos. Esto lo ayuda a predecir con mayor precisión cuándo R hará una copia de una estructura de datos y sienta las bases importantes para comprender la programación funcional.
+-   [Capítulo -@sec-names-values], "Nombres y valores", es un capítulo completamente nuevo que lo ayuda a comprender la diferencia entre objetos y nombres de objetos. Esto lo ayuda a predecir con mayor precisión cuándo R hará una copia de una estructura de datos y sienta las bases importantes para comprender la programación funcional.
 
--   [Chapter -@sec-vectors-chap], "Vectores" (anteriormente denominadas estructuras de datos), se ha reescrito para centrarse en tipos de vectores como números enteros, factores y marcos de datos. Contiene más detalles de vectores S3 importantes (como fechas y fechas-horas), analiza la variación del marco de datos proporcionado por el paquete tibble [@tibble] y, en general, refleja mi comprensión mejorada de los tipos de datos vectoriales.
+-   [Capítulo -@sec-vectors-chap], "Vectores" (anteriormente denominadas estructuras de datos), se ha reescrito para centrarse en tipos de vectores como números enteros, factores y marcos de datos. Contiene más detalles de vectores S3 importantes (como fechas y fechas-horas), analiza la variación del marco de datos proporcionado por el paquete tibble [@tibble] y, en general, refleja mi comprensión mejorada de los tipos de datos vectoriales.
 
--   [Chapter -@sec-subsetting], "Subsetting", ahora distingue entre `[` y `[[` por su intención: `[` extrae muchos valores y `[[` extrae un solo valor (anteriormente se caracterizaban por si "simplificaban" o "conservaban"). La sección @sec-subset-single dibuja el "tren" para ayudarlo a comprender cómo funciona `[[` con listas e introduce nuevas funciones que brindan un comportamiento más consistente para índices fuera de los límites.
+-   [Capítulo -@sec-subsetting], "Subsetting", ahora distingue entre `[` y `[[` por su intención: `[` extrae muchos valores y `[[` extrae un solo valor (anteriormente se caracterizaban por si "simplificaban" o "conservaban"). La sección @sec-subset-single dibuja el "tren" para ayudarlo a comprender cómo funciona `[[` con listas e introduce nuevas funciones que brindan un comportamiento más consistente para índices fuera de los límites.
 
--   [Chapter -@sec-control-flow], "Flujo de control", es un nuevo capítulo: de alguna manera me olvidé de herramientas importantes como declaraciones `if` y bucles `for`.
+-   [Capítulo -@sec-control-flow], "Flujo de control", es un nuevo capítulo: de alguna manera me olvidé de herramientas importantes como declaraciones `if` y bucles `for`.
 
--   [Chapter -@sec-functions], "Funciones", tiene un ordenamiento mejorado, introduce las canalizaciones (`%>%` y `|>`) como una tercera forma de componer funciones (Sección @sec-function-composition) y ha mejorado considerablemente la cobertura de formas de funciones (Sección @sec-function-forms).
+-   [Capítulo -@sec-functions], "Funciones", tiene un ordenamiento mejorado, introduce las canalizaciones (`%>%` y `|>`) como una tercera forma de componer funciones (Sección @sec-function-composition) y ha mejorado considerablemente la cobertura de formas de funciones (Sección @sec-function-forms).
 
--   [Chapter -@sec-environments], "Entornos", tiene un tratamiento reorganizado de entornos especiales @sec-special-environments, y una discusión muy mejorada de la pila de llamadas @sec-call-stack.
+-   [Capítulo -@sec-environments], "Entornos", tiene un tratamiento reorganizado de entornos especiales @sec-special-environments, y una discusión muy mejorada de la pila de llamadas @sec-call-stack.
 
--   [Chapter -@sec-conditions], "Condiciones", contiene material previamente en "Excepciones y depuración", y mucho contenido nuevo sobre cómo funciona el sistema de condiciones de R. También le muestra cómo crear sus propias clases de condiciones personalizadas @sec-custom-conditions.
+-   [Capítulo -@sec-conditions], "Condiciones", contiene material previamente en "Excepciones y depuración", y mucho contenido nuevo sobre cómo funciona el sistema de condiciones de R. También le muestra cómo crear sus propias clases de condiciones personalizadas @sec-custom-conditions.
 
 Los capítulos que siguen a la Parte I, Fundamentos, se han reorganizado en torno a los tres paradigmas de programación más importantes en R: programación funcional, programación orientada a objetos y metaprogramación.
 
--   La programación funcional ahora se divide más claramente en las tres técnicas principales: "Funcionales" ([Chapter -@sec-functionals]), "Fábricas de funciones" ([Capítulo -@sec-function-factories]) y "Operadores de funciones" ([Capítulo -@sec-function-operators]). Me he centrado en ideas que tienen aplicaciones prácticas en la ciencia de datos y he reducido la cantidad de teoría pura.
+-   La programación funcional ahora se divide más claramente en las tres técnicas principales: "Funcionales" ([Capítulo -@sec-functionals]), "Fábricas de funciones" ([Capítulo -@sec-function-factories]) y "Operadores de funciones" ([Capítulo -@sec-function-operators]). Me he centrado en ideas que tienen aplicaciones prácticas en la ciencia de datos y he reducido la cantidad de teoría pura.
 
     Estos capítulos ahora usan funciones provistas por el paquete purrr [@purrr], lo que me permite concentrarme más en las ideas subyacentes y menos en los detalles secundarios. Esto condujo a una simplificación considerable del capítulo de operadores de funciones, ya que un uso importante era evitar la ausencia de puntos suspensivos (`...`) en los funcionales base.
 
--   La programación orientada a objetos (POO) ahora forma una sección importante del libro con capítulos completamente nuevos sobre tipos base ([Chapter -@sec-base-types]), S3 ([Chapter -@sec-s3]), S4 ([Chapter -@sec-s4]), R6 ([Chapter -@sec-r6]) y las compensaciones entre los sistemas ([Chapter -@sec-oo-tradeoffs]).
+-   La programación orientada a objetos (POO) ahora forma una sección importante del libro con capítulos completamente nuevos sobre tipos base ([Capítulo -@sec-base-types]), S3 ([Capítulo -@sec-s3]), S4 ([Capítulo -@sec-s4]), R6 ([Capítulo -@sec-r6]) y las compensaciones entre los sistemas ([Capítulo -@sec-oo-tradeoffs]).
 
     Estos capítulos se enfocan en cómo funcionan los diferentes sistemas de objetos, no en cómo usarlos de manera efectiva. Esto es desafortunado, pero necesario, porque muchos de los detalles técnicos no se describen en otra parte, y el uso efectivo de OOP necesita un libro completo propio.
 
--   La metaprogramación (anteriormente llamada "computación en el lenguaje") describe el conjunto de herramientas que puede usar para generar código con código. En comparación con la primera edición, este material se ha ampliado sustancialmente y ahora se centra en la "evaluación ordenada", un conjunto de ideas y teorías que hacen que la metaprogramación sea segura, tenga buenos principios y sea accesible para muchos más programadores de R. [Chapter -@sec-meta-big-picture], "Panorama general" establece de forma aproximada cómo encajan todas las piezas; [Chapter -@sec-expressions], "Expresiones", describe las estructuras de datos subyacentes; [Chapter -@sec-quasiquotation], "Cuasicotización", cubre las citas y las no comillas; [Chapter -@sec-evaluation], "Evaluación", explica la evaluación del código en entornos especiales; y [Chapter -@sec-translation], "Traducciones", reúne todos los temas para mostrar cómo puede traducir de un lenguaje (de programación) a otro.
+-   La metaprogramación (anteriormente llamada "computación en el lenguaje") describe el conjunto de herramientas que puede usar para generar código con código. En comparación con la primera edición, este material se ha ampliado sustancialmente y ahora se centra en la "evaluación ordenada", un conjunto de ideas y teorías que hacen que la metaprogramación sea segura, tenga buenos principios y sea accesible para muchos más programadores de R. [Capítulo -@sec-meta-big-picture], "Panorama general" establece de forma aproximada cómo encajan todas las piezas; [Capítulo -@sec-expressions], "Expresiones", describe las estructuras de datos subyacentes; [Capítulo -@sec-quasiquotation], "Cuasicotización", cubre las citas y las no comillas; [Capítulo -@sec-evaluation], "Evaluación", explica la evaluación del código en entornos especiales; y [Capítulo -@sec-translation], "Traducciones", reúne todos los temas para mostrar cómo puede traducir de un lenguaje (de programación) a otro.
 
 La sección final del libro reúne los capítulos sobre técnicas de programación: creación de perfiles, medición y mejora del rendimiento y Rcpp. Los contenidos son muy similares a la primera edición, aunque la organización es un poco diferente. He realizado ligeras actualizaciones a lo largo de estos capítulos, especialmente para usar paquetes más nuevos (microbenchmark -\> bench, lineprof -\> profvis), pero la mayor parte del texto es el mismo.
 
@@ -50,6 +50,6 @@ Si bien la segunda edición ha ampliado principalmente la cobertura del material
 
 -   El capítulo de C se ha movido a <https://github.com/hadley/r-internals>, que, con el tiempo, proporcionará una guía para escribir código C que funcione con las estructuras de datos de R.
 
--   El capítulo de memoria ha sido eliminado. Gran parte del material se ha integrado en [Chapter -@sec-names-values] y el resto se sintió demasiado técnico y no tan importante de entender.
+-   El capítulo de memoria ha sido eliminado. Gran parte del material se ha integrado en [Capítulo -@sec-names-values] y el resto se sintió demasiado técnico y no tan importante de entender.
 
 -   Se eliminó el capítulo sobre el desempeño de R como lenguaje. Proporcionó pocas ideas procesables y se volvió anticuado a medida que cambiaba R.

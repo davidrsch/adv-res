@@ -145,7 +145,7 @@ Es posible anular estas reglas y usar cualquier nombre, es decir, cualquier secu
 
 Si bien es poco probable que cree deliberadamente nombres tan locos, debe comprender cómo funcionan estos nombres locos porque los encontrará, más comúnmente cuando carga datos que se han creado fuera de R.
 
-::: sidebar
+::: sidebarinplace
 *Puede* también crear enlaces no sintácticos usando comillas simples o dobles (por ejemplo, `"_abc" <- 1`) en lugar de acentos graves, pero no debería, porque tendrá que usar una sintaxis diferente para recuperar los valores. La capacidad de usar cadenas en el lado izquierdo de la flecha de asignación es un artefacto histórico, usado antes de que R admitiera los acentos graves.
 :::
 

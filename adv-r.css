@@ -16,6 +16,15 @@
 
 /* Sidebar formating --------------------------------------------*/
 
+.sidebarinplace {
+  border: 1px solid #ccc;
+  border-left-width: 5px;
+  border-radius: 5px;
+  padding: 1em;
+  margin: 1em 0;
+  position: static;
+}
+
 div.sidebar, div.base {
   border: 1px solid #ccc;
   border-left-width: 5px;
@@ -41,7 +50,7 @@ div.sidebar, div.base {
 
 div.base::before {
   display: block;
-  content: "In base R";
+  content: "En R base";
 }
 
 div.base::before,

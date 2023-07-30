@@ -78,7 +78,7 @@ Después de leer este libro, usted:
 
 ## ¿Qué no aprenderás?
 
-Este libro trata sobre R, el lenguaje de programación, no sobre R, la herramienta de análisis de datos. Si está buscando mejorar sus habilidades en ciencia de datos, le recomiendo que aprenda sobre [tidyverse](https://www.tidyverse.org/), una colección de paquetes consistentes desarrollados por mis colegas y yo. En este libro aprenderá las técnicas utilizadas para desarrollar los paquetes tidyverse; si desea aprender a usarlos, le recomiendo [*R para la Ciencia de Datos*](http://r4ds.had.co.nz/).
+Este libro trata sobre R, el lenguaje de programación, no sobre R, la herramienta de análisis de datos. Si está buscando mejorar sus habilidades en ciencia de datos, le recomiendo que aprenda sobre [tidyverse](https://www.tidyverse.org/), una colección de paquetes consistentes desarrollados por mis colegas y yo. En este libro aprenderá las técnicas utilizadas para desarrollar los paquetes tidyverse; si desea aprender a usarlos, le recomiendo [*R para la Ciencia de Datos*](http://r4ds.hadley.nz/).
 
 Si desea compartir su código R con otros, deberá crear un paquete R. Esto le permite agrupar el código junto con la documentación y las pruebas unitarias, y distribuirlo fácilmente a través de CRAN. En mi opinión, la forma más sencilla de desarrollar paquetes es con [devtools](http://devtools.r-lib.org), [roxygen2](http://roxygen2.r-lib.org/), [testthat](http://testthat.r-lib.org) y [usethis](http://usethis.r-lib.org). Puede aprender a usar estos paquetes para crear su propio paquete en [*Paquetes de R*](http://r-pkgs.had.co.nz/).
 
@@ -94,7 +94,7 @@ Una mentalidad científica es extremadamente útil cuando se aprende R. Si no co
 
 Debido a que la comunidad de R se compone principalmente de científicos de datos, no de informáticos, hay relativamente pocos libros que profundicen en los fundamentos técnicos de R. En mi viaje personal para comprender R, he encontrado que es particularmente útil usar recursos de otros lenguajes de programación. R tiene aspectos de lenguajes de programación tanto funcionales como orientados a objetos (OO). Aprender cómo se expresan estos conceptos en R lo ayudará a aprovechar su conocimiento existente de otros lenguajes de programación y lo ayudará a identificar áreas en las que puede mejorar.
 
-Para comprender por qué los sistemas de objetos de R funcionan de la forma en que lo hacen, descubrí que *La estructura e interpretación de los programas informáticos*[^introducción-1][@SICP](SICP) es particularmente útil. Es un libro conciso pero profundo, y después de leerlo, sentí por primera vez que podía diseñar mi propio sistema orientado a objetos. El libro fue mi primera introducción al paradigma encapsulado de la programación orientada a objetos que se encuentra en R y me ayudó a comprender las fortalezas y debilidades de este sistema. SICP también enseña la mentalidad funcional en la que crea funciones que son simples individualmente y que se vuelven poderosas cuando se componen juntas.
+Para comprender por qué los sistemas de objetos de R funcionan de la forma en que lo hacen, descubrí que *La estructura e interpretación de los programas informáticos*\[\^introducción-1\][\@SICP](SICP) es particularmente útil. Es un libro conciso pero profundo, y después de leerlo, sentí por primera vez que podía diseñar mi propio sistema orientado a objetos. El libro fue mi primera introducción al paradigma encapsulado de la programación orientada a objetos que se encuentra en R y me ayudó a comprender las fortalezas y debilidades de este sistema. SICP también enseña la mentalidad funcional en la que crea funciones que son simples individualmente y que se vuelven poderosas cuando se componen juntas.
 
 [^introduction-1]: Puedes leerlo en línea gratis en <https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book.html>
 
@@ -114,7 +114,7 @@ Algunos buenos consejos generales:
 
 -   Dedique algún tiempo a crear un ejemplo reproducible o reprex (de sus siglas en inglés **repr**oducible **ex**ample). Esto ayudará a que otros te ayuden y, a menudo, conduce a una solución sin preguntar a otros, porque en el proceso de hacer que el problema sea reproducible, a menudo descubres la causa raíz. Recomiendo aprender y usar el paquete [reprex](https://reprex.tidyverse.org/).
 
-<!-- ¿alguien lo revisará una vez que haya terminado y creará un glosario? Si marcó cosas como "reprex" en negrita, debería ser fácil encontrar términos. -->
+<!-- GVW:¿alguien lo revisará una vez que haya terminado y creará un glosario? Si marcó cosas como "reprex" en negrita, debería ser fácil encontrar términos. -->
 
 Si está buscando ayuda específica para resolver los ejercicios de este libro, las soluciones de Malte Grosser y Henning Bumann están disponibles en <https://advanced-r-solutions.rbind.io>.
 
@@ -185,7 +185,7 @@ Muchos ejemplos usan números aleatorios. Estos se hacen reproducibles mediante 
 
 ## Colofón {#colophon}
 
-Este libro fue escrito en [bookdown](http://bookdown.org/) dentro de [RStudio](http://www.rstudio.com/ide/). El [sitio web](https://adv-r.hadley.nz/) está alojado en [netlify](http://netlify.com/), y [travis-ci](https://travis-ci.org/) lo actualiza automáticamente después de cada confirmación. La fuente completa está disponible en [GitHub](https://github.com/hadley/adv-r). El código del libro impreso se establece en [inconsolata](http://levien.com/type/myfonts/inconsolata.html). Las imágenes de emoji en el libro impreso provienen de [Twitter Emoji] con licencia abierta (https://github.com/twitter/twemoji).
+Este libro fue escrito en [bookdown](http://bookdown.org/) dentro de [RStudio](http://www.rstudio.com/ide/). El [sitio web](https://adv-r.hadley.nz/) está alojado en [netlify](http://netlify.com/), y [travis-ci](https://travis-ci.org/) lo actualiza automáticamente después de cada confirmación. La fuente completa está disponible en [GitHub](https://github.com/hadley/adv-r). El código del libro impreso se establece en [inconsolata](http://levien.com/type/myfonts/inconsolata.html). Las imágenes de emoji en el libro impreso provienen de \[Twitter Emoji\] con licencia abierta (https://github.com/twitter/twemoji).
 
 Esta versión del libro se creó con `r R.version.string` y los siguientes paquetes.
 
