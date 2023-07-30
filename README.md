@@ -19,6 +19,7 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
     -   Nombres y valores
     -   Vectores
     -   Subconjunto
+    -   Flujo de control
 
 # Más información acerca del repositorio
 
@@ -93,6 +94,7 @@ The translation was done using Google Translate and some grammar and coherence e
     -   Names and values
     -   Vectors
     -   Subsetting
+    -   Control flow
 
 # More info about the repository
 
