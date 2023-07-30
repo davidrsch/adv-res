@@ -1,103 +1,103 @@
-# Subsetting {#sec-subsetting}
+# Subconjunto {#sec-subsetting}
 
 ```{r setup, include = FALSE}
 source("common.R")
 rownames(mtcars) <- NULL
 ```
 
-## Introduction
+## Introducción
 
 \index{subsetting}
 
-R's subsetting operators are fast and powerful. Mastering them allows you to succinctly perform complex operations in a way that few other languages can match. Subsetting in R is easy to learn but hard to master because you need to internalise a number of interrelated concepts:
+Los operadores de subconjuntos de R son rápidos y potentes. Dominarlos le permite realizar operaciones complejas de manera sucinta de una manera que pocos otros idiomas pueden igualar. La creación de subconjuntos en R es fácil de aprender pero difícil de dominar porque necesita interiorizar una serie de conceptos interrelacionados:
 
--   There are six ways to subset atomic vectors.
+-   Hay seis formas de crear subconjuntos de vectores atómicos.
 
--   There are three subsetting operators, `[[`, `[`, and `$`.
+-   Hay tres operadores de subconjuntos, `[[`, `[` y `$`.
 
--   Subsetting operators interact differently with different vector types (e.g., atomic vectors, lists, factors, matrices, and data frames).
+-   Los operadores de creación de subconjuntos interactúan de manera diferente con diferentes tipos de vectores (por ejemplo, vectores atómicos, listas, factores, matrices y data frames).
 
--   Subsetting can be combined with assignment.
+-   La creación de subconjuntos se puede combinar con la asignación.
 
-Subsetting is a natural complement to `str()`. While `str()` shows you all the pieces of any object (its structure), subsetting allows you to pull out the pieces that you're interested in. For large, complex objects, I highly recommend using the interactive RStudio Viewer, which you can activate with `View(my_object)`.
+La creación de subconjuntos es un complemento natural de `str()`. Mientras que `str()` le muestra todas las piezas de cualquier objeto (su estructura), la creación de subconjuntos le permite extraer las piezas que le interesan. Para objetos grandes y complejos, recomiendo usar el RStudio Viewer interactivo, que puedes activar con `View(my_object)`.
 
-### Quiz {.unnumbered}
+### Prueba {.unnumbered}
 
-Take this short quiz to determine if you need to read this chapter. If the answers quickly come to mind, you can comfortably skip this chapter. Check your answers in Section \@ref(subsetting-answers).
+Responda este breve cuestionario para determinar si necesita leer este capítulo. Si las respuestas le vienen a la mente rápidamente, puede saltarse cómodamente este capítulo. Comprueba tus respuestas en la @sec-subsetting-answers.
 
-1.  What is the result of subsetting a vector with positive integers, negative integers, a logical vector, or a character vector?
+1.  ¿Cuál es el resultado de subdividir un vector con enteros positivos, enteros negativos, un vector lógico o un vector de caracteres?
 
-2.  What's the difference between `[`, `[[`, and `$` when applied to a list?
+2.  ¿Cuál es la diferencia entre `[`, `[[` y `$` cuando se aplica a una lista?
 
-3.  When should you use `drop = FALSE`?
+3.  ¿Cuándo debería usar `drop = FALSE`?
 
-4.  If `x` is a matrix, what does `x[] <- 0` do? How is it different from `x <- 0`?
+4.  Si `x` es una matriz, ¿qué hace `x[] <- 0`? ¿En qué se diferencia de `x <- 0`?
 
-5.  How can you use a named vector to relabel categorical variables?
+5.  ¿Cómo puede usar un vector con nombre para volver a etiquetar variables categóricas?
 
-### Outline {.unnumbered}
+### Estructura {.unnumbered}
 
--   Section \@ref(subset-multiple) starts by teaching you about `[`. You'll learn the six ways to subset atomic vectors. You'll then learn how those six ways act when used to subset lists, matrices, and data frames.
+-   La @sec-subset-multiple comienza enseñándote acerca de `[`. Aprenderá las seis formas de crear subconjuntos de vectores atómicos. Luego aprenderá cómo actúan esas seis formas cuando se usan para crear subconjuntos de listas, matrices y data frames.
 
--   Section \@ref(subset-single) expands your knowledge of subsetting operators to include `[[` and `$` and focuses on the important principles of simplifying versus preserving.
+-   La @sec-subset-single amplía su conocimiento de los operadores de subconjuntos para incluir `[[` y `$` y se centra en los principios importantes de simplificar frente a preservar.
 
--   In Section \@ref(subassignment) you'll learn the art of subassignment, which combines subsetting and assignment to modify parts of an object.
+-   La @sec-subassignment aprenderá el arte de la subasignación, que combina subconjuntos y asignación para modificar partes de un objeto.
 
--   Section \@ref(applications) leads you through eight important, but not obvious, applications of subsetting to solve problems that you often encounter in data analysis.
+-   La @sec-applications llo guía a través de ocho aplicaciones importantes, pero no obvias, de subconjuntos para resolver problemas que a menudo encuentra en el análisis de datos.
 
-## Selecting multiple elements {#subset-multiple}
+## Selección de varios elementos {#sec-subset-multiple}
 
 \indexc{[}
 
-Use `[` to select any number of elements from a vector. To illustrate, I'll apply `[` to 1D atomic vectors, and then show how this generalises to more complex objects and more dimensions.
+Utilice `[` para seleccionar cualquier número de elementos de un vector. Para ilustrar, aplicaré `[` a vectores atómicos 1D, y luego mostraré cómo esto se generaliza a objetos más complejos y más dimensiones.
 
-### Atomic vectors
+### Vectores atómicos
 
 \index{subsetting!atomic vectors} \index{atomic vectors!subsetting}
 
-Let's explore the different types of subsetting with a simple vector, `x`.
+Exploremos los diferentes tipos de subconjuntos con un vector simple, `x`.
 
 ```{r}
 x <- c(2.1, 4.2, 3.3, 5.4)
 ```
 
-Note that the number after the decimal point represents the original position in the vector.
+Tenga en cuenta que el número después del punto decimal representa la posición original en el vector.
 
-There are six things that you can use to subset a vector:
+Hay seis cosas que puede usar para crear subconjuntos de un vector:
 
--   **Positive integers** return elements at the specified positions:
+-   **Los enteros positivos** devuelven elementos en las posiciones especificadas:
 
     ```{r}
     x[c(3, 1)]
     x[order(x)]
 
-    # Duplicate indices will duplicate values
+    # Los índices duplicados duplicarán los valores
     x[c(1, 1)]
 
-    # Real numbers are silently truncated to integers
+    # Los números reales se truncan silenciosamente a enteros
     x[c(2.1, 2.9)]
     ```
 
--   **Negative integers** exclude elements at the specified positions:
+-   **Los enteros negativos** excluyen elementos en las posiciones especificadas:
 
     ```{r}
     x[-c(3, 1)]
     ```
 
-    Note that you can't mix positive and negative integers in a single subset:
+    Tenga en cuenta que no puede mezclar números enteros positivos y negativos en un solo subconjunto:
 
     ```{r, error = TRUE}
     x[c(-1, 2)]
     ```
 
--   **Logical vectors** select elements where the corresponding logical value is `TRUE`. This is probably the most useful type of subsetting because you can write an expression that uses a logical vector:
+-   **Los vectores lógicos** seleccionan elementos donde el valor lógico correspondiente es `TRUE`. Este es probablemente el tipo de subconjunto más útil porque puede escribir una expresión que usa un vector lógico:
 
     ```{r}
     x[c(TRUE, TRUE, FALSE, FALSE)]
     x[x > 3]
     ```
 
-    \index{recycling} In `x[y]`, what happens if `x` and `y` are different lengths? The behaviour is controlled by the **recycling rules** where the shorter of the two is recycled to the length of the longer. This is convenient and easy to understand when one of `x` and `y` is length one, but I recommend avoiding recycling for other lengths because the rules are inconsistently applied throughout base R.
+    \index{recycling} En `x[y]`, ¿qué sucede si `x` e `y` tienen longitudes diferentes? El comportamiento está controlado por las **reglas de reciclaje**, donde el más corto de los dos se recicla al largo del más largo. Esto es conveniente y fácil de entender cuando uno de `x` e `y` tiene la longitud uno, pero recomiendo evitar el reciclaje para otras longitudes porque las reglas se aplican de manera inconsistente en la base R.
 
     ```{r}
     x[c(TRUE, FALSE)]
@@ -105,61 +105,61 @@ There are six things that you can use to subset a vector:
     x[c(TRUE, FALSE, TRUE, FALSE)]
     ```
 
-    Note that a missing value in the index always yields a missing value in the output:
+    Tenga en cuenta que un valor faltante en el índice siempre produce un valor faltante en la salida:
 
     ```{r}
     x[c(TRUE, TRUE, NA, FALSE)]
     ```
 
--   **Nothing** returns the original vector. This is not useful for 1D vectors, but, as you'll see shortly, is very useful for matrices, data frames, and arrays. It can also be useful in conjunction with assignment.
+-   **Nada** devuelve el vector original. Esto no es útil para vectores 1D, pero, como verá en breve, es muy útil para matrices, data frames y arreglos. También puede ser útil junto con la asignación.
 
     ```{r}
     x[]
     ```
 
--   **Zero** returns a zero-length vector. This is not something you usually do on purpose, but it can be helpful for generating test data.
+-   **Zero** devuelve un vector de longitud cero. Esto no es algo que normalmente haga a propósito, pero puede ser útil para generar datos de prueba.
 
     ```{r}
     x[0]
     ```
 
--   If the vector is named, you can also use **character vectors** to return elements with matching names.
+-   Si el vector tiene nombre, también puede usar **vectores de caracteres** para devolver elementos con nombres coincidentes.
 
     ```{r}
     (y <- setNames(x, letters[1:4]))
     y[c("d", "c", "a")]
 
-    # Like integer indices, you can repeat indices
+    # Al igual que los índices enteros, puede repetir índices
     y[c("a", "a", "a")]
 
-    # When subsetting with [, names are always matched exactly
+    # Al crear un subconjunto con [, los nombres siempre coinciden exactamente
     z <- c(abc = 1, def = 2)
     z[c("a", "d")]
     ```
 
-NB: Factors are not treated specially when subsetting. This means that subsetting will use the underlying integer vector, not the character levels. This is typically unexpected, so you should avoid subsetting with factors:
+NB: Los factores no se tratan de manera especial cuando se subdividen. Esto significa que la creación de subconjuntos utilizará el vector entero subyacente, no los niveles de caracteres. Esto suele ser inesperado, por lo que debe evitar subconjuntos con factores:
 
 ```{r}
 y[factor("b")]
 ```
 
-### Lists
+### Listas
 
 \index{lists!subsetting} \index{subsetting!lists}
 
-Subsetting a list works in the same way as subsetting an atomic vector. Using `[` always returns a list; `[[` and `$`, as described in Section \@ref(subset-single), let you pull out elements of a list.
+La creación de subconjuntos de una lista funciona de la misma manera que la creación de subconjuntos de un vector atómico. Usar `[` siempre devuelve una lista; `[[` y `$`, como se describe en la @sec-subset-single, le permiten extraer elementos de una lista.
 
-### Matrices and arrays {#matrix-subsetting}
+### Matrices y arreglos {#sec-matrix-subsetting}
 
 \index{subsetting!arrays} \index{arrays!subsetting}
 
-You can subset higher-dimensional structures in three ways:
+Puede crear subconjuntos de estructuras de dimensiones superiores de tres maneras:
 
--   With multiple vectors.
--   With a single vector.
--   With a matrix.
+-   Con múltiples vectores.
+-   Con un solo vector.
+-   Con una matriz.
 
-The most common way of subsetting matrices (2D) and arrays (\>2D) is a simple generalisation of 1D subsetting: supply a 1D index for each dimension, separated by a comma. Blank subsetting is now useful because it lets you keep all rows or all columns.
+La forma más común de crear subconjuntos de matrices (2D) y arreglos (\>2D) es una generalización simple de subconjuntos 1D: proporcione un índice 1D para cada dimensión, separados por una coma. El subconjunto en blanco ahora es útil porque le permite mantener todas las filas o todas las columnas.
 
 ```{r}
 a <- matrix(1:9, nrow = 3)
@@ -169,14 +169,14 @@ a[c(TRUE, FALSE, TRUE), c("B", "A")]
 a[0, -2]
 ```
 
-By default, `[` simplifies the results to the lowest possible dimensionality. For example, both of the following expressions return 1D vectors. You'll learn how to avoid "dropping" dimensions in Section \@ref(simplify-preserve):
+Por defecto, `[` simplifica los resultados a la dimensionalidad más baja posible. Por ejemplo, las dos expresiones siguientes devuelven vectores 1D. Aprenderá cómo evitar "reducir" el número de dimensiones en la @sec-simplify-preserve:
 
 ```{r}
 a[1, ]
 a[1, 1]
 ```
 
-Because both matrices and arrays are just vectors with special attributes, you can subset them with a single vector, as if they were a 1D vector. Note that arrays in R are stored in column-major order:
+Debido a que tanto las matrices como los arreglos son solo vectores con atributos especiales, puede crear subconjuntos con un solo vector, como si fueran un vector 1D. Tenga en cuenta que las matrices en R se almacenan en orden de columna principal:
 
 ```{r}
 vals <- outer(1:5, 1:5, FUN = "paste", sep = ",")
@@ -185,7 +185,7 @@ vals
 vals[c(4, 15)]
 ```
 
-You can also subset higher-dimensional data structures with an integer matrix (or, if named, a character matrix). Each row in the matrix specifies the location of one value, and each column corresponds to a dimension in the array. This means that you can use a 2 column matrix to subset a matrix, a 3 column matrix to subset a 3D array, and so on. The result is a vector of values:
+También puede crear subconjuntos de estructuras de datos de mayor dimensión con una matriz de enteros (o, si se nombra, una matriz de caracteres). Cada fila de la matriz especifica la ubicación de un valor y cada columna corresponde a una dimensión de la matriz. Esto significa que puede usar una matriz de 2 columnas para crear un subconjunto de una matriz, una matriz de 3 columnas para crear un subconjunto de una matriz 3D, etc. El resultado es un vector de valores:
 
 ```{r}
 select <- matrix(ncol = 2, byrow = TRUE, c(
@@ -196,17 +196,17 @@ select <- matrix(ncol = 2, byrow = TRUE, c(
 vals[select]
 ```
 
-### Data frames and tibbles {#df-subsetting}
+### Data frames y tibbles {#sec-df-subsetting}
 
 \index{subsetting!data frames} \index{data frames!subsetting}
 
-Data frames have the characteristics of both lists and matrices:
+Data frames tienen las características tanto de listas como de matrices:
 
--   When subsetting with a single index, they behave like lists and index the columns, so `df[1:2]` selects the first two columns.
+-   Cuando se subdividen con un solo índice, se comportan como listas e indexan las columnas, por lo que `df[1:2]` selecciona las dos primeras columnas.
 
--   When subsetting with two indices, they behave like matrices, so `df[1:3, ]` selects the first three *rows* (and all the columns)[^subsetting-1].
+-   Al crear subconjuntos con dos índices, se comportan como matrices, por lo que `df[1:3, ]` selecciona las primeras tres *filas* (y todas las columnas)[^subsetting-1].
 
-[^subsetting-1]: If you're coming from Python this is likely to be confusing, as you'd probably expect `df[1:3, 1:2]` to select three columns and two rows. Generally, R "thinks" about dimensions in terms of rows and columns while Python does so in terms of columns and rows.
+[^subsetting-1]: Si viene de Python, es probable que esto sea confuso, ya que probablemente esperaría que `df[1:3, 1:2]` seleccione tres columnas y dos filas. Generalmente, R "piensa" en las dimensiones en términos de filas y columnas, mientras que Python lo hace en términos de columnas y filas.
 
 ```{r}
 df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
@@ -214,20 +214,20 @@ df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
 df[df$x == 2, ]
 df[c(1, 3), ]
 
-# There are two ways to select columns from a data frame
-# Like a list
+# Hay dos formas de seleccionar columnas de un data frame
+# Como una lista
 df[c("x", "z")]
-# Like a matrix
+# Como una matriz
 df[, c("x", "z")]
 
-# There's an important difference if you select a single 
-# column: matrix subsetting simplifies by default, list 
-# subsetting does not.
+# Hay una diferencia importante si selecciona una sola 
+# columna: el subconjunto de la matriz se simplifica de forma predeterminada, el 
+# subconjunto de la lista no
 str(df["x"])
 str(df[, "x"])
 ```
 
-Subsetting a tibble with `[` always returns a tibble:
+Subdividir un tibble con `[` siempre devuelve un tibble:
 
 ```{r}
 df <- tibble::tibble(x = 1:3, y = 3:1, z = letters[1:3])
@@ -236,15 +236,15 @@ str(df["x"])
 str(df[, "x"])
 ```
 
-### Preserving dimensionality {#simplify-preserve}
+### Preservando la dimensionalidad {#sec-simplify-preserve}
 
 \indexc{drop = FALSE}
 
 \index{subsetting!simplifying} \index{subsetting!preserving}
 
-By default, subsetting a matrix or data frame with a single number, a single name, or a logical vector containing a single `TRUE`, will simplify the returned output, i.e. it will return an object with lower dimensionality. To preserve the original dimensionality, you must use `drop = FALSE`.
+De forma predeterminada, subdividir una matriz o data frame con un solo número, un solo nombre o un vector lógico que contenga un solo `TRUE` simplificará la salida devuelta, es decir, devolverá un objeto con menor dimensionalidad. Para conservar la dimensionalidad original, debe usar `drop = FALSE`.
 
--   For matrices and arrays, any dimensions with length 1 will be dropped:
+-   Para matrices y arreglos, se eliminarán todas las dimensiones con longitud 1:
 
     ```{r}
     a <- matrix(1:4, nrow = 2)
@@ -253,7 +253,7 @@ By default, subsetting a matrix or data frame with a single number, a single nam
     str(a[1, , drop = FALSE])
     ```
 
--   Data frames with a single column will return just the content of that column:
+-   Data frames con una sola columna devolverán solo el contenido de esa columna:
 
     ```{r}
     df <- data.frame(a = 1:2, b = 1:2)
@@ -262,9 +262,9 @@ By default, subsetting a matrix or data frame with a single number, a single nam
     str(df[, "a", drop = FALSE])
     ```
 
-The default `drop = TRUE` behaviour is a common source of bugs in functions: you check your code with a data frame or matrix with multiple columns, and it works. Six months later, you (or someone else) uses it with a single column data frame and it fails with a mystifying error. When writing functions, get in the habit of always using `drop = FALSE` when subsetting a 2D object. For this reason, tibbles default to `drop = FALSE`, and `[` always returns another tibble.
+El comportamiento predeterminado `drop = TRUE` es una fuente común de errores en las funciones: verifica su código con un data frame o matriz con varias columnas, y funciona. Seis meses después, usted (u otra persona) lo usa con un data frame de una sola columna y falla con un error desconcertante. Al escribir funciones, acostúmbrese a usar siempre `drop = FALSE` al subdividir un objeto 2D. Por esta razón, los tibbles tienen por defecto `drop = FALSE`, y `[` siempre devuelve otro tibble.
 
-Factor subsetting also has a `drop` argument, but its meaning is rather different. It controls whether or not levels (rather than dimensions) are preserved, and it defaults to `FALSE`. If you find you're using `drop = TRUE` a lot it's often a sign that you should be using a character vector instead of a factor.
+El subconjunto de factores también tiene un argumento `drop`, pero su significado es bastante diferente. Controla si se conservan o no los niveles (en lugar de las dimensiones), y su valor predeterminado es `FALSE`. Si encuentra que está usando `drop = TRUE` mucho, a menudo es una señal de que debería estar usando un vector de caracteres en lugar de un factor.
 
 ```{r}
 z <- factor(c("a", "b"))
@@ -272,9 +272,9 @@ z[1]
 z[1, drop = TRUE]
 ```
 
-### Exercises
+### Ejercicios
 
-1.  Fix each of the following common data frame subsetting errors:
+1.  Solucione cada uno de los siguientes errores comunes de creación de subconjuntos de data frames:
 
     ```{r, eval = FALSE}
     mtcars[mtcars$cyl = 4, ]
@@ -283,43 +283,43 @@ z[1, drop = TRUE]
     mtcars[mtcars$cyl == 4 | 6, ]
     ```
 
-2.  Why does the following code yield five missing values? (Hint: why is it different from `x[NA_real_]`?)
+2.  ¿Por qué el siguiente código arroja cinco valores faltantes? (Pista: ¿por qué es diferente de `x[NA_real_]`?)
 
     ```{r}
     x <- 1:5
     x[NA]
     ```
 
-3.  What does `upper.tri()` return? How does subsetting a matrix with it work? Do we need any additional subsetting rules to describe its behaviour?
+3.  ¿Qué devuelve `upper.tri()`? ¿Cómo funciona el subconjunto de una matriz con él? ¿Necesitamos reglas adicionales de creación de subconjuntos para describir su comportamiento?
 
     ```{r, eval = FALSE}
     x <- outer(1:5, 1:5, FUN = "*")
     x[upper.tri(x)]
     ```
 
-4.  Why does `mtcars[1:20]` return an error? How does it differ from the similar `mtcars[1:20, ]`?
+4.  ¿Por qué `mtcars[1:20]` devuelve un error? ¿En qué se diferencia de los `mtcars[1:20, ]` similares?
 
-5.  Implement your own function that extracts the diagonal entries from a matrix (it should behave like `diag(x)` where `x` is a matrix).
+5.  Implemente su propia función que extraiga las entradas diagonales de una matriz (debería comportarse como `diag(x)` donde `x` es una matriz).
 
-6.  What does `df[is.na(df)] <- 0` do? How does it work?
+6.  ¿Qué hace `df[is.na(df)] <- 0`? ¿Como funciona?
 
-## Selecting a single element {#subset-single}
+## Selección de un solo elemento {#sec-subset-single}
 
 \index{subsetting!lists} \index{lists!subsetting}
 
-There are two other subsetting operators: `[[` and `$`. `[[` is used for extracting single items, while `x$y` is a useful shorthand for `x[["y"]]`.
+Hay otros dos operadores de subconjuntos: `[[` y `$`. `[[` se usa para extraer elementos individuales, mientras que `x$y` es una abreviatura útil para `x[["y"]]`.
 
 ### `[[`
 
 \indexc{[[}
 
-`[[` is most important when working with lists because subsetting a list with `[` always returns a smaller list. To help make this easier to understand we can use a metaphor:
+`[[` es más importante cuando se trabaja con listas porque subdividir una lista con `[` siempre devuelve una lista más pequeña. Para ayudar a que esto sea más fácil de entender, podemos usar una metáfora:
 
-> If list `x` is a train carrying objects, then `x[[5]]` is the object in car 5; `x[4:6]` is a train of cars 4-6.
+> Si la lista `x` es un tren que transporta objetos, entonces `x[[5]]` es el objeto en el vagón 5; `x[4:6]` es un tren de vagones 4-6.
 >
 > --- \@RLangTip, <https://twitter.com/RLangTip/status/268375867468681216>
 
-Let's use this metaphor to make a simple list:
+Usemos esta metáfora para hacer una lista simple:
 
 ```{r}
 x <- list(1:3, "a", 4:6)
@@ -329,21 +329,21 @@ x <- list(1:3, "a", 4:6)
 knitr::include_graphics("diagrams/subsetting/train.png")
 ```
 
-When extracting a single element, you have two options: you can create a smaller train, i.e., fewer carriages, or you can extract the contents of a particular carriage. This is the difference between `[` and `[[`:
+Al extraer un solo elemento, tiene dos opciones: puede crear un tren más pequeño, es decir, menos vagones, o puede extraer el contenido de un vagón en particular. Esta es la diferencia entre `[` y `[[`:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/subsetting/train-single.png")
 ```
 
-When extracting multiple (or even zero!) elements, you have to make a smaller train:
+Al extraer elementos múltiples (¡o incluso cero!), debe hacer un tren más pequeño:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/subsetting/train-multiple.png")
 ```
 
-Because `[[` can return only a single item, you must use it with either a single positive integer or a single string. If you use a vector with `[[`, it will subset recursively, i.e. `x[[c(1, 2)]]` is equivalent to `x[[1]][[2]]`. This is a quirky feature that few know about, so I recommend avoiding it in favour of `purrr::pluck()`, which you'll learn about in Section \@ref(subsetting-oob).
+Debido a que `[[` solo puede devolver un solo elemento, debe usarlo con un solo entero positivo o una sola cadena. Si usa un vector con `[[`, se subdividirá recursivamente, es decir, `x[[c(1, 2)]]` es equivalente a `x[[1]][[2]]`. Esta es una característica peculiar que pocos conocen, así que recomiendo evitarla en favor de `purrr::pluck()`, sobre la cual aprenderá en la @sec-subsetting-oob.
 
-While you must use `[[` when working with lists, I'd also recommend using it with atomic vectors whenever you want to extract a single value. For example, instead of writing:
+Si bien debe usar `[[` cuando trabaja con listas, también recomendaría usarlo con vectores atómicos siempre que desee extraer un solo valor. Por ejemplo, en lugar de escribir:
 
 ```{r, eval = FALSE}
 for (i in 2:length(x)) {
@@ -351,7 +351,7 @@ for (i in 2:length(x)) {
 }
 ```
 
-It's better to write:
+Es mejor escribir:
 
 ```{r, eval = FALSE}
 for (i in 2:length(x)) {
@@ -359,13 +359,13 @@ for (i in 2:length(x)) {
 }
 ```
 
-Doing so reinforces the expectation that you are getting and setting individual values.
+Si lo hace, refuerza la expectativa de que está recibiendo y estableciendo valores individuales.
 
 ### `$`
 
 \indexc{\$}
 
-`$` is a shorthand operator: `x$y` is roughly equivalent to `x[["y", exact = FALSE]]`. It's often used to access variables in a data frame, as in `mtcars$cyl` or `diamonds$carat`. One common mistake with `$` is to use it when you have the name of a column stored in a variable:
+`$` es un operador abreviado: `x$y` es aproximadamente equivalente a `x[["y", exact = FALSE]]`. A menudo se usa para acceder a variables en un data frame, como en `mtcars$cyl` o `diamonds$carat`. Un error común con `$` es usarlo cuando tienes el nombre de una columna almacenada en una variable:
 
 ```{r, include = FALSE}
 options(warnPartialMatchDollar = FALSE)
@@ -373,14 +373,14 @@ options(warnPartialMatchDollar = FALSE)
 
 ```{r}
 var <- "cyl"
-# Doesn't work - mtcars$var translated to mtcars[["var"]]
+# No funciona - mtcars$var traducido a mtcars[["var"]]
 mtcars$var
 
-# Instead use [[
+# En su lugar use [[
 mtcars[[var]]
 ```
 
-The one important difference between `$` and `[[` is that `$` automatically does (left-to-right) partial matching without warning:
+La única diferencia importante entre `$` y `[[` es que `$` automáticamente hace (de izquierda a derecha) coincidencias parciales sin previo aviso:
 
 ```{r}
 x <- list(abc = 1)
@@ -388,26 +388,26 @@ x$a
 x[["a"]]
 ```
 
-\index{options!warnPartialMatchDollar@\texttt{warnPartialMatchDollar}} To help avoid this behaviour I highly recommend setting the global option `warnPartialMatchDollar` to `TRUE`:
+\index{options!warnPartialMatchDollar@\texttt{warnPartialMatchDollar}} Para ayudar a evitar este comportamiento, recomiendo configurar la opción global `warnPartialMatchDollar` en `TRUE`:
 
 ```{r}
 options(warnPartialMatchDollar = TRUE)
 x$a
 ```
 
-(For data frames, you can also avoid this problem by using tibbles, which never do partial matching.)
+(Para data frames, también puede evitar este problema usando tibbles, que nunca hacen coincidencias parciales.)
 
-### Missing and out-of-bounds indices {#subsetting-oob}
+### Índices faltantes y fuera de los límites {#sec-subsetting-oob}
 
 \index{subsetting!with NA \& NULL} \index{subsetting!out of bounds} \indexc{pluck()} \indexc{chuck()}
 
-It's useful to understand what happens with `[[` when you use an "invalid" index. The following table summarises what happens when you subset a logical vector, list, and `NULL` with a zero-length object (like `NULL` or `logical()`), out-of-bounds values (OOB), or a missing value (e.g. `NA_integer_`) with `[[`. Each cell shows the result of subsetting the data structure named in the row by the type of index described in the column. I've only shown the results for logical vectors, but other atomic vectors behave similarly, returning elements of the same type (NB: int = integer; chr = character).
+Es útil comprender lo que sucede con `[[` cuando usa un índice "no válido". La siguiente tabla resume lo que sucede cuando crea un subconjunto de un vector lógico, una lista y un `NULL` con un objeto de longitud cero (como `NULL` o `logical()`), valores fuera de los límites (OOB) o un valor faltante (por ejemplo, `NA_integer_`) con `[[`. Cada celda muestra el resultado de dividir la estructura de datos nombrada en la fila por el tipo de índice descrito en la columna. Solo he mostrado los resultados para vectores lógicos, pero otros vectores atómicos se comportan de manera similar, devolviendo elementos del mismo tipo (NB: int = entero; chr = carácter).
 
-| `row[[col]]` | Zero-length | OOB (int) | OOB (chr) | Missing |
-|--------------|-------------|-----------|-----------|---------|
-| Atomic       | Error       | Error     | Error     | Error   |
-| List         | Error       | Error     | `NULL`    | `NULL`  |
-| `NULL`       | `NULL`      | `NULL`    | `NULL`    | `NULL`  |
+| `row[[col]]` | Longitud cero | OOB (int) | OOB (chr) | Faltante |
+|--------------|---------------|-----------|-----------|----------|
+| Atómico      | Error         | Error     | Error     | Error    |
+| Lista        | Error         | Error     | `NULL`    | `NULL`   |
+| `NULL`       | `NULL`        | `NULL`    | `NULL`    | `NULL`   |
 
 ```{r, eval = FALSE, echo = FALSE}
 logical()[[1]]
@@ -426,9 +426,9 @@ NULL[[NA_real_]]
 NULL[[NULL]]
 ```
 
-If the vector being indexed is named, then the names of OOB, missing, or `NULL` components will be `<NA>`.
+Si se nombra el vector que se indexa, los nombres de los componentes OOB, faltantes o `NULL` serán `<NA>`.
 
-The inconsistencies in the table above led to the development of `purrr::pluck()` and `purrr::chuck()`. When the element is missing, `pluck()` always returns `NULL` (or the value of the `.default` argument) and `chuck()` always throws an error. The behaviour of `pluck()` makes it well suited for indexing into deeply nested data structures where the component you want may not exist (as is common when working with JSON data from web APIs). `pluck()` also allows you to mix integer and character indices, and provides an alternative default value if an item does not exist:
+Las inconsistencias en la tabla anterior llevaron al desarrollo de `purrr::pluck()` y `purrr::chuck()`. Cuando falta el elemento, `pluck()` siempre devuelve `NULL` (o el valor del argumento `.default`) y `chuck()` siempre arroja un error. El comportamiento de `pluck()` lo hace ideal para la indexación en estructuras de datos profundamente anidadas donde el componente que desea puede no existir (como es común cuando se trabaja con datos JSON de API web). `pluck()` también te permite mezclar índices enteros y de caracteres, y proporciona un valor predeterminado alternativo si un elemento no existe:
 
 ```{r}
 x <- list(
@@ -443,23 +443,23 @@ purrr::pluck(x, "c", 1)
 purrr::pluck(x, "c", 1, .default = NA)
 ```
 
-### `@` and `slot()`
+### `@` y `slot()`
 
-There are two additional subsetting operators, which are needed for S4 objects: `@` (equivalent to `$`), and `slot()` (equivalent to `[[`). `@` is more restrictive than `$` in that it will return an error if the slot does not exist. These are described in more detail in Chapter \@ref(s4).
+Hay dos operadores de subconjuntos adicionales, que son necesarios para los objetos de S4: `@` (equivalente a `$`) y `slot()` (equivalente a `[[`). `@` es más restrictivo que `$` ya que devolverá un error si la ranura no existe. Estos se describen con más detalle en el @sec-s4.
 
-### Exercises
+### Ejercicios
 
-1.  Brainstorm as many ways as possible to extract the third value from the `cyl` variable in the `mtcars` dataset.
+1.  Piense en tantas formas como sea posible para extraer el tercer valor de la variable `cyl` en el conjunto de datos `mtcars`.
 
-2.  Given a linear model, e.g., `mod <- lm(mpg ~ wt, data = mtcars)`, extract the residual degrees of freedom. Then extract the R squared from the model summary (`summary(mod)`)
+2.  Dado un modelo lineal, por ejemplo, `mod <- lm(mpg ~ wt, data = mtcars)`, extraiga los grados de libertad residuales. Luego extraiga la R al cuadrado del resumen del modelo (`summary (mod)`)
 
-<!-- FIXME: more examples -->
+<!-- FIXME: más ejemplos -->
 
-## Subsetting and assignment {#subassignment}
+## Subconjunto y asignación {#sec-subassignment}
 
 \index{subsetting!subassignment} \index{assignment!subassignment} \index{lists!removing an element}
 
-All subsetting operators can be combined with assignment to modify selected values of an input vector: this is called subassignment. The basic form is `x[i] <- value`:
+Todos los operadores de subconjunto se pueden combinar con la asignación para modificar los valores seleccionados de un vector de entrada: esto se denomina subasignación. La forma básica es `x[i] <- valor`:
 
 ```{r}
 x <- 1:5
@@ -467,9 +467,9 @@ x[c(1, 2)] <- c(101, 102)
 x
 ```
 
-I recommend that you should make sure that `length(value)` is the same as `length(x[i])`, and that `i` is unique. This is because, while R will recycle if needed, those rules are complex (particularly if `i` contains missing or duplicated values) and may cause problems.
+Te recomiendo que te asegures de que `length(valor)` sea lo mismo que `length(x[i])`, y que `i` sea único. Esto se debe a que, si bien R reciclará si es necesario, esas reglas son complejas (particularmente si `i` contiene valores faltantes o duplicados) y pueden causar problemas.
 
-With lists, you can use `x[[i]] <- NULL` to remove a component. To add a literal `NULL`, use `x[i] <- list(NULL)`:
+Con las listas, puede usar `x[[i]] <- NULL` para eliminar un componente. Para agregar un literal `NULL`, use `x[i] <- list(NULL)`:
 
 ```{r}
 x <- list(a = 1, b = 2)
@@ -481,7 +481,7 @@ y["b"] <- list(NULL)
 str(y)
 ```
 
-Subsetting with nothing can be useful with assignment because it preserves the structure of the original object. Compare the following two expressions. In the first, `mtcars` remains a data frame because you are only changing the contents of `mtcars`, not `mtcars` itself. In the second, `mtcars` becomes a list because you are changing the object it is bound to.
+La creación de subconjuntos sin nada puede ser útil con la asignación porque conserva la estructura del objeto original. Compara las siguientes dos expresiones. En el primero, `mtcars` sigue siendo un data frame porque solo está cambiando el contenido de `mtcars`, no `mtcars` en sí. En el segundo, `mtcars` se convierte en una lista porque está cambiando el objeto al que está vinculado.
 
 ```{r, mtcars}
 mtcars[] <- lapply(mtcars, as.integer)
@@ -495,15 +495,15 @@ is.data.frame(mtcars)
 rm(mtcars)
 ```
 
-## Applications {#applications}
+## Aplicaciones {#sec-applications}
 
-The principles described above have a wide variety of useful applications. Some of the most important are described below. While many of the basic principles of subsetting have already been incorporated into functions like `subset()`, `merge()`, and `dplyr::arrange()`, a deeper understanding of how those principles have been implemented will be valuable when you run into situations where the functions you need don't exist.
+Los principios descritos anteriormente tienen una amplia variedad de aplicaciones útiles. A continuación se describen algunos de los más importantes. Si bien muchos de los principios básicos de creación de subconjuntos ya se han incorporado en funciones como `subset()`, `merge()` y `dplyr::arrange()`, será valioso comprender mejor cómo se han implementado esos principios. cuando se encuentra con situaciones en las que las funciones que necesita no existen.
 
-### Lookup tables (character subsetting) {#lookup-tables}
+### Tablas de búsqueda (subconjunto de caracteres) {#sec-lookup-tables}
 
 \index{lookup tables}
 
-Character matching is a powerful way to create lookup tables. Say you want to convert abbreviations:
+La coincidencia de caracteres es una forma poderosa de crear tablas de búsqueda. Digamos que quieres convertir abreviaturas:
 
 ```{r}
 x <- c("m", "f", "u", "f", "f", "m", "m")
@@ -511,17 +511,17 @@ lookup <- c(m = "Male", f = "Female", u = NA)
 lookup[x]
 ```
 
-Note that if you don't want names in the result, use `unname()` to remove them.
+Tenga en cuenta que si no quiere nombres en el resultado, use `unname()` para eliminarlos.
 
 ```{r}
 unname(lookup[x])
 ```
 
-### Matching and merging by hand (integer subsetting) {#matching-merging}
+### Coincidencia y fusión a mano (subconjunto de enteros) {#sec-matching-merging}
 
 \index{matching and merging} \indexc{match()}
 
-You can also have more complicated lookup tables with multiple columns of information. For example, suppose we have a vector of integer grades, and a table that describes their properties:
+También puede tener tablas de búsqueda más complicadas con múltiples columnas de información. Por ejemplo, supongamos que tenemos un vector de grados enteros y una tabla que describe sus propiedades:
 
 ```{r}
 grades <- c(1, 2, 2, 3, 1)
@@ -533,7 +533,7 @@ info <- data.frame(
 )
 ```
 
-Then, let's say we want to duplicate the `info` table so that we have a row for each value in `grades`. An elegant way to do this is by combining `match()` and integer subsetting (`match(needles, haystack)` returns the position where each `needle` is found in the `haystack`).
+Entonces, digamos que queremos duplicar la tabla `info` para que tengamos una fila para cada valor en `grade`. Una forma elegante de hacer esto es combinando `match()` y un subconjunto de enteros (`match(aguja, pajar)` devuelve la posición donde se encuentra cada `aguja` en el `pajar`).
 
 ```{r}
 id <- match(grades, info$grade)
@@ -541,38 +541,38 @@ id
 info[id, ]
 ```
 
-If you're matching on multiple columns, you'll need to first collapse them into a single column (with e.g. `interaction()`). Typically, however, you're better off switching to a function designed specifically for joining multiple tables like `merge()`, or `dplyr::left_join()`.
+Si está haciendo coincidir varias columnas, primero deberá colapsarlas en una sola columna (con, por ejemplo, `interaction ()`). Sin embargo, normalmente es mejor cambiar a una función diseñada específicamente para unir varias tablas como `merge()` o `dplyr::left_join()`.
 
-### Random samples and bootstraps (integer subsetting)
+### Muestras aleatorias y bootstraps (subconjunto de enteros)
 
 \index{sampling} \index{bootstrapping}
 
-You can use integer indices to randomly sample or bootstrap a vector or data frame. Just use `sample(n)` to generate a random permutation of `1:n`, and then use the results to subset the values:
+Puede usar índices enteros para muestrear o arrancar aleatoriamente un vector o un data frame. Simplemente use `sample(n)` para generar una permutación aleatoria de `1:n`, y luego use los resultados para dividir los valores:
 
 ```{r}
 df <- data.frame(x = c(1, 2, 3, 1, 2), y = 5:1, z = letters[1:5])
 
-# Randomly reorder
+# Reordenar aleatoriamente
 df[sample(nrow(df)), ]
 
-# Select 3 random rows
+# Seleccionar aleatoriamente 3 filas
 df[sample(nrow(df), 3), ]
 
-# Select 6 bootstrap replicates
+# Seleccione 6 réplicas de arranque
 df[sample(nrow(df), 6, replace = TRUE), ]
 ```
 
-The arguments of `sample()` control the number of samples to extract, and also whether sampling is done with or without replacement.
+Los argumentos de `sample()` controlan el número de muestras a extraer, y también si el muestreo se realiza con o sin reemplazo.
 
-### Ordering (integer subsetting)
+### Ordenación (subconjunto de enteros)
 
 \indexc{order()}
 
 \index{sorting}
 
-`order()` takes a vector as its input and returns an integer vector describing how to order the subsetted vector[^subsetting-2]:
+`order()` toma un vector como entrada y devuelve un vector entero que describe cómo ordenar el vector dividido en subconjuntos[^subsetting-2]:
 
-[^subsetting-2]: These are "pull" indices, i.e., `order(x)[i]` is an index of where each `x[i]` is located. It is not an index of where `x[i]` should be sent.
+[^subsetting-2]: Estos son índices de "extracción", es decir, `order(x)[i]` es un índice de dónde se encuentra cada `x[i]`. No es un índice de dónde debe enviarse `x[i]`.
 
 ```{r}
 x <- c("b", "c", "a")
@@ -580,12 +580,12 @@ order(x)
 x[order(x)]
 ```
 
-To break ties, you can supply additional variables to `order()`. You can also change the order from ascending to descending by using `decreasing = TRUE`. By default, any missing values will be put at the end of the vector; however, you can remove them with `na.last = NA` or put them at the front with `na.last = FALSE`.
+Para desempatar, puede proporcionar variables adicionales a `order()`. También puede cambiar el orden de ascendente a descendente utilizando `decreasing = TRUE`. De forma predeterminada, cualquier valor que falte se colocará al final del vector; sin embargo, puede eliminarlos con `na.last = NA` o ponerlos al frente con `na.last = FALSE`.
 
-For two or more dimensions, `order()` and integer subsetting makes it easy to order either the rows or columns of an object:
+Para dos o más dimensiones, `order()` y el subconjunto de enteros facilita el orden de las filas o las columnas de un objeto:
 
 ```{r}
-# Randomly reorder df
+# Reordenar al azar df
 df2 <- df[sample(nrow(df)), 3:1]
 df2
 
@@ -593,11 +593,11 @@ df2[order(df2$x), ]
 df2[, order(names(df2))]
 ```
 
-You can sort vectors directly with `sort()`, or similarly `dplyr::arrange()`, to sort a data frame.
+Puede ordenar los vectores directamente con `sort()`, o de manera similar `dplyr::arrange()`, para ordenar un data frame.
 
-### Expanding aggregated counts (integer subsetting)
+### Expansión de recuentos agregados (subconjunto de enteros)
 
-Sometimes you get a data frame where identical rows have been collapsed into one and a count column has been added. `rep()` and integer subsetting make it easy to uncollapse, because we can take advantage of `rep()`s vectorisation: `rep(x, y)` repeats `x[i]` `y[i]` times.
+A veces obtiene un data frame donde filas idénticas se han colapsado en una y se ha agregado una columna de conteo. `rep()` y el subconjunto de enteros hacen que sea fácil de descomprimir, porque podemos aprovechar la vectorización de `rep()`: `rep(x, y)` repite `x[i]` `y[i]` veces .
 
 ```{r}
 df <- data.frame(x = c(2, 4, 1), y = c(9, 11, 6), n = c(3, 5, 1))
@@ -606,33 +606,33 @@ rep(1:nrow(df), df$n)
 df[rep(1:nrow(df), df$n), ]
 ```
 
-### Removing columns from data frames (character \mbox{subsetting})
+### Eliminar columnas de data frames (caracteres \mbox{subsetting})
 
-There are two ways to remove columns from a data frame. You can set individual columns to `NULL`:
+Hay dos formas de eliminar columnas de un data frame. Puede establecer columnas individuales para `NULL`:
 
 ```{r}
 df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
 df$z <- NULL
 ```
 
-Or you can subset to return only the columns you want:
+O puede extraer un subconjunto para devolver solo las columnas que desea:
 
 ```{r}
 df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
 df[c("x", "y")]
 ```
 
-If you only know the columns you don't want, use set operations to work out which columns to keep:
+Si solo conoce las columnas que no desea, use las operaciones de configuración para determinar qué columnas conservar:
 
 ```{r}
 df[setdiff(names(df), "z")]
 ```
 
-### Selecting rows based on a condition (logical subsetting)
+### Selección de filas en función de una condición (subconjunto lógico)
 
 \index{subsetting!with logical vectors} \indexc{subset()}
 
-Because logical subsetting allows you to easily combine conditions from multiple columns, it's probably the most commonly used technique for extracting rows out of a data frame.
+Debido a que el subconjunto lógico le permite combinar fácilmente condiciones de varias columnas, es probablemente la técnica más utilizada para extraer filas de un data frame.
 
 ```{r}
 mtcars[mtcars$gear == 5, ]
@@ -640,24 +640,24 @@ mtcars[mtcars$gear == 5, ]
 mtcars[mtcars$gear == 5 & mtcars$cyl == 4, ]
 ```
 
-Remember to use the vector boolean operators `&` and `|`, not the short-circuiting scalar operators `&&` and `||`, which are more useful inside if statements. And don't forget [De Morgan's laws](http://en.wikipedia.org/wiki/De_Morgan's_laws), which can be useful to simplify negations:
+Recuerde utilizar los operadores booleanos vectoriales `&` y `|`, no los operadores escalares de cortocircuito `&&` y `||`, que son más útiles dentro de las sentencias if. Y no olvide [las leyes de De Morgan](http://en.wikipedia.org/wiki/De_Morgan's_laws), que pueden ser útiles para simplificar las negaciones:
 
--   `!(X & Y)` is the same as `!X | !Y`
--   `!(X | Y)` is the same as `!X & !Y`
+-   `!(X & Y)` es lo mismo que `!X | !Y`
+-   `!(X | Y)` es lo mismo que `!X & !Y`
 
-For example, `!(X & !(Y | Z))` simplifies to `!X | !!(Y|Z)`, and then to `!X | Y | Z`.
+Por ejemplo, `!(X & !(Y | Z))` se simplifica en `!X | !!(Y|Z)`, y luego a `!X | Y | Z`.
 
-### Boolean algebra versus sets (logical and integer \mbox{subsetting})
+### Álgebra booleana versus conjuntos (lógicos y enteros \mbox{subsetting})
 
 \index{Boolean algebra} \index{set algebra} \indexc{which()}
 
-It's useful to be aware of the natural equivalence between set operations (integer subsetting) and Boolean algebra (logical subsetting). Using set operations is more effective when:
+Es útil ser consciente de la equivalencia natural entre las operaciones con conjuntos (subconjuntos enteros) y el álgebra booleana (subconjuntos lógicos). El uso de operaciones de conjuntos es más efectivo cuando:
 
--   You want to find the first (or last) `TRUE`.
+-   Quieres encontrar el primero (o el último) `TRUE`.
 
--   You have very few `TRUE`s and very many `FALSE`s; a set representation may be faster and require less storage.
+-   Tienes muy pocos `TRUE` y muchos `FALSE`; una representación establecida puede ser más rápida y requerir menos almacenamiento.
 
-`which()` allows you to convert a Boolean representation to an integer representation. There's no reverse operation in base R but we can easily create one:
+`which()` le permite convertir una representación booleana en una representación entera. No hay una operación inversa en la base R, pero podemos crear una fácilmente:
 
 ```{r}
 x <- sample(10) < 4
@@ -671,7 +671,7 @@ unwhich <- function(x, n) {
 unwhich(which(x), 10)
 ```
 
-Let's create two logical vectors and their integer equivalents, and then explore the relationship between Boolean and set operations.
+Creemos dos vectores lógicos y sus equivalentes enteros, y luego exploremos la relación entre las operaciones booleanas y de conjuntos.
 
 ```{r}
 (x1 <- 1:10 %% 2 == 0)
@@ -696,30 +696,30 @@ xor(x1, y1)
 setdiff(union(x2, y2), intersect(x2, y2))
 ```
 
-When first learning subsetting, a common mistake is to use `x[which(y)]` instead of `x[y]`. Here the `which()` achieves nothing: it switches from logical to integer subsetting but the result is exactly the same. In more general cases, there are two important differences.
+Al aprender subconjuntos por primera vez, un error común es usar `x[which(y)]` en lugar de `x[y]`. Aquí, `which()` no logra nada: cambia de subconjunto lógico a entero, pero el resultado es exactamente el mismo. En casos más generales, hay dos diferencias importantes.
 
--   When the logical vector contains `NA`, logical subsetting replaces these values with `NA` while `which()` simply drops these values. It's not uncommon to use `which()` for this side-effect, but I don't recommend it: nothing about the name "which" implies the removal of missing values.
+-   Cuando el vector lógico contiene `NA`, el subconjunto lógico reemplaza estos valores con `NA` mientras que `which()` simplemente elimina estos valores. No es raro usar `which()` para este efecto secundario, pero no lo recomiendo: nada sobre el nombre "cuál" implica la eliminación de valores faltantes.
 
--   `x[-which(y)]` is **not** equivalent to `x[!y]`: if `y` is all FALSE, `which(y)` will be `integer(0)` and `-integer(0)` is still `integer(0)`, so you'll get no values, instead of all values.
+-   `x[-which(y)]` **no** es equivalente a `x[!y]`: si `y` es todo FALSO, `which(y)` será `integer(0)` y `-integer(0)` sigue siendo `integer(0)`, por lo que no obtendrá valores, en lugar de todos los valores.
 
-In general, avoid switching from logical to integer subsetting unless you want, for example, the first or last `TRUE` value.
+En general, evite cambiar de subconjunto lógico a entero a menos que desee, por ejemplo, el primer o último valor `TRUE`.
 
-### Exercises
+### Ejercicios
 
-1.  How would you randomly permute the columns of a data frame? (This is an important technique in random forests.) Can you simultaneously permute the rows and columns in one step?
+1.  ¿Cómo permutarías aleatoriamente las columnas de un data frame? (Esta es una técnica importante en los bosques aleatorios). ¿Puede permutar simultáneamente las filas y las columnas en un solo paso?
 
-2.  How would you select a random sample of `m` rows from a data frame? What if the sample had to be contiguous (i.e., with an initial row, a final row, and every row in between)?
+2.  ¿Cómo seleccionaría una muestra aleatoria de `m` filas de un data frame? ¿Qué pasaría si la muestra tuviera que ser contigua (es decir, con una fila inicial, una fila final y todas las filas intermedias)?
 
-3.  How could you put the columns in a data frame in alphabetical order?
+3.  ¿Cómo podría poner las columnas en un data frame en orden alfabético?
 
-## Quiz answers {#subsetting-answers}
+## Respuestas de la {#sec-subsetting-answers}
 
-1.  Positive integers select elements at specific positions, negative integers drop elements; logical vectors keep elements at positions corresponding to `TRUE`; character vectors select elements with matching names.
+1.  Los enteros positivos seleccionan elementos en posiciones específicas, los enteros negativos descartan elementos; los vectores lógicos mantienen los elementos en las posiciones correspondientes a `TRUE`; los vectores de caracteres seleccionan elementos con nombres coincidentes.
 
-2.  `[` selects sub-lists: it always returns a list. If you use it with a single positive integer, it returns a list of length one. `[[` selects an element within a list. `$` is a convenient shorthand: `x$y` is equivalent to `x[["y"]]`.
+2.  `[` selecciona sub-listas: siempre devuelve una lista. Si lo usa con un solo entero positivo, devuelve una lista de longitud uno. `[[` selecciona un elemento dentro de una lista. `$` es una abreviatura conveniente: `x$y` es equivalente a `x[["y"]]`.
 
-3.  Use `drop = FALSE` if you are subsetting a matrix, array, or data frame and you want to preserve the original dimensions. You should almost always use it when subsetting inside a function.
+3.  Use `drop = FALSE` si está creando subconjuntos de una matriz, un arreglo o un data frame y desea conservar las dimensiones originales. Casi siempre deberías usarlo cuando hagas subconjuntos dentro de una función.
 
-4.  If `x` is a matrix, `x[] <- 0` will replace every element with 0, keeping the same number of rows and columns. In contrast, `x <- 0` completely replaces the matrix with the value 0.
+4.  Si `x` es una matriz, `x[] <- 0` reemplazará cada elemento con 0, manteniendo el mismo número de filas y columnas. Por el contrario, `x <- 0` reemplaza completamente la matriz con el valor 0.
 
-5.  A named character vector can act as a simple lookup table: `c(x = 1, y = 2, z = 3)[c("y", "z", "x")]`
+5.  Un vector de caracteres con nombre puede actuar como una tabla de búsqueda simple: `c(x = 1, y = 2, z = 3)[c("y", "z", "x")]`
