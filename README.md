@@ -21,6 +21,7 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
     -   Subconjunto
     -   Flujo de control
     -   Funciones
+    -   Entornos
 
 # Más información acerca del repositorio
 
@@ -97,6 +98,7 @@ The translation was done using Google Translate and some grammar and coherence e
     -   Subsetting
     -   Control flow
     -   Functions
+    -   Environments
 
 # More info about the repository
 

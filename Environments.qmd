@@ -1,4 +1,4 @@
-# Environments {#sec-environments}
+# Entornos {#sec-environments}
 
 \index{environments}
 
@@ -8,63 +8,63 @@ source("common.R")
 
 ## Introduction
 
-The environment is the data structure that powers scoping. This chapter dives deep into environments, describing their structure in depth, and using them to improve your understanding of the four scoping rules described in Section \@ref(lexical-scoping). Understanding environments is not necessary for day-to-day use of R. But they are important to understand because they power many important R features like lexical scoping, namespaces, and R6 classes, and interact with evaluation to give you powerful tools for making domain specific languages, like dplyr and ggplot2.
+El entorno es la estructura de datos que impulsa el alcance. Este capítulo profundiza en los entornos, describe su estructura en profundidad y los usa para mejorar su comprensión de las cuatro reglas de scoping descritas en la @sec-lexical-scoping. Comprender los entornos no es necesario para el uso diario de R. Pero es importante comprenderlos porque impulsan muchas funciones importantes de R, como el scoping léxico, los espacios de nombres y las clases R6, e interactúan con la evaluación para brindarle herramientas poderosas para crear dominios. lenguajes específicos, como dplyr y ggplot2.
 
-### Quiz {.unnumbered}
+### Prueba {.unnumbered}
 
-If you can answer the following questions correctly, you already know the most important topics in this chapter. You can find the answers at the end of the chapter in Section \@ref(env-answers).
+Si puede responder correctamente las siguientes preguntas, ya conoce los temas más importantes de este capítulo. Puede encontrar las respuestas al final del capítulo en la @sec-env-answers.
 
-1.  List at least three ways that an environment differs from a list.
+1.  Enumere al menos tres formas en que un entorno difiere de una lista.
 
-2.  What is the parent of the global environment? What is the only environment that doesn't have a parent?
+2.  ¿Cuál es el padre del medio ambiente global? ¿Cuál es el único entorno que no tiene un padre?
 
-3.  What is the enclosing environment of a function? Why is it important?
+3.  ¿Qué es el entorno envolvente de una función? ¿Por qué es importante?
 
-4.  How do you determine the environment from which a function was called?
+4.  ¿Cómo determina el entorno desde el que se llamó a una función?
 
-5.  How are `<-` and `<<-` different?
+5.  ¿En qué se diferencian `<-` y `<<-`?
 
-### Outline {.unnumbered}
+### Estructura {.unnumbered}
 
--   Section \@ref(env-basics) introduces you to the basic properties of an environment and shows you how to create your own.
+-   La @sec-env-basics le presenta las propiedades básicas de un entorno y le muestra cómo crear el suyo propio.
 
--   Section \@ref(env-recursion) provides a function template for computing with environments, illustrating the idea with a useful function.
+-   La @sec-env-recursion proporciona una plantilla de funciones para computar con entornos, ilustrando la idea con una función útil.
 
--   Section \@ref(special-environments) describes environments used for special purposes: for packages, within functions, for namespaces, and for function execution.
+-   La @sec-special-environments describe entornos utilizados para fines especiales: para paquetes, dentro de funciones, para espacios de nombres y para la ejecución de funciones.
 
--   Section \@ref(call-stack) explains the last important environment: the caller environment. This requires you to learn about the call stack, that describes how a function was called. You'll have seen the call stack if you've ever called `traceback()` to aid debugging.
+-   La @sec-call-stack explica el último entorno importante: el entorno de la persona que llama. Esto requiere que aprenda sobre la pila de llamadas, que describe cómo se llamó a una función. Habrás visto la pila de llamadas si alguna vez llamaste a `traceback()` para ayudar en la depuración.
 
--   Section \@ref(explicit-envs) briefly discusses three places where environments are useful data structures for solving other problems.
+-   La @sec-explicit-envs analiza brevemente tres lugares donde los entornos son estructuras de datos útiles para resolver otros problemas.
 
-### Prerequisites {.unnumbered}
+### Requisitos previos {.unnumbered}
 
-This chapter will use [rlang](https://rlang.r-lib.org) functions for working with environments, because it allows us to focus on the essence of environments, rather than the incidental details.
+Este capítulo utilizará las funciones [rlang](https://rlang.r-lib.org) para trabajar con entornos, ya que nos permite centrarnos en la esencia de los entornos, en lugar de los detalles secundarios.
 
 ```{r setup, message = FALSE}
 library(rlang)
 ```
 
-The `env_` functions in rlang are designed to work with the pipe: all take an environment as the first argument, and many also return an environment. I won't use the pipe in this chapter in the interest of keeping the code as simple as possible, but you should consider it for your own code.
+Las funciones `env_` en rlang están diseñadas para trabajar con la canalización: todas toman un entorno como primer argumento, y muchas también devuelven un entorno. No usaré la canalización en este capítulo con el fin de mantener el código lo más simple posible, pero debería considerarlo para su propio código.
 
-## Environment basics {#env-basics}
+## Conceptos básicos de entornos {#sec-env-basics}
 
-Generally, an environment is similar to a named list, with four important exceptions:
+En general, un entorno es similar a una lista con nombre, con cuatro excepciones importantes:
 
--   Every name must be unique.
+-   Cada nombre debe ser único.
 
--   The names in an environment are not ordered.
+-   Los nombres de un entorno no están ordenados.
 
--   An environment has a parent.
+-   Un entorno tiene un padre.
 
--   Environments are not copied when modified.
+-   Los entornos no se copian cuando se modifican.
 
-Let's explore these ideas with code and pictures.
+Exploremos estas ideas con código e imágenes.
 
-### Basics
+### Lo esencial
 
 \index{environments!creating} \indexc{env()} \indexc{new.env()} \index{assignment}
 
-To create an environment, use `rlang::env()`. It works like `list()`, taking a set of name-value pairs:
+Para crear un entorno, utilice `rlang::env()`. Funciona como `list()`, tomando un conjunto de pares nombre-valor:
 
 ```{r}
 e1 <- env(
@@ -76,16 +76,16 @@ e1 <- env(
 ```
 
 ::: base
-Use `new.env()` to create a new environment. Ignore the `hash` and `size` parameters; they are not needed. You cannot simultaneously create and define values; use `$<-`, as shown below.
+Utilice `new.env()` para crear un nuevo entorno. Ignora los parámetros `hash` y `size`; no son necesarios. No puede crear y definir valores simultáneamente; use `$<-`, como se muestra a continuación.
 :::
 
-The job of an environment is to associate, or **bind**, a set of names to a set of values. You can think of an environment as a bag of names, with no implied order (i.e. it doesn't make sense to ask which is the first element in an environment). For that reason, we'll draw the environment as so:
+El trabajo de un entorno es asociar, o **vincular**, un conjunto de nombres a un conjunto de valores. Puede pensar en un entorno como una bolsa de nombres, sin orden implícito (es decir, no tiene sentido preguntar cuál es el primer elemento en un entorno). Por esa razón, dibujaremos el entorno así:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/environments/bindings.png")
 ```
 
-As discussed in Section \@ref(env-modify), environments have reference semantics: unlike most R objects, when you modify them, you modify them in place, and don't create a copy. One important implication is that environments can contain themselves.
+Como se discutió en la @sec-env-modify, los entornos tienen una semántica de referencia: a diferencia de la mayoría de los objetos R, cuando los modifica, los modifica en su lugar y no crea una copia. Una implicación importante es que los entornos pueden contenerse a sí mismos.
 
 ```{r}
 e1$d <- e1
@@ -95,35 +95,35 @@ e1$d <- e1
 knitr::include_graphics("diagrams/environments/loop.png")
 ```
 
-Printing an environment just displays its memory address, which is not terribly useful:
+Imprimir un entorno solo muestra su dirección de memoria, lo que no es muy útil:
 
 ```{r}
 e1
 ```
 
-Instead, we'll use `env_print()` which gives us a little more information:
+En su lugar, usaremos `env_print()` que nos brinda un poco más de información:
 
 ```{r}
 env_print(e1)
 ```
 
-You can use `env_names()` to get a character vector giving the current bindings
+Puede usar `env_names()` para obtener un vector de caracteres que proporcione los enlaces actuales
 
 ```{r}
 env_names(e1)
 ```
 
 ::: base
-In R 3.2.0 and greater, use `names()` to list the bindings in an environment. If your code needs to work with R 3.1.0 or earlier, use `ls()`, but note that you'll need to set `all.names = TRUE` to show all bindings.
+En R 3.2.0 y versiones posteriores, use `names()` para enumerar los enlaces en un entorno. Si su código necesita funcionar con R 3.1.0 o anterior, use `ls()`, pero tenga en cuenta que deberá configurar `all.names = TRUE` para mostrar todos los enlaces.
 :::
 
-### Important environments
+### Entornos importantes
 
 \index{environments!current} \index{environments!global}
 
-We'll talk in detail about special environments in \@ref(special-environments), but for now we need to mention two. The current environment, or `current_env()` is the environment in which code is currently executing. When you're experimenting interactively, that's usually the global environment, or `global_env()`. The global environment is sometimes called your "workspace", as it's where all interactive (i.e. outside of a function) computation takes place.
+Hablaremos en detalle sobre entornos especiales en @sec-special-environments, pero por ahora necesitamos mencionar dos. El entorno actual, o `current_env()` es el entorno en el que el código se está ejecutando actualmente. Cuando estás experimentando de forma interactiva, ese suele ser el entorno global, o `global_env()`. El entorno global a veces se llama su "área de trabajo", ya que es donde se lleva a cabo todo el cálculo interactivo (es decir, fuera de una función).
 
-To compare environments, you need to use `identical()` and not `==`. This is because `==` is a vectorised operator, and environments are not vectors.
+Para comparar entornos, debe usar `identical()` y no `==`. Esto se debe a que `==` es un operador vectorizado y los entornos no son vectores.
 
 ```{r, error = TRUE}
 identical(global_env(), current_env())
@@ -132,14 +132,14 @@ global_env() == current_env()
 ```
 
 ::: base
-Access the global environment with `globalenv()` and the current environment with `environment()`. The global environment is printed as `R_GlobalEnv` and `.GlobalEnv`.
+Accede al entorno global con `globalenv()` y al entorno actual con `environment()`. El entorno global se imprime como `R_GlobalEnv` y `.GlobalEnv`.
 :::
 
-### Parents
+### Padres
 
 \index{environments!parent} \indexc{env\_parent()}
 
-Every environment has a **parent**, another environment. In diagrams, the parent is shown as a small pale blue circle and arrow that points to another environment. The parent is what's used to implement lexical scoping: if a name is not found in an environment, then R will look in its parent (and so on). You can set the parent environment by supplying an unnamed argument to `env()`. If you don't supply it, it defaults to the current environment. In the code below, `e2a` is the parent of `e2b`.
+Cada entorno tiene un **padre**, otro entorno. En los diagramas, el padre se muestra como un pequeño círculo azul pálido y una flecha que apunta a otro entorno. El padre es lo que se usa para implementar el scoping léxico: si un nombre no se encuentra en un entorno, entonces R buscará en su padre (y así sucesivamente). Puede configurar el entorno principal proporcionando un argumento sin nombre a `env()`. Si no lo proporciona, el valor predeterminado es el entorno actual. En el siguiente código, `e2a` es el padre de `e2b`.
 
 ```{r}
 e2a <- env(d = 4, e = 5)
@@ -150,16 +150,16 @@ e2b <- env(e2a, a = 1, b = 2, c = 3)
 knitr::include_graphics("diagrams/environments/parents.png")
 ```
 
-To save space, I typically won't draw all the ancestors; just remember whenever you see a pale blue circle, there's a parent environment somewhere.
+Para ahorrar espacio, normalmente no dibujaré a todos los antepasados; solo recuerda que cada vez que veas un círculo azul pálido, hay un entorno principal en alguna parte.
 
-You can find the parent of an environment with `env_parent()`:
+Puedes encontrar el padre de un entorno con `env_parent()`:
 
 ```{r}
 env_parent(e2b)
 env_parent(e2a)
 ```
 
-Only one environment doesn't have a parent: the **empty** environment. I draw the empty environment with a hollow parent environment, and where space allows I'll label it with `R_EmptyEnv`, the name R uses.
+Solo un entorno no tiene un padre: el entorno **vacío**. Dibujo el entorno vacío con un entorno principal vacío y, cuando el espacio lo permita, lo etiquetaré con `R_EmptyEnv`, el nombre que usa R.
 
 ```{r}
 e2c <- env(empty_env(), d = 4, e = 5)
@@ -170,30 +170,30 @@ e2d <- env(e2c, a = 1, b = 2, c = 3)
 knitr::include_graphics("diagrams/environments/parents-empty.png")
 ```
 
-The ancestors of every environment eventually terminate with the empty environment. You can see all ancestors with `env_parents()`:
+Los ancestros de cada ambiente eventualmente terminan con el ambiente vacío. Puedes ver todos los ancestros con `env_parents()`:
 
 ```{r}
 env_parents(e2b)
 env_parents(e2d)
 ```
 
-By default, `env_parents()` stops when it gets to the global environment. This is useful because the ancestors of the global environment include every attached package, which you can see if you override the default behaviour as below. We'll come back to these environments in Section \@ref(search-path).
+Por defecto, `env_parents()` se detiene cuando llega al entorno global. Esto es útil porque los ancestros del entorno global incluyen todos los paquetes adjuntos, que puede ver si anula el comportamiento predeterminado como se muestra a continuación. Volveremos a estos entornos en la @sec-search-path.
 
 ```{r}
 env_parents(e2b, last = empty_env())
 ```
 
 ::: base
-Use `parent.env()` to find the parent of an environment. No base function returns all ancestors.
+Use `parent.env()` para encontrar el padre de un entorno. Ninguna función base devuelve todos los ancestros.
 :::
 
-### Super assignment, `<<-`
+### Asignación superior, `<<-`
 
 \indexc{<<-}
 
 \index{assignment} \index{super assignment}
 
-The ancestors of an environment have an important relationship to `<<-`. Regular assignment, `<-`, always creates a variable in the current environment. Super assignment, `<<-`, never creates a variable in the current environment, but instead modifies an existing variable found in a parent environment.
+Los ancestros de un entorno tienen una relación importante con `<<-`. La asignación regular, `<-`, siempre crea una variable en el entorno actual. La súper asignación, `<<-`, nunca crea una variable en el entorno actual, sino que modifica una variable existente que se encuentra en un entorno principal.
 
 ```{r}
 x <- 0
@@ -204,13 +204,13 @@ f()
 x
 ```
 
-If `<<-` doesn't find an existing variable, it will create one in the global environment. This is usually undesirable, because global variables introduce non-obvious dependencies between functions. `<<-` is most often used in conjunction with a function factory, as described in Section \@ref(stateful-funs).
+Si `<<-` no encuentra una variable existente, creará una en el entorno global. Esto generalmente no es deseable, porque las variables globales introducen dependencias no obvias entre funciones. `<<-` se usa más a menudo junto con una fábrica de funciones, como se describe en la @sec-stateful-funs.
 
-### Getting and setting
+### Conseguir y configurar
 
 \index{environments!bindings} \indexc{env\_bind\_*}
 
-You can get and set elements of an environment with `$` and `[[` in the same way as a list:
+Puede obtener y establecer elementos de un entorno con `$` y `[[` de la misma manera que una lista:
 
 ```{r}
 e3 <- env(x = 1, y = 2)
@@ -219,7 +219,7 @@ e3$z <- 3
 e3[["z"]]
 ```
 
-But you can't use `[[` with numeric indices, and you can't use `[`:
+Pero no puedes usar `[[` con índices numéricos, y no puedes usar `[`:
 
 ```{r, error = TRUE}
 e3[[1]]
@@ -227,7 +227,7 @@ e3[[1]]
 e3[c("x", "y")]
 ```
 
-`$` and `[[` will return `NULL` if the binding doesn't exist. Use `env_get()` if you want an error:
+`$` y `[[` devolverán `NULL` si el enlace no existe. Usa `env_get()` si quieres un error:
 
 ```{r, error = TRUE}
 e3$xyz
@@ -235,37 +235,37 @@ e3$xyz
 env_get(e3, "xyz")
 ```
 
-If you want to use a default value if the binding doesn't exist, you can use the `default` argument.
+Si desea usar un valor predeterminado si el enlace no existe, puede usar el argumento `default`.
 
 ```{r}
 env_get(e3, "xyz", default = NA)
 ```
 
-There are two other ways to add bindings to an environment:
+Hay otras dos formas de agregar enlaces a un entorno:
 
--   `env_poke()`[^environments-1] takes a name (as string) and a value:
+-   `env_poke()`[^environments-1] toma un nombre (como cadena) y un valor:
 
     ```{r}
     env_poke(e3, "a", 100)
     e3$a
     ```
 
--   `env_bind()` allows you to bind multiple values:
+-   `env_bind()` le permite vincular múltiples valores:
 
     ```{r}
     env_bind(e3, a = 10, b = 20)
     env_names(e3)
     ```
 
-[^environments-1]: You might wonder why rlang has `env_poke()` instead of `env_set()`. This is for consistency: `_set()` functions return a modified copy; `_poke()` functions modify in place.
+[^environments-1]: Quizás se pregunte por qué rlang tiene `env_poke()` en lugar de `env_set()`. Esto es por coherencia: las funciones `_set()` devuelven una copia modificada; Las funciones `_poke()` se modifican en su lugar.
 
-You can determine if an environment has a binding with `env_has()`:
+Puede determinar si un entorno tiene un enlace con `env_has()`:
 
 ```{r}
 env_has(e3, "a")
 ```
 
-Unlike lists, setting an element to `NULL` does not remove it, because sometimes you want a name that refers to `NULL`. Instead, use `env_unbind()`:
+A diferencia de las listas, establecer un elemento en `NULL` no lo elimina, porque a veces desea un nombre que se refiera a `NULL`. En su lugar, usa `env_unbind()`:
 
 ```{r}
 e3$a <- NULL
@@ -275,19 +275,19 @@ env_unbind(e3, "a")
 env_has(e3, "a")
 ```
 
-Unbinding a name doesn't delete the object. That's the job of the garbage collector, which automatically removes objects with no names binding to them. This process is described in more detail in Section \@ref(gc).
+Desvincular un nombre no elimina el objeto. Ese es el trabajo del recolector de basura, que elimina automáticamente los objetos sin nombres vinculados a ellos. Este proceso se describe con más detalle en la @sec-gc.
 
 ::: base
-\indexc{rm()}\index{assignment!assign()@\texttt{assign()}}\indexc{get()}\indexc{exists()} See `get()`, `assign()`, `exists()`, and `rm()`. These are designed interactively for use with the current environment, so working with other environments is a little clunky. Also beware the `inherits` argument: it defaults to `TRUE` meaning that the base equivalents will inspect the supplied environment and all its ancestors.
+\indexc{rm()}\index{assignment!assign()@\texttt{assign()}}\indexc{get()}\indexc{exists()} Consulte `get()`, `assign()`, `exists()` y `rm()`. Estos están diseñados de forma interactiva para su uso con el entorno actual, por lo que trabajar con otros entornos es un poco complicado. También tenga cuidado con el argumento `inherits`: por defecto es `TRUE`, lo que significa que los equivalentes base inspeccionarán el entorno suministrado y todos sus ancestros.
 :::
 
-### Advanced bindings
+### Enlaces avanzados{#advanced-dindings}
 
 \index{bindings!delayed} \index{promises} \index{bindings!active} \index{active bindings} \indexc{env\_bind\_*}
 
-There are two more exotic variants of `env_bind()`:
+Hay dos variantes más exóticas de `env_bind()`:
 
--   `env_bind_lazy()` creates **delayed bindings**, which are evaluated the first time they are accessed. Behind the scenes, delayed bindings create promises, so behave in the same way as function arguments.
+-   `env_bind_lazy()` crea **enlaces retrasados**, que se evalúan la primera vez que se accede a ellos. Detrás de escena, los enlaces retrasados crean promesas, por lo que se comportan de la misma manera que los argumentos de función.
 
     ```{r, cache = TRUE}
     env_bind_lazy(current_env(), b = {Sys.sleep(1); 1})
@@ -296,9 +296,9 @@ There are two more exotic variants of `env_bind()`:
     system.time(print(b))
     ```
 
-    The primary use of delayed bindings is in `autoload()`, which allows R packages to provide datasets that behave like they are loaded in memory, even though they're only loaded from disk when needed.
+    El uso principal de los enlaces retrasados es `autoload()`, que permite que los paquetes de R proporcionen conjuntos de datos que se comportan como si estuvieran cargados en la memoria, aunque solo se cargan desde el disco cuando es necesario.
 
--   `env_bind_active()` creates **active bindings** which are re-computed every time they're accessed:
+-   `env_bind_active()` crea **enlaces activos** que se vuelven a calcular cada vez que se accede a ellos:
 
     ```{r}
     env_bind_active(current_env(), z1 = function(val) runif(1))
@@ -307,33 +307,33 @@ There are two more exotic variants of `env_bind()`:
     z1
     ```
 
-    Active bindings are used to implement R6's active fields, which you'll learn about in Section \@ref(active-fields).
+    Los enlaces activos se utilizan para implementar los campos activos de R6, sobre los que aprenderá en la @sec-active-fields.
 
 ::: base
-See `?delayedAssign()` and `?makeActiveBinding()`.
+Consulte `?delayedAssign()` y `?makeActiveBinding()`.
 :::
 
-### Exercises
+### Ejercicios
 
-1.  List three ways in which an environment differs from a list.
+1.  Enumera tres formas en las que un entorno difiere de una lista.
 
-2.  Create an environment as illustrated by this picture.
+2.  Cree un entorno como el que se ilustra en esta imagen.
 
     ```{r, echo = FALSE, out.width = NULL}
     knitr::include_graphics("diagrams/environments/recursive-1.png")
     ```
 
-3.  Create a pair of environments as illustrated by this picture.
+3.  Cree un par de ambientes como se ilustra en esta imagen.
 
     ```{r, echo = FALSE, out.width = NULL}
     knitr::include_graphics("diagrams/environments/recursive-2.png")
     ```
 
-4.  Explain why `e[[1]]` and `e[c("a", "b")]` don't make sense when `e` is an environment.
+4.  Explique por qué `e[[1]]` y `e[c("a", "b")]` no tienen sentido cuando `e` es un entorno.
 
-5.  Create a version of `env_poke()` that will only bind new names, never re-bind old names. Some programming languages only do this, and are known as [single assignment languages](http://en.wikipedia.org/wiki/Assignment_(computer_science)#Single_assignment).
+5.  Cree una versión de `env_poke()` que solo vinculará nombres nuevos, nunca volverá a vincular nombres antiguos. Algunos lenguajes de programación solo hacen esto y se conocen como \[lenguajes de asignación única\] (http://en.wikipedia.org/wiki/Assignment\_(computer_science)#Single_assignment).
 
-6.  What does this function do? How does it differ from `<<-` and why might you prefer it?
+6.  ¿Qué hace esta función? ¿En qué se diferencia de `<<-` y por qué podría preferirlo?
 
     ```{r, error = TRUE}
     rebind <- function(name, value, env = caller_env()) {
@@ -351,38 +351,38 @@ See `?delayedAssign()` and `?makeActiveBinding()`.
     a
     ```
 
-## Recursing over environments {#env-recursion}
+## Recursing sobre entornos {#sec-env-recursion}
 
 \index{recursion!over environments}
 
-If you want to operate on every ancestor of an environment, it's often convenient to write a recursive function. This section shows you how, applying your new knowledge of environments to write a function that given a name, finds the environment `where()` that name is defined, using R's regular scoping rules.
+Si desea operar en todos los ancestros de un entorno, a menudo es conveniente escribir una función recursiva. Esta sección le muestra cómo, aplicando su nuevo conocimiento de entornos para escribir una función que, dado un nombre, encuentra el entorno `where()` está definido ese nombre, utilizando las reglas de alcance habituales de R.
 
-The definition of `where()` is straightforward. It has two arguments: the name to look for (as a string), and the environment in which to start the search. (We'll learn why `caller_env()` is a good default in Section \@ref(call-stack).)
+La definición de `where()` es sencilla. Tiene dos argumentos: el nombre a buscar (como una cadena) y el entorno en el que iniciar la búsqueda. (Aprenderemos por qué `caller_env()` es un buen valor predeterminado en la @sec-call-stack.)
 
 ```{r}
 where <- function(name, env = caller_env()) {
   if (identical(env, empty_env())) {
-    # Base case
+    # caso base
     stop("Can't find ", name, call. = FALSE)
   } else if (env_has(env, name)) {
-    # Success case
+    # caso de exitoso
     env
   } else {
-    # Recursive case
+    # caso recursivo
     where(name, env_parent(env))
   }
 }
 ```
 
-There are three cases:
+Hay tres casos:
 
--   The base case: we've reached the empty environment and haven't found the binding. We can't go any further, so we throw an error.
+-   El caso base: hemos llegado al entorno vacío y no hemos encontrado el enlace. No podemos ir más lejos, por lo que lanzamos un error.
 
--   The successful case: the name exists in this environment, so we return the environment.
+-   El caso exitoso: el nombre existe en este entorno, por lo que devolvemos el entorno.
 
--   The recursive case: the name was not found in this environment, so try the parent.
+-   El caso recursivo: el nombre no se encontró en este entorno, así que pruebe con el padre.
 
-These three cases are illustrated with these three examples:
+Estos tres casos se ilustran con estos tres ejemplos:
 
 ```{r, error = TRUE}
 where("yyy")
@@ -393,7 +393,7 @@ where("x")
 where("mean")
 ```
 
-It might help to see a picture. Imagine you have two environments, as in the following code and diagram:
+Podría ayudar ver una imagen. Imagine que tiene dos entornos, como en el siguiente código y diagrama:
 
 ```{r}
 e4a <- env(empty_env(), a = 1, b = 2)
@@ -404,73 +404,73 @@ e4b <- env(e4a, x = 10, a = 11)
 knitr::include_graphics("diagrams/environments/where-ex.png")
 ```
 
--   `where("a", e4b)` will find `a` in `e4b`.
+-   `where("a", e4b)` encontrará `a` en `e4b`.
 
--   `where("b", e4b)` doesn't find `b` in `e4b`, so it looks in its parent, `e4a`, and finds it there.
+-   `where("b", e4b)` no encuentra `b` en `e4b`, así que busca en su padre, `e4a`, y lo encuentra ahí.
 
--   `where("c", e4b)` looks in `e4b`, then `e4a`, then hits the empty environment and throws an error.
+-   `where("c", e4b)` busca en `e4b`, entonces `e4a`, luego llega al entorno vacío y arroja un error.
 
-It's natural to work with environments recursively, so `where()` provides a useful template. Removing the specifics of `where()` shows the structure more clearly:
+Es natural trabajar con entornos recursivamente, por lo que `where()` proporciona una plantilla útil. Eliminar los detalles de `where()` muestra la estructura más claramente:
 
 ```{r}
 f <- function(..., env = caller_env()) {
   if (identical(env, empty_env())) {
-    # base case
+    # caso base
   } else if (success) {
-    # success case
+    # caso exitoso
   } else {
-    # recursive case
+    # caso recursivo
     f(..., env = env_parent(env))
   }
 }
 ```
 
-::: sidebar
-### Iteration versus recursion {.unnumbered}
+::: sidebarinplace
+### Iteración versus recursividad {.unnumbered}
 
-It's possible to use a loop instead of recursion. I think it's harder to understand than the recursive version, but I include it because you might find it easier to see what's happening if you haven't written many recursive functions.
+Es posible usar un bucle en lugar de recursividad. Creo que es más difícil de entender que la versión recursiva, pero la incluyo porque puede resultarle más fácil ver lo que sucede si no ha escrito muchas funciones recursivas.
 
 ```{r}
 f2 <- function(..., env = caller_env()) {
   while (!identical(env, empty_env())) {
     if (success) {
-      # success case
+      # caso exitoso
       return()
     }
-    # inspect parent
+    # inspeccionar padre
     env <- env_parent(env)
   }
 
-  # base case
+  # caso base
 }
 ```
 :::
 
-### Exercises
+### Ejercicios
 
-1.  Modify `where()` to return *all* environments that contain a binding for `name`. Carefully think through what type of object the function will need to return.
+1.  Modifique `where()` para devolver *todos* los entornos que contienen un enlace para `name`. Piensa detenidamente qué tipo de objeto necesitará devolver la función.
 
-2.  Write a function called `fget()` that finds only function objects. It should have two arguments, `name` and `env`, and should obey the regular scoping rules for functions: if there's an object with a matching name that's not a function, look in the parent. For an added challenge, also add an `inherits` argument which controls whether the function recurses up the parents or only looks in one environment.
+2.  Escribe una función llamada `fget()` que encuentre solo objetos de función. Debe tener dos argumentos, `name` y `env`, y debe obedecer las reglas regulares de alcance de las funciones: si hay un objeto con un nombre coincidente que no es una función, busque en el padre. Para un desafío adicional, agregue también un argumento `inherits` que controle si la función recurre a los padres o solo busca en un entorno.
 
-## Special environments {#sec-special-environments}
+## Entornos especiales {#sec-special-environments}
 
-Most environments are not created by you (e.g. with `env()`) but are instead created by R. In this section, you'll learn about the most important environments, starting with the package environments. You'll then learn about the function environment bound to the function when it is created, and the (usually) ephemeral execution environment created every time the function is called. Finally, you'll see how the package and function environments interact to support namespaces, which ensure that a package always behaves the same way, regardless of what other packages the user has loaded.
+La mayoría de los entornos no los crea usted (por ejemplo, con `env()`), sino que los crea R. En esta sección, aprenderá sobre los entornos más importantes, comenzando con los entornos de paquete. Luego, aprenderá sobre el entorno de la función vinculado a la función cuando se crea y el entorno de ejecución (generalmente) efímero que se crea cada vez que se llama a la función. Finalmente, verá cómo los entornos de funciones y paquetes interactúan para admitir espacios de nombres, lo que garantiza que un paquete siempre se comporte de la misma manera, independientemente de qué otros paquetes haya cargado el usuario.
 
-### Package environments and the search path {#search-path}
+### Entornos de paquetes y la ruta de búsqueda {#sec-search-path}
 
 \indexc{search()}
 
 \index{search path} \indexc{Autoloads} \index{environments!base}
 
-Each package attached by `library()` or `require()` becomes one of the parents of the global environment. The immediate parent of the global environment is the last package you attached[^environments-2], the parent of that package is the second to last package you attached, ...
+Cada paquete adjunto por `library()` o `require()` se convierte en uno de los padres del entorno global. El padre inmediato del entorno global es el último paquete que adjuntó [^environments-2], el padre de ese paquete es el penúltimo paquete que adjuntó, ...
 
-[^environments-2]: Note the difference between attached and loaded. A package is loaded automatically if you access one of its functions using `::`; it is only **attached** to the search path by `library()` or `require()`.
+[^environments-2]: Tenga en cuenta la diferencia entre adjunto y cargado. Un paquete se carga automáticamente si accede a una de sus funciones usando `::`; solo se **adjunta** a la ruta de búsqueda mediante `library()` o `require()`.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/environments/search-path.png")
 ```
 
-If you follow all the parents back, you see the order in which every package has been attached. This is known as the **search path** because all objects in these environments can be found from the top-level interactive workspace. You can see the names of these environments with `base::search()`, or the environments themselves with `rlang::search_envs()`:
+Si sigue a todos los padres hacia atrás, verá el orden en que se adjuntó cada paquete. Esto se conoce como **ruta de búsqueda** porque todos los objetos en estos entornos se pueden encontrar desde el espacio de trabajo interactivo de nivel superior. Puede ver los nombres de estos entornos con `base::search()`, o los propios entornos con `rlang::search_envs()`:
 
 ```{r}
 search()
@@ -478,25 +478,25 @@ search()
 search_envs()
 ```
 
-The last two environments on the search path are always the same:
+Los dos últimos entornos en la ruta de búsqueda son siempre los mismos:
 
--   The `Autoloads` environment uses delayed bindings to save memory by only loading package objects (like big datasets) when needed.
+-   El entorno `Autoloads` utiliza enlaces retrasados para ahorrar memoria al cargar solo objetos del paquete (como grandes conjuntos de datos) cuando es necesario.
 
--   The base environment, `package:base` or sometimes just `base`, is the environment of the base package. It is special because it has to be able to bootstrap the loading of all other packages. You can access it directly with `base_env()`.
+-   El entorno base, `package: base` o, a veces, simplemente `base`, es el entorno del paquete base. Es especial porque debe poder iniciar la carga de todos los demás paquetes. Puedes acceder a él directamente con `base_env()`.
 
-Note that when you attach another package with `library()`, the parent environment of the global environment changes:
+Tenga en cuenta que cuando adjunta otro paquete con `library()`, el entorno principal del entorno global cambia:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/environments/search-path-2.png")
 ```
 
-### The function environment {#function-environments}
+### El entorno funcional {#sec-function-environments}
 
 \index{environments!function} \indexc{fn\_env()}
 
-A function binds the current environment when it is created. This is called the **function environment**, and is used for lexical scoping. Across computer languages, functions that capture (or enclose) their environments are called **closures**, which is why this term is often used interchangeably with *function* in R's documentation.
+Una función vincula el entorno actual cuando se crea. Esto se denomina **entorno de función** y se utiliza para el scoping léxico. En todos los lenguajes informáticos, las funciones que capturan (o encierran) sus entornos se denominan **cierres**, razón por la cual este término a menudo se usa indistintamente con *función* en la documentación de R.
 
-You can get the function environment with `fn_env()`:
+Puede obtener el entorno de la función con `fn_env()`:
 
 ```{r}
 y <- 1
@@ -505,16 +505,16 @@ fn_env(f)
 ```
 
 ::: base
-Use `environment(f)` to access the environment of function `f`.
+Utilice `environment(f)` para acceder al entorno de la función `f`.
 :::
 
-In diagrams, I'll draw a function as a rectangle with a rounded end that binds an environment.
+En los diagramas, dibujaré una función como un rectángulo con un extremo redondeado que une un entorno.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/environments/binding.png")
 ```
 
-In this case, `f()` binds the environment that binds the name `f` to the function. But that's not always the case: in the following example `g` is bound in a new environment `e`, but `g()` binds the global environment. The distinction between binding and being bound by is subtle but important; the difference is how we find `g` versus how `g` finds its variables.
+En este caso, `f()` vincula el entorno que vincula el nombre `f` a la función. Pero ese no es siempre el caso: en el siguiente ejemplo, `g` está enlazado en un nuevo entorno `e`, pero `g()` enlaza el entorno global. La distinción entre atar y ser atado por es sutil pero importante; la diferencia es cómo encontramos `g` versus cómo `g` encuentra sus variables.
 
 ```{r}
 e <- env()
@@ -525,57 +525,57 @@ e$g <- function() 1
 knitr::include_graphics("diagrams/environments/binding-2.png")
 ```
 
-### Namespaces
+### Espacios de nombres
 
 \index{namespaces}
 
-In the diagram above, you saw that the parent environment of a package varies based on what other packages have been loaded. This seems worrying: doesn't that mean that the package will find different functions if packages are loaded in a different order? The goal of **namespaces** is to make sure that this does not happen, and that every package works the same way regardless of what packages are attached by the user.
+En el diagrama anterior, vio que el entorno principal de un paquete varía según los otros paquetes que se hayan cargado. Esto parece preocupante: ¿no significa eso que el paquete encontrará diferentes funciones si los paquetes se cargan en un orden diferente? El objetivo de los **espacios de nombres** es asegurarse de que esto no suceda y de que todos los paquetes funcionen de la misma manera, independientemente de los paquetes que adjunte el usuario.
 
-For example, take `sd()`:
+Por ejemplo, tome `sd()`:
 
 ```{r}
 sd
 ```
 
-`sd()` is defined in terms of `var()`, so you might worry that the result of `sd()` would be affected by any function called `var()` either in the global environment, or in one of the other attached packages. R avoids this problem by taking advantage of the function versus binding environment described above. Every function in a package is associated with a pair of environments: the package environment, which you learned about earlier, and the **namespace** environment.
+`sd()` se define en términos de `var()`, por lo que podría preocuparse de que el resultado de `sd()` se vea afectado por cualquier función llamada `var()` ya sea en el entorno global o en uno de los otros paquetes adjuntos . R evita este problema aprovechando el entorno de función versus enlace descrito anteriormente. Cada función en un paquete está asociada con un par de entornos: el entorno del paquete, del que aprendió anteriormente, y el entorno del **espacio de nombres**.
 
--   The package environment is the external interface to the package. It's how you, the R user, find a function in an attached package or with `::`. Its parent is determined by search path, i.e. the order in which packages have been attached.
+-   El entorno del paquete es la interfaz externa del paquete. Así es como usted, el usuario de R, encuentra una función en un paquete adjunto o con `::`. Su padre está determinado por la ruta de búsqueda, es decir, el orden en que se han adjuntado los paquetes.
 
--   The namespace environment is the internal interface to the package. The package environment controls how we find the function; the namespace controls how the function finds its variables.
+-   El entorno del espacio de nombres es la interfaz interna del paquete. El entorno del paquete controla cómo encontramos la función; el espacio de nombres controla cómo la función encuentra sus variables.
 
-Every binding in the package environment is also found in the namespace environment; this ensures every function can use every other function in the package. But some bindings only occur in the namespace environment. These are known as internal or non-exported objects, which make it possible to hide internal implementation details from the user.
+Cada enlace en el entorno del paquete también se encuentra en el entorno del espacio de nombres; esto asegura que cada función pueda usar cualquier otra función en el paquete. Pero algunos enlaces solo ocurren en el entorno del espacio de nombres. Estos se conocen como objetos internos o no exportados, que permiten ocultar al usuario detalles de implementación internos.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/environments/namespace-bind.png")
 ```
 
-Every namespace environment has the same set of ancestors:
+Cada entorno de espacio de nombres tiene el mismo conjunto de ancestros:
 
--   Each namespace has an **imports** environment that contains bindings to all the functions used by the package. The imports environment is controlled by the package developer with the `NAMESPACE` file.
+-   Cada espacio de nombres tiene un entorno de **importaciones** que contiene enlaces a todas las funciones utilizadas por el paquete. El entorno de importación está controlado por el desarrollador del paquete con el archivo `NAMESPACE`.
 
--   Explicitly importing every base function would be tiresome, so the parent of the imports environment is the base **namespace**. The base namespace contains the same bindings as the base environment, but it has a different parent.
+-   La importación explícita de cada función base sería tediosa, por lo que el padre del entorno de importación es el **espacio de nombres** base. El espacio de nombres base contiene los mismos enlaces que el entorno base, pero tiene un padre diferente.
 
--   The parent of the base namespace is the global environment. This means that if a binding isn't defined in the imports environment the package will look for it in the usual way. This is usually a bad idea (because it makes code depend on other loaded packages), so `R CMD check` automatically warns about such code. It is needed primarily for historical reasons, particularly due to how S3 method dispatch works.
+-   El padre del espacio de nombres base es el entorno global. Esto significa que si un enlace no está definido en el entorno de importación, el paquete lo buscará de la forma habitual. Esto suele ser una mala idea (porque hace que el código dependa de otros paquetes cargados), por lo que `R CMD check` advierte automáticamente sobre dicho código. Es necesario principalmente por razones históricas, particularmente debido a cómo funciona el envío del método S3.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/environments/namespace-env.png")
 ```
 
-Putting all these diagrams together we get:
+Juntando todos estos diagramas obtenemos:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/environments/namespace.png")
 ```
 
-So when `sd()` looks for the value of `var` it always finds it in a sequence of environments determined by the package developer, but not by the package user. This ensures that package code always works the same way regardless of what packages have been attached by the user.
+Entonces, cuando `sd()` busca el valor de `var`, siempre lo encuentra en una secuencia de entornos determinada por el desarrollador del paquete, pero no por el usuario del paquete. Esto garantiza que el código del paquete siempre funcione de la misma manera, independientemente de los paquetes que haya adjuntado el usuario.
 
-There's no direct link between the package and namespace environments; the link is defined by the function environments.
+No existe un vínculo directo entre el paquete y los entornos de espacio de nombres; el enlace está definido por los entornos de función.
 
-### Execution environments
+### Entornos de ejecución {#sec-execution-environments}
 
 \index{environments!execution} \index{functions!environment}
 
-The last important topic we need to cover is the **execution** environment. What will the following function return the first time it's run? What about the second?
+El último tema importante que debemos cubrir es el entorno de **ejecución**. ¿Qué devolverá la siguiente función la primera vez que se ejecute? ¿Qué pasa con el segundo?
 
 ```{r}
 g <- function(x) {
@@ -589,14 +589,14 @@ g <- function(x) {
 }
 ```
 
-Think about it for a moment before you read on.
+Piénsalo un momento antes de seguir leyendo.
 
 ```{r}
 g(10)
 g(10)
 ```
 
-This function returns the same value every time because of the fresh start principle, described in Section \@ref(fresh-start). Each time a function is called, a new environment is created to host execution. This is called the execution environment, and its parent is the function environment. Let's illustrate that process with a simpler function. Figure \@ref(fig:execution-env) illustrates the graphical conventions: I draw execution environments with an indirect parent; the parent environment is found via the function environment.
+Esta función devuelve el mismo valor cada vez debido al principio de nuevo comienzo, descrito en la @sec-fresh-start. Cada vez que se llama a una función, se crea un nuevo entorno para albergar la ejecución. Esto se denomina entorno de ejecución y su padre es el entorno de funciones. Ilustremos ese proceso con una función más simple. La figura @fig-execution-env ilustra las convenciones gráficas: dibujo entornos de ejecución con un padre indirecto; el entorno principal se encuentra a través del entorno de función.
 
 ```{r}
 h <- function(x) {
@@ -607,11 +607,16 @@ h <- function(x) {
 y <- h(1) # 3.
 ```
 
-```{r execution-env, echo = FALSE, out.width = NULL, fig.cap = "The execution environment of a simple function call. Note that the parent of the execution environment is the function environment."}
+```{r}
+#| label: fig-execution-env
+#| echo: FALSE
+#| out.width: NULL
+#| fig.cap : "The execution environment of a simple function call. Note that the parent of the execution environment is the function environment."
+
 knitr::include_graphics("diagrams/environments/execution.png")
 ```
 
-An execution environment is usually ephemeral; once the function has completed, the environment will be garbage collected. There are several ways to make it stay around for longer. The first is to explicitly return it:
+Un entorno de ejecución suele ser efímero; una vez que la función se haya completado, el entorno se recolectará como basura. Hay varias maneras de hacer que se quede por más tiempo. El primero es devolverlo explícitamente:
 
 ```{r}
 h2 <- function(x) {
@@ -624,9 +629,9 @@ env_print(e)
 fn_env(h2)
 ```
 
-Another way to capture it is to return an object with a binding to that environment, like a function. The following example illustrates that idea with a function factory, `plus()`. We use that factory to create a function called `plus_one()`.
+Otra forma de capturarlo es devolver un objeto con un enlace a ese entorno, como una función. El siguiente ejemplo ilustra esa idea con una fábrica de funciones, `plus()`. Usamos esa fábrica para crear una función llamada `plus_one()`.
 
-There's a lot going on in the diagram because the enclosing environment of `plus_one()` is the execution environment of `plus()`.
+Están sucediendo muchas cosas en el diagrama porque el entorno envolvente de `plus_one()` es el entorno de ejecución de `plus()`.
 
 ```{r}
 plus <- function(x) {
@@ -641,7 +646,7 @@ plus_one
 knitr::include_graphics("diagrams/environments/closure.png")
 ```
 
-What happens when we call `plus_one()`? Its execution environment will have the captured execution environment of `plus()` as its parent:
+¿Qué sucede cuando llamamos `plus_one()`? Su entorno de ejecución tendrá el entorno de ejecución capturado de `plus()` como padre:
 
 ```{r}
 plus_one(2)
@@ -651,13 +656,13 @@ plus_one(2)
 knitr::include_graphics("diagrams/environments/closure-call.png")
 ```
 
-You'll learn more about function factories in Section \@ref(factory-fundamentals).
+Aprenderá más sobre las fábricas de funciones en la @sec-factory-fundamentals.
 
-### Exercises
+### Ejercicios
 
-1.  How is `search_envs()` different from `env_parents(global_env())`?
+1.  ¿En qué se diferencia `search_envs()` de `env_parents(global_env())`?
 
-2.  Draw a diagram that shows the enclosing environments of this function:
+2.  Dibuje un diagrama que muestre los entornos circundantes de esta función:
 
     ```{r, eval = FALSE}
     f1 <- function(x1) {
@@ -672,29 +677,29 @@ You'll learn more about function factories in Section \@ref(factory-fundamentals
     f1(1)
     ```
 
-3.  Write an enhanced version of `str()` that provides more information about functions. Show where the function was found and what environment it was defined in.
+3.  Escriba una versión mejorada de `str()` que proporcione más información sobre las funciones. Muestre dónde se encontró la función y en qué entorno se definió.
 
-## Call stacks {#sec-call-stack}
+## Pilas de llamadas {#sec-call-stack}
 
 \index{environments!calling} \indexc{parent.frame()} \index{call stacks}
 
-There is one last environment we need to explain, the **caller** environment, accessed with `rlang::caller_env()`. This provides the environment from which the function was called, and hence varies based on how the function is called, not how the function was created. As we saw above this is a useful default whenever you write a function that takes an environment as an argument.
+Hay un último entorno que debemos explicar, el entorno **caller**, al que se accede con `rlang::caller_env()`. Esto proporciona el entorno desde el que se llamó a la función y, por lo tanto, varía en función de cómo se llame a la función, no de cómo se creó. Como vimos anteriormente, este es un valor predeterminado útil cada vez que escribe una función que toma un entorno como argumento.
 
 ::: base
-`parent.frame()` is equivalent to `caller_env()`; just note that it returns an environment, not a frame.
+`parent.frame()` es equivalente a `caller_env()`; solo tenga en cuenta que devuelve un entorno, no un marco.
 :::
 
-To fully understand the caller environment we need to discuss two related concepts: the **call stack**, which is made up of **frames**. Executing a function creates two types of context. You've learned about one already: the execution environment is a child of the function environment, which is determined by where the function was created. There's another type of context created by where the function was called: this is called the call stack.
+Para comprender completamente el entorno de la persona que llama, debemos analizar dos conceptos relacionados: la **pila de llamadas**, que se compone de **marcos**. La ejecución de una función crea dos tipos de contexto. Ya aprendió sobre uno: el entorno de ejecución es un elemento secundario del entorno de función, que está determinado por el lugar donde se creó la función. Hay otro tipo de contexto creado por donde se llamó a la función: esto se llama la pila de llamadas.
 
-<!-- HW: mention that this is actually a tree! -->
+<!-- HW: mencionar que esto es en realidad un árbol! -->
 
-### Simple call stacks {#simple-stack}
+### Pilas de llamadas simples {#sec-simple-stack}
 
 ```{=tex}
 \indexc{cst()}
 \indexc{traceback()}
 ```
-Let's illustrate this with a simple sequence of calls: `f()` calls `g()` calls `h()`.
+Ilustremos esto con una secuencia simple de llamadas: `f()` llama a `g()` llama a `h()`.
 
 ```{r}
 f <- function(x) {
@@ -708,7 +713,7 @@ h <- function(x) {
 }
 ```
 
-The way you most commonly see a call stack in R is by looking at the `traceback()` after an error has occurred:
+La forma más común de ver una pila de llamadas en R es mirando el `traceback()` después de que haya ocurrido un error:
 
 ```{r, eval = FALSE}
 f(x = 1)
@@ -720,7 +725,7 @@ traceback()
 #> 1: f(x = 1)
 ```
 
-Instead of `stop()` + `traceback()` to understand the call stack, we're going to use `lobstr::cst()` to print out the **c**all **s**tack **t**ree:
+En lugar de `stop()` + `traceback()` para entender la pila de llamadas, vamos a usar `lobstr::cst()` para imprimir el árbol de pilas de llamadas (**c**all **s**tack *t*ree, en inglés):
 
 ```{r, eval = FALSE}
 h <- function(x) {
@@ -734,15 +739,15 @@ f(x = 1)
 #>       └─lobstr::cst()
 ```
 
-This shows us that `cst()` was called from `h()`, which was called from `g()`, which was called from `f()`. Note that the order is the opposite from `traceback()`. As the call stacks get more complicated, I think it's easier to understand the sequence of calls if you start from the beginning, rather than the end (i.e. `f()` calls `g()`; rather than `g()` was called by `f()`).
+Esto nos muestra que `cst()` fue llamado desde `h()`, que fue llamado desde `g()`, que fue llamado desde `f()`. Tenga en cuenta que el orden es el opuesto de `traceback()`. A medida que las pilas de llamadas se vuelven más complicadas, creo que es más fácil entender la secuencia de llamadas si comienza desde el principio, en lugar del final (es decir, `f()` llama a `g()`; en lugar de `g()` fue llamado por `f()`).
 
-### Lazy evaluation {#lazy-call-stack}
+### Evaluación perezosa {#sec-lazy-call-stack}
 
 \index{lazy evaluation}
 
-The call stack above is simple: while you get a hint that there's some tree-like structure involved, everything happens on a single branch. This is typical of a call stack when all arguments are eagerly evaluated.
+La pila de llamadas anterior es simple: mientras obtiene una pista de que hay una estructura similar a un árbol involucrada, todo sucede en una sola rama. Esto es típico de una pila de llamadas cuando todos los argumentos se evalúan con entusiasmo.
 
-Let's create a more complicated example that involves some lazy evaluation. We'll create a sequence of functions, `a()`, `b()`, `c()`, that pass along an argument `x`.
+Vamos a crear un ejemplo más complicado que implique una evaluación perezosa. Crearemos una secuencia de funciones, `a()`, `b()`, `c()`, que pasan un argumento `x`.
 
 ```{r, eval = FALSE}
 a <- function(x) b(x)
@@ -760,51 +765,56 @@ a(f())
 #>       └─lobstr::cst()
 ```
 
-`x` is lazily evaluated so this tree gets two branches. In the first branch `a()` calls `b()`, then `b()` calls `c()`. The second branch starts when `c()` evaluates its argument `x`. This argument is evaluated in a new branch because the environment in which it is evaluated is the global environment, not the environment of `c()`.
+`x` se evalúa perezosamente, por lo que este árbol tiene dos ramas. En la primera rama `a()` llama a `b()`, luego `b()` llama a `c()`. La segunda rama comienza cuando `c()` evalúa su argumento `x`. Este argumento se evalúa en una nueva rama porque el entorno en el que se evalúa es el entorno global, no el entorno de `c()`.
 
-### Frames
+### Marcos
 
 \index{frame} \indexc{parent.frame()}
 
-Each element of the call stack is a **frame**[^environments-3], also known as an evaluation context. The frame is an extremely important internal data structure, and R code can only access a small part of the data structure because tampering with it will break R. A frame has three key components:
+Cada elemento de la pila de llamadas es un **marco**[^environments-3], también conocido como contexto de evaluación. El marco es una estructura de datos interna extremadamente importante, y el código R solo puede acceder a una pequeña parte de la estructura de datos porque manipularlo romperá R. Un marco tiene tres componentes clave:
 
-[^environments-3]: NB: `?environment` uses frame in a different sense: "Environments consist of a *frame*, or collection of named objects, and a pointer to an enclosing environment." We avoid this sense of frame, which comes from S, because it's very specific and not widely used in base R. For example, the frame in `parent.frame()` is an execution context, not a collection of named objects.
+[^environments-3]: NB: `?environment` usa marco en un sentido diferente: "Los entornos consisten en un *marco*, o una colección de objetos con nombre, y un puntero a un entorno envolvente". Evitamos este sentido de marco, que proviene de S, porque es muy específico y no se usa mucho en la base R. Por ejemplo, el marco en `parent.frame()` es un contexto de ejecución, no una colección de objetos con nombre.
 
--   An expression (labelled with `expr`) giving the function call. This is what `traceback()` prints out.
+-   Una expresión (etiquetada con `expr`) que da la llamada a la función. Esto es lo que imprime `traceback()`.
 
--   An environment (labelled with `env`), which is typically the execution environment of a function. There are two main exceptions: the environment of the global frame is the global environment, and calling `eval()` also generates frames, where the environment can be anything.
+-   Un entorno (etiquetado con `env`), que suele ser el entorno de ejecución de una función. Hay dos excepciones principales: el entorno del marco global es el entorno global, y llamar a `eval()` también genera marcos, donde el entorno puede ser cualquier cosa.
 
--   A parent, the previous call in the call stack (shown by a grey arrow).
+-   Un padre, la llamada anterior en la pila de llamadas (se muestra con una flecha gris).
 
-Figure \@ref(fig:calling) illustrates the stack for the call to `f(x = 1)` shown in Section \@ref(simple-stack).
+La figura @fig-calling ilustra la pila para la llamada a `f(x = 1)` que se muestra en la @sec-simple-stack.
 
-```{r calling, echo = FALSE, out.width = NULL, fig.cap = "The graphical depiction of a simple call stack"}
+```{r}
+#| label: fig-calling
+#| echo: FALSE
+#| out.width: NULL
+#| fig.cap: "The graphical depiction of a simple call stack"
+
 knitr::include_graphics("diagrams/environments/calling.png")
 ```
 
-(To focus on the calling environments, I have omitted the bindings in the global environment from `f`, `g`, and `h` to the respective function objects.)
+(Para centrarme en los entornos de llamada, he omitido los enlaces en el entorno global de `f`, `g` y `h` a los objetos de función respectivos.)
 
-The frame also holds exit handlers created with `on.exit()`, restarts and handlers for the condition system, and which context to `return()` to when a function completes. These are important internal details that are not accessible with R code.
+El marco también contiene controladores de salida creados con `on.exit()`, reinicios y controladores para el sistema de condiciones, y a qué contexto `return()` cuando se completa una función. Estos son detalles internos importantes a los que no se puede acceder con el código R.
 
-### Dynamic scope
+### Alcance dinámico
 
 \index{scoping!dynamic}
 
-Looking up variables in the calling stack rather than in the enclosing environment is called **dynamic scoping**. Few languages implement dynamic scoping (Emacs Lisp is a [notable exception](http://www.gnu.org/software/emacs/emacs-paper.html#SEC15).) This is because dynamic scoping makes it much harder to reason about how a function operates: not only do you need to know how it was defined, you also need to know the context in which it was called. Dynamic scoping is primarily useful for developing functions that aid interactive data analysis, and one of the topics discussed in Chapter \@ref(evaluation).
+La búsqueda de variables en la pila de llamadas en lugar de en el entorno adjunto se denomina **ámbito dinámico**. Pocos lenguajes implementan el alcance dinámico (Emacs Lisp es una \[excepción notable\] (http://www.gnu.org/software/emacs/emacs-paper.html#SEC15).) Esto se debe a que el alcance dinámico hace que sea mucho más difícil razonar sobre cómo opera una función: no solo necesita saber cómo se definió, también necesita saber el contexto en el que se llamó. El alcance dinámico es principalmente útil para desarrollar funciones que ayudan al análisis interactivo de datos y es uno de los temas tratados en el @sec-evaluation.
 
-### Exercises
+### Ejercicios
 
-1.  Write a function that lists all the variables defined in the environment in which it was called. It should return the same results as `ls()`.
+1.  Escriba una función que enumere todas las variables definidas en el entorno en el que se llamó. Debería devolver los mismos resultados que `ls()`.
 
-## As data structures {#explicit-envs}
+## Como estructuras de datos {#sec-explicit-envs}
 
 \index{hashmaps} \index{dictionaries|see {hashmaps}}
 
-As well as powering scoping, environments are also useful data structures in their own right because they have reference semantics. There are three common problems that they can help solve:
+Además de potenciar el alcance, los entornos también son estructuras de datos útiles por derecho propio porque tienen semántica de referencia. Hay tres problemas comunes que pueden ayudar a resolver:
 
--   **Avoiding copies of large data**. Since environments have reference semantics, you'll never accidentally create a copy. But bare environments are painful to work with, so instead I recommend using R6 objects, which are built on top of environments. Learn more in Chapter \@ref(r6).
+-   **Evitar copias de datos de gran tamaño**. Dado que los entornos tienen semántica de referencia, nunca creará una copia accidentalmente. Pero es complicado trabajar con entornos desnudos, por lo que en su lugar recomiendo usar objetos R6, que se construyen sobre los entornos. Obtenga más información en el @sec-r6.
 
--   **Managing state within a package**. Explicit environments are useful in packages because they allow you to maintain state across function calls. Normally, objects in a package are locked, so you can't modify them directly. Instead, you can do something like this:
+-   **Administrar el estado dentro de un paquete**. Los entornos explícitos son útiles en los paquetes porque le permiten mantener el estado en las llamadas a funciones. Normalmente, los objetos de un paquete están bloqueados, por lo que no puede modificarlos directamente. En su lugar, puedes hacer algo como esto:
 
     ```{r}
     my_env <- new.env(parent = emptyenv())
@@ -820,18 +830,18 @@ As well as powering scoping, environments are also useful data structures in the
     }
     ```
 
-    Returning the old value from setter functions is a good pattern because it makes it easier to reset the previous value in conjunction with `on.exit()` (Section \@ref(on-exit)).
+    Devolver el valor anterior de las funciones de establecimiento es un buen patrón porque hace que sea más fácil restablecer el valor anterior junto con `on.exit()` (@sec-on-exit).
 
--   **As a hashmap**. A hashmap is a data structure that takes constant, O(1), time to find an object based on its name. Environments provide this behaviour by default, so can be used to simulate a hashmap. See the hash package [@hash] for a complete development of this idea.
+-   **Como hashmap**. Un hashmap es una estructura de datos que toma tiempo constante, O(1), para encontrar un objeto basado en su nombre. Los entornos proporcionan este comportamiento de forma predeterminada, por lo que se pueden usar para simular un mapa hash. Vea el paquete hash [@hash] para un desarrollo completo de esta idea.
 
-## Quiz answers {#env-answers}
+## Respuestas de la prueba {#sec-env-answers}
 
-1.  There are four ways: every object in an environment must have a name; order doesn't matter; environments have parents; environments have reference semantics.
+1.  Hay cuatro formas: cada objeto en un entorno debe tener un nombre; el orden no importa; los ambientes tienen padres; los entornos tienen semántica de referencia.
 
-2.  The parent of the global environment is the last package that you loaded. The only environment that doesn't have a parent is the empty environment.
+2.  El padre del entorno global es el último paquete que cargó. El único entorno que no tiene un padre es el entorno vacío.
 
-3.  The enclosing environment of a function is the environment where it was created. It determines where a function looks for variables.
+3.  El entorno envolvente de una función es el entorno donde se creó. Determina dónde una función busca variables.
 
-4.  Use `caller_env()` or `parent.frame()`.
+4.  Use `caller_env()` o `parent.frame()`.
 
-5.  `<-` always creates a binding in the current environment; `<<-` rebinds an existing name in a parent of the current environment.
+5.  `<-` siempre crea un enlace en el entorno actual; `<<-` vuelve a enlazar un nombre existente en un padre del entorno actual.
