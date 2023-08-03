@@ -60,7 +60,7 @@ Hay cuatro tipos principales de vectores atómicos: lógico, entero, doble y car
 knitr::include_graphics("diagrams/vectors/summary-tree-atomic.png")
 ```
 
-### Escalares
+### Escalares {#sec-scalars}
 
 \index{scalars} \indexc{NaN} \indexc{Inf} \indexc{L} \indexc{""} \indexc{'}
 
