@@ -16,12 +16,6 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
 -   Prefacio
 -   Introducción
 -   Fundamentos
-    -   Nombres y valores
-    -   Vectores
-    -   Subconjunto
-    -   Flujo de control
-    -   Funciones
-    -   Entornos
 
 # Más información acerca del repositorio
 
@@ -93,12 +87,6 @@ The translation was done using Google Translate and some grammar and coherence e
 -   Preface
 -   Introduction
 -   Foundations
-    -   Names and values
-    -   Vectors
-    -   Subsetting
-    -   Control flow
-    -   Functions
-    -   Environments
 
 # More info about the repository
 
