@@ -2,57 +2,43 @@
 source("common.R")
 ```
 
-# Introduction {#fp .unnumbered}  
+# Introducción {#sec-fp .unnumbered}
+
 \index{functional programming}
 
-R, at its heart, is a __functional__ language. This means that it has certain technical properties, but more importantly that it lends itself to a style of problem solving centred on functions. Below I'll give a brief overview of the technical definition of a functional _language_, but in this book I will primarily focus on the functional _style_ of programming, because I think it is an extremely good fit to the types of problem you commonly encounter when doing data analysis.
+R, en esencia, es un lenguaje **funcional**. Esto significa que tiene ciertas propiedades técnicas, pero lo más importante es que se presta a un estilo de resolución de problemas centrado en funciones. A continuación, daré una breve descripción de la definición técnica de un *lenguaje* funcional, pero en este libro me centraré principalmente en el *estilo* funcional de programación, porque creo que se adapta muy bien a los tipos de problemas comúnmente se encuentra al hacer análisis de datos.
 
-Recently, functional techniques have experienced a surge in interest because they can produce efficient and elegant solutions to many modern problems. A functional style tends to create functions that can easily be analysed in isolation (i.e. using only local information), and hence is often much easier to automatically optimise or parallelise. The traditional weaknesses of functional languages, poorer performance and sometimes unpredictable memory usage, have been much reduced in recent years. Functional programming is complementary to object-oriented programming, which has been the dominant programming paradigm for the last several decades. 
+Recientemente, las técnicas funcionales han experimentado un gran interés porque pueden producir soluciones eficientes y elegantes para muchos problemas modernos. Un estilo funcional tiende a crear funciones que pueden analizarse fácilmente de forma aislada (es decir, utilizando solo información local) y, por lo tanto, a menudo es mucho más fácil de optimizar o paralelizar automáticamente. Las debilidades tradicionales de los lenguajes funcionales, el rendimiento más bajo y, a veces, el uso impredecible de la memoria, se han reducido mucho en los últimos años. La programación funcional es complementaria a la programación orientada a objetos, que ha sido el paradigma de programación dominante durante las últimas décadas.
 
-## Functional programming languages {-}
+## Lenguajes de programacion funcional {.unnumbered}
 
-Every programming language has functions, so what makes a programming language functional? There are many definitions for precisely what makes a language functional, but there are two common threads. 
+Cada lenguaje de programación tiene funciones, entonces, ¿qué hace que un lenguaje de programación sea funcional? Hay muchas definiciones de lo que hace que un lenguaje sea funcional, pero hay dos hilos comunes.
 
-Firstly, functional languages have __first-class functions__, functions that behave like any other data structure. In R, this means that you can do many of the things with a function that you can do with a vector: you can assign them to variables, store them in lists, pass them as arguments to other functions, create them inside functions, and even return them as the result of a function. 
+En primer lugar, los lenguajes funcionales tienen **funciones de primera clase**, funciones que se comportan como cualquier otra estructura de datos. En R, esto significa que puede hacer muchas de las cosas con una función que puede hacer con un vector: puede asignarlas a variables, almacenarlas en listas, pasarlas como argumentos a otras funciones, crearlas dentro de funciones y incluso devolverlos como resultado de una función.
 
-Secondly, many functional languages require functions to be __pure__. A function is pure if it satisfies two properties:
+En segundo lugar, muchos lenguajes funcionales requieren que las funciones sean **puras**. Una función es pura si cumple dos propiedades:
 
-* The output only depends on the inputs, i.e. if you call it again with the 
-  same inputs, you get the same outputs. This excludes functions like `runif()`,
-  `read.csv()`, or `Sys.time()` that can return different values.
+-   La salida solo depende de las entradas, es decir, si lo vuelve a llamar con las mismas entradas, obtendrá las mismas salidas. Esto excluye funciones como `runif()`, `read.csv()` o `Sys.time()` que pueden devolver valores diferentes.
 
-* The function has no side-effects, like changing the value of a global 
-  variable, writing to disk, or displaying to the screen. This excludes 
-  functions like `print()`, `write.csv()` and `<-`.
+-   La función no tiene efectos secundarios, como cambiar el valor de una variable global, escribir en el disco o mostrar en la pantalla. Esto excluye funciones como `print()`, `write.csv()` y `<-`.
 
-Pure functions are much easier to reason about, but obviously have significant downsides: imagine doing a data analysis where you couldn't generate random numbers or read files from disk. 
+Las funciones puras son mucho más fáciles de razonar, pero obviamente tienen desventajas significativas: imagine hacer un análisis de datos en el que no pueda generar números aleatorios o leer archivos del disco.
 
-Strictly speaking, R isn't a functional programming _language_ because it doesn't require that you write pure functions. However, you can certainly adopt a functional style in parts of your code: you don't _have_ to write pure functions, but you often _should_. In my experience, partitioning code into functions that are either extremely pure or extremely impure tends to lead to code that is easier to understand and extends to new situations.
+Estrictamente hablando, R no es un *lenguaje* de programación funcional porque no requiere que escribas funciones puras. Sin embargo, ciertamente puede adoptar un estilo funcional en partes de su código: no *tiene* que escribir funciones puras, pero a menudo *debería*. En mi experiencia, dividir el código en funciones que son extremadamente puras o extremadamente impuras tiende a generar un código que es más fácil de entender y se extiende a nuevas situaciones.
 
-## Functional style {-}
+## Estilo funcional {.unnumbered}
 
-It's hard to describe exactly what a functional _style_ is, but generally I think it means decomposing a big problem into smaller pieces, then solving each piece with a function or combination of functions. When using a functional style, you strive to decompose components of the problem into isolated functions that operate independently. Each function taken by itself is simple and straightforward to understand; complexity is handled by composing functions in various ways.
+Es difícil describir exactamente qué es un *estilo* funcional, pero en general creo que significa descomponer un gran problema en partes más pequeñas y luego resolver cada parte con una función o combinación de funciones. Cuando usa un estilo funcional, se esfuerza por descomponer los componentes del problema en funciones aisladas que operan de forma independiente. Cada función tomada por sí sola es simple y fácil de entender; la complejidad se maneja componiendo funciones de varias maneras.
 
-The following three chapters discuss the three key functional techniques that help you to decompose problems into smaller pieces:
+Los siguientes tres capítulos analizan las tres técnicas funcionales clave que lo ayudan a descomponer los problemas en partes más pequeñas:
 
-* Chapter \@ref(functionals) shows you how to replace many for loops with 
-  __functionals__ which are functions (like `lapply()`) that take another 
-  function as an argument. Functionals allow you to take a function that solves 
-  the problem for a single input and generalise it to handle any number of 
-  inputs. Functionals are by far and away the most important technique and 
-  you'll use them all the time in data analysis.
+-   El @sec-functionals muestra cómo reemplazar muchos bucles for con **funcionales** que son funciones (como `lapply()`) que toman otra función como argumento. Los funcionales le permiten tomar una función que resuelve el problema para una sola entrada y generalizarla para manejar cualquier número de entradas. Los funcionales son, con mucho, la técnica más importante y los usará todo el tiempo en el análisis de datos.
 
-* Chapter \@ref(function-factories) introduces __function factories__: 
-  functions that create functions. Function factories are less commonly
-  used than functionals, but can allow you to elegantly partition work 
-  between different parts of your code.
+-   El @sec-function-factories introduce **fábricas de funciones**: funciones que crean funciones. Las fábricas de funciones se usan con menos frecuencia que las funcionales, pero pueden permitirle dividir elegantemente el trabajo entre diferentes partes de su código.
 
-* Chapter \@ref(function-operators) shows you how to create __function
-  operators__: functions that take functions as input and produce functions 
-  as output. They are like adverbs, because they typically modify the operation 
-  of a function.
+-   El @sec-function-operators le muestra cómo crear **operadores de función**: funciones que toman funciones como entrada y producen funciones como salida. Son como los adverbios, porque normalmente modifican el funcionamiento de una función.
 
-Collectively, these types of function are called __higher-order functions__ and they fill out a two-by-two table:
+En conjunto, estos tipos de funciones se denominan **funciones de orden superior** y completan una tabla de dos por dos:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/fp.png")

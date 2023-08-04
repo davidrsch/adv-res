@@ -16,6 +16,8 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
 -   Prefacio
 -   Introducción
 -   Fundamentos
+-   Programación funcional
+    -   Introducción
 
 # Más información acerca del repositorio
 
@@ -87,6 +89,8 @@ The translation was done using Google Translate and some grammar and coherence e
 -   Preface
 -   Introduction
 -   Foundations
+-   Functional Programming
+    -   Introduction
 
 # More info about the repository
 
