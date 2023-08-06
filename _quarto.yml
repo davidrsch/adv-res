@@ -25,13 +25,13 @@ book:
         - Functions.qmd
         - Environments.qmd
         - Conditions.qmd
-    - part: "Functional programming"
+    - part: "Programación funcional"
       chapters:
         - FP.qmd
         - Functionals.qmd
         - Function-factories.qmd
         - Function-operators.qmd
-    - part: "Object-oriented programming"
+    - part: "Programación orientada a objetos"
       chapters:
         - OO.qmd
         - base-types.qmd
@@ -39,7 +39,7 @@ book:
         - R6.qmd
         - S4.qmd
         - OO-tradeoffs.qmd
-    - part: "Metaprogramming"
+    - part: "Metaprogramación"
       chapters:
         - Meta.qmd
         - Big-picture.qmd
@@ -47,7 +47,7 @@ book:
         - Quotation.qmd
         - Evaluation.qmd
         - Translation.qmd
-    - part: "Techniques"
+    - part: "Tecnicas"
       chapters:
         - Techniques.qmd
         - Debugging.qmd
@@ -67,6 +67,7 @@ format:
       es
 
   pdf:
+    documentclass: scrbook
     include_in_header: latex/preamble.tex
     include_before_body: latex/before_body.tex
     include_after_body: latex/after_body.tex
