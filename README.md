@@ -93,6 +93,7 @@ The translation was done using Google Translate and some grammar and coherence e
 -   Functional Programming
     -   Introduction
     -   Functionals
+    -   Function Factories
 
 # More info about the repository
 
