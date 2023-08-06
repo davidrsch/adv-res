@@ -65,7 +65,7 @@ library(purrr)
 
 ## My first functional: `map()` {#sec-map}
 
-\indexc{map()}
+\index{map()}
 
 El funcional más fundamental es `purrr::map()`\[\^funcionals-2\]. Toma un vector y una función, llama a la función una vez por cada elemento del vector y devuelve los resultados en una lista. En otras palabras, `map(1:3, f)` es equivalente a `list(f(1), f(2), f(3))`.
 
@@ -99,7 +99,7 @@ simple_map <- function(x, f, ...) {
 La verdadera función `purrr::map()` tiene algunas diferencias: está escrita en C para aprovechar hasta el último ápice de rendimiento, conserva los nombres y admite algunos atajos que aprenderá en la @sec-purrr-shortcuts.
 
 ::: base
-\indexc{lapply()}
+\index{lapply()}
 
 El equivalente básico de `map()` es `lapply()`. La única diferencia es que `lapply()` no es compatible con los asistentes que aprenderá a continuación, por lo que si solo está usando `map()` de purrr, puede omitir la dependencia adicional y usar `lapply()` directamente.
 :::
@@ -151,15 +151,15 @@ map(1:2, as.character)
 
 ::: base
 ```{=tex}
-\indexc{sapply()}
-\indexc{vapply()}
+\index{sapply()}
+\index{vapply()}
 ```
 Base R tiene dos funciones de aplicación que pueden devolver vectores atómicos: `sapply()` y `vapply()`. Te recomiendo que evites `sapply()` porque intenta simplificar el resultado, por lo que puede devolver una lista, un vector o una matriz. Esto dificulta la programación y debe evitarse en entornos no interactivos. `vapply()` es más seguro porque le permite proporcionar una plantilla, `FUN.VALUE`, que describe la forma de salida. Si no quieres usar purrr, te recomiendo que siempre uses `vapply()` en tus funciones, no `sapply()`. La principal desventaja de `vapply()` es su verbosidad: por ejemplo, el equivalente a `map_dbl(x, mean, na.rm = TRUE)` es `vapply(x, mean, na.rm = TRUE, FUN.VALUE = doble(1))`.
 :::
 
 ### Funciones y accesos directos anónimos {#sec-purrr-shortcuts}
 
-\index{functions!anonymous} \indexc{\textasciitilde}
+\index{functions!anonymous} \index{\textasciitilde}
 
 En lugar de usar `map()` con una función existente, puede crear una función anónima en línea (como se menciona en la @sec-first-class-functions):
 
@@ -190,7 +190,7 @@ str(x)
 
 Reserve esta sintaxis para funciones cortas y simples. Una buena regla general es que si su función abarca líneas o usa `{}`, es hora de darle un nombre.
 
-\indexc{pluck()}
+\index{pluck()}
 
 Las funciones del mapa también tienen atajos para extraer elementos de un vector, impulsados por `purrr::pluck()`. Puede utilizar un vector de caracteres para seleccionar elementos por nombre, un vector entero para seleccionar por posición o una lista para seleccionar tanto por nombre como por posición. Estos son muy útiles para trabajar con listas profundamente anidadas, que a menudo surgen cuando se trabaja con JSON.
 
@@ -223,7 +223,7 @@ En las funciones básicas de R, como `lapply()`, puede proporcionar el nombre de
 
 ### Pasar argumentos con `...` {#sec-passing-arguments}
 
-\indexc{...}
+\index{...}
 
 \index{vectorisation}
 
@@ -386,7 +386,7 @@ Verá una alternativa más en la @sec-pmap.
 
 ## Estilo Purrr {#sec-purrr-style}
 
-\indexc{\%>\%}
+\index{\%>\%}
 
 Antes de continuar explorando más variantes de mapas, echemos un vistazo rápido a cómo tiende a usar varias funciones purrr para resolver un problema moderadamente realista: ajustar un modelo a cada subgrupo y extraer un coeficiente del modelo. Para este ejemplo de juguete, voy a dividir el conjunto de datos `mtcars` en grupos definidos por el número de cilindros, utilizando la función base `split`:
 
@@ -452,7 +452,7 @@ La familia de funciones del mapa tiene entradas y salidas ortogonales, lo que si
 
 ### Mismo tipo de salida que de entrada: `modify()` {#sec-modify}
 
-\indexc{modify()}
+\index{modify()}
 
 Imagina que quisieras duplicar cada columna en un data frame. Primero puede intentar usar `map()`, pero `map()` siempre devuelve una lista:
 
@@ -492,7 +492,7 @@ En la @sec-predicate-map aprenderá sobre una variante muy útil de `modify()`, 
 
 ### Dos entradas: `map2()` y amigos {#sec-map2}
 
-\indexc{map2()}
+\index{map2()}
 
 `map()` se vectoriza sobre un único argumento, `.x`. Esto significa que solo varía `.x` cuando se llama a `.f`, y todos los demás argumentos se pasan sin cambios, por lo que no es adecuado para algunos problemas. Por ejemplo, ¿cómo encontraría una media ponderada cuando tiene una lista de observaciones y una lista de pesos? Imagina que tenemos los siguientes datos:
 
@@ -565,9 +565,9 @@ La base equivalente más cercana a `map2()` es `Map()`, que se analiza en la @se
 ### Sin salidas: `walk()` y amigos
 
 ```{=tex}
-\indexc{walk()}
-\indexc{walk2()}
-\indexc{invisible()}
+\index{walk()}
+\index{walk2()}
+\index{invisible()}
 ```
 La mayoría de las funciones se llaman por el valor que devuelven, por lo que tiene sentido capturar y almacenar el valor con una función `map()`. Pero algunas funciones se llaman principalmente por sus efectos secundarios (por ejemplo, `cat()`, `write.csv()` o `ggsave()`) y no tiene sentido capturar sus resultados. Toma este ejemplo simple que muestra un mensaje de bienvenida usando `cat()`. `cat()` devuelve `NULL`, así que mientras `map()` funciona (en el sentido de que genera las bienvenidas deseadas), también devuelve `list(NULL, NULL)`.
 
@@ -623,7 +623,7 @@ No existe una base equivalente a `walk()`; envuelva el resultado de `lapply()` e
 
 ### Iterando sobre valores e índices
 
-\indexc{imap()}
+\index{imap()}
 
 \index{loops!common patterns}
 
@@ -654,7 +654,7 @@ imap_chr(x, ~ paste0("The highest value of ", .y, " is ", max(.x)))
 
 ### Cualquier número de entradas: `pmap ()` y amigos {#sec-pmap}
 
-\indexc{pmap()}
+\index{pmap()}
 
 Ya que tenemos `map()` y `map2()`, podrías esperar `map3()`, `map4()`, `map5()`, ... Pero, ¿dónde te detendrías? En lugar de generalizar `map2()` a un número arbitrario de argumentos, purrr adopta un rumbo ligeramente diferente con `pmap()`: le proporciona una sola lista, que contiene cualquier número de argumentos. En la mayoría de los casos, será una lista de vectores de igual longitud, es decir, algo muy similar a un data frame. En los diagramas, enfatizaré esa relación dibujando la entrada de forma similar a un data frame.
 
@@ -710,8 +710,8 @@ Aquí, los nombres de las columnas son fundamentales: elegí cuidadosamente hace
 
 ::: base
 ```{=tex}
-\indexc{Map()}
-\indexc{mapply()}
+\index{Map()}
+\index{mapply()}
 ```
 Hay dos equivalentes base para la familia `pmap()`: `Map()` y `mapply()`. Ambos tienen importantes inconvenientes:
 
@@ -758,7 +758,7 @@ Después de la familia map, la siguiente familia de funciones más importante es
 
 ### Lo esencial
 
-\indexc{reduce()}
+\index{reduce()}
 
 \index{fold|see {reduce}}
 
@@ -821,7 +821,7 @@ El equivalente básico es `Reduce()`. Tenga en cuenta que el orden de los argume
 
 ### accumulate
 
-\indexc{accumulate()}
+\index{accumulate()}
 
 La primera variante `reduce()`, `accumulate()`, es útil para comprender cómo funciona reduce, porque en lugar de devolver solo el resultado final, también devuelve todos los resultados intermedios:
 
@@ -889,7 +889,7 @@ Si está utilizando `reduce()` en una función, siempre debe proporcionar `.init
 
 ### Múltiples entradas
 
-\indexc{reduce2()}
+\index{reduce2()}
 
 Muy ocasionalmente necesita pasar dos argumentos a la función que está reduciendo. Por ejemplo, puede tener una lista de data frames que desea unir y las variables que usa para unir variarán de un elemento a otro. Este es un escenario muy especializado, por lo que no quiero dedicarle mucho tiempo, pero sí quiero que sepas que `reduce2()` existe.
 
@@ -994,7 +994,7 @@ Para terminar el capítulo, aquí ofrezco un resumen de importantes funciones ba
 
 ### Matrices y arreglos
 
-\indexc{apply()}
+\index{apply()}
 
 `map()` y amigos están especializados para trabajar con vectores unidimensionales. `base::apply()` está especializado para trabajar con vectores bidimensionales y superiores, es decir, matrices y arreglos. Puede pensar en `apply()` como una operación que resume una matriz o conjunto al colapsar cada fila o columna en un solo valor. Tiene cuatro argumentos:
 

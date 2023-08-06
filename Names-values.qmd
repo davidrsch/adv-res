@@ -71,7 +71,7 @@ Los detalles de la gestión de memoria de R no están documentados en un solo lu
 
 ## Binding basics {#sec-binding-basics}
 
-\index{bindings|seealso {assignment}} \index{assignment} \indexc{obj\_addr()}
+\index{bindings|seealso {assignment}} \index{assignment} \index{obj\_addr()}
 
 Considere este código:
 
@@ -204,7 +204,7 @@ Al explorar el comportamiento de copiar al modificar de forma interactiva, tenga
 
 ### `tracemem()`
 
-\indexc{tracemem()}
+\index{tracemem()}
 
 Puedes ver cuándo se copia un objeto con la ayuda de `base::tracemem()`. Una vez que llame a esa función con un objeto, obtendrá la dirección actual del objeto:
 
@@ -266,7 +266,7 @@ knitr::include_graphics("diagrams/name-value/binding-f2.png")
 
 ### Listas {#sec-list-references}
 
-\indexc{ref()}
+\index{ref()}
 
 \index{lists}
 
@@ -405,9 +405,9 @@ Esto tiene un impacto profundo en la cantidad de memoria que usa un vector de ca
 ## Tamaño del objeto {#sec-object-size}
 
 ```{=tex}
-\indexc{object.size} 
-\indexc{obj\_size()}
-\indexc{ALTREP}
+\index{object.size} 
+\index{obj\_size()}
+\index{ALTREP}
 ```
 \index{memory usage}
 
@@ -659,7 +659,7 @@ knitr::include_graphics("diagrams/name-value/e-self.png")
 
 ## Desvincular y el recolector de basura. {#sec-gc}
 
-\index{garbage collector} \index{unbinding} \indexc{rm()}
+\index{garbage collector} \index{unbinding} \index{rm()}
 
 Considere este código:
 

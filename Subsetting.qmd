@@ -47,7 +47,7 @@ Responda este breve cuestionario para determinar si necesita leer este capítulo
 
 ## Selección de varios elementos {#sec-subset-multiple}
 
-\indexc{[}
+\index{[}
 
 Utilice `[` para seleccionar cualquier número de elementos de un vector. Para ilustrar, aplicaré `[` a vectores atómicos 1D, y luego mostraré cómo esto se generaliza a objetos más complejos y más dimensiones.
 
@@ -238,7 +238,7 @@ str(df[, "x"])
 
 ### Preservando la dimensionalidad {#sec-simplify-preserve}
 
-\indexc{drop = FALSE}
+\index{drop = FALSE}
 
 \index{subsetting!simplifying} \index{subsetting!preserving}
 
@@ -311,7 +311,7 @@ Hay otros dos operadores de subconjuntos: `[[` y `$`. `[[` se usa para extraer e
 
 ### `[[`
 
-\indexc{[[}
+\index{[[}
 
 `[[` es más importante cuando se trabaja con listas porque subdividir una lista con `[` siempre devuelve una lista más pequeña. Para ayudar a que esto sea más fácil de entender, podemos usar una metáfora:
 
@@ -363,7 +363,7 @@ Si lo hace, refuerza la expectativa de que está recibiendo y estableciendo valo
 
 ### `$`
 
-\indexc{\$}
+\index{\$}
 
 `$` es un operador abreviado: `x$y` es aproximadamente equivalente a `x[["y", exact = FALSE]]`. A menudo se usa para acceder a variables en un data frame, como en `mtcars$cyl` o `diamonds$carat`. Un error común con `$` es usarlo cuando tienes el nombre de una columna almacenada en una variable:
 
@@ -399,7 +399,7 @@ x$a
 
 ### Índices faltantes y fuera de los límites {#sec-subsetting-oob}
 
-\index{subsetting!with NA \& NULL} \index{subsetting!out of bounds} \indexc{pluck()} \indexc{chuck()}
+\index{subsetting!with NA \& NULL} \index{subsetting!out of bounds} \index{pluck()} \index{chuck()}
 
 Es útil comprender lo que sucede con `[[` cuando usa un índice "no válido". La siguiente tabla resume lo que sucede cuando crea un subconjunto de un vector lógico, una lista y un `NULL` con un objeto de longitud cero (como `NULL` o `logical()`), valores fuera de los límites (OOB) o un valor faltante (por ejemplo, `NA_integer_`) con `[[`. Cada celda muestra el resultado de dividir la estructura de datos nombrada en la fila por el tipo de índice descrito en la columna. Solo he mostrado los resultados para vectores lógicos, pero otros vectores atómicos se comportan de manera similar, devolviendo elementos del mismo tipo (NB: int = entero; chr = carácter).
 
@@ -519,7 +519,7 @@ unname(lookup[x])
 
 ### Coincidencia y fusión a mano (subconjunto de enteros) {#sec-matching-merging}
 
-\index{matching and merging} \indexc{match()}
+\index{matching and merging} \index{match()}
 
 También puede tener tablas de búsqueda más complicadas con múltiples columnas de información. Por ejemplo, supongamos que tenemos un vector de grados enteros y una tabla que describe sus propiedades:
 
@@ -566,7 +566,7 @@ Los argumentos de `sample()` controlan el número de muestras a extraer, y tambi
 
 ### Ordenación (subconjunto de enteros)
 
-\indexc{order()}
+\index{order()}
 
 \index{sorting}
 
@@ -630,7 +630,7 @@ df[setdiff(names(df), "z")]
 
 ### Selección de filas en función de una condición (subconjunto lógico)
 
-\index{subsetting!with logical vectors} \indexc{subset()}
+\index{subsetting!with logical vectors} \index{subset()}
 
 Debido a que el subconjunto lógico le permite combinar fácilmente condiciones de varias columnas, es probablemente la técnica más utilizada para extraer filas de un data frame.
 
@@ -649,7 +649,7 @@ Por ejemplo, `!(X & !(Y | Z))` se simplifica en `!X | !!(Y|Z)`, y luego a `!X | 
 
 ### Álgebra booleana versus conjuntos (lógicos y enteros \mbox{subsetting})
 
-\index{Boolean algebra} \index{set algebra} \indexc{which()}
+\index{Boolean algebra} \index{set algebra} \index{which()}
 
 Es útil ser consciente de la equivalencia natural entre las operaciones con conjuntos (subconjuntos enteros) y el álgebra booleana (subconjuntos lógicos). El uso de operaciones de conjuntos es más efectivo cuando:
 

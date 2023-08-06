@@ -81,7 +81,7 @@ Hay excepciones a cada regla y, en este caso, hay una pequeña selección de fun
 
 ### Componentes de una función {#sec-fun-components}
 
-\index{functions!body} \indexc{body()} \index{functions!formals} \index{arguments!formal} \indexc{formals()} \index{functions!environment} \index{environments!of a function} \indexc{srcref}
+\index{functions!body} \index{body()} \index{functions!formals} \index{arguments!formal} \index{formals()} \index{functions!environment} \index{environments!of a function} \index{srcref}
 
 Una función tiene tres partes.:
 
@@ -120,7 +120,7 @@ attr(f02, "srcref")
 
 ### Funciones primitivas {#sec-primitive-functions}
 
-\index{primitive functions} \index{functions!primitive} \indexc{.Primitive()}
+\index{primitive functions} \index{functions!primitive} \index{.Primitive()}
 
 Hay una excepción a la regla de que una función tiene tres componentes. Las funciones primitivas, como `sum()` y `[`, llaman directamente al código C.
 
@@ -187,7 +187,7 @@ En R, a menudo verá funciones llamadas cierres **closures**. Este nombre reflej
 
 ### Invocando una función
 
-\indexc{do.call()}
+\index{do.call()}
 
 Normalmente llamas a una función colocando sus argumentos, entre paréntesis, después de su nombre: `mean(1:10, na.rm = TRUE)`. Pero, ¿qué sucede si ya tiene los argumentos en una estructura de datos?
 
@@ -239,7 +239,7 @@ Volveremos a esta idea en la @sec-tidy-dots.
 
 ## Composición de funciones {#sec-function-composition}
 
-\index{functions!composition} \indexc{\%>\%} \index{magrittr|see {\texttt{\%>\%}}} \index{piping|see {\texttt{\%>\%}}}
+\index{functions!composition} \index{\%>\%} \index{magrittr|see {\texttt{\%>\%}}} \index{piping|see {\texttt{\%>\%}}}
 
 Base R proporciona dos formas de componer múltiples llamadas a funciones. Por ejemplo, imagina que quieres calcular la desviación estándar de la población usando `sqrt()` y `mean()` como bloques de construcción:
 
@@ -435,7 +435,7 @@ Puede que te sorprenda que `g11()` siempre devuelve el mismo valor. Esto sucede 
 
 ### Búsqueda dinámica
 
-\indexc{findGlobals()}
+\index{findGlobals()}
 
 El scooping léxico determina dónde, pero no cuándo buscar valores. R busca valores cuando se ejecuta la función, no cuando se crea la función. Juntas, estas dos propiedades nos dicen que la salida de una función puede diferir dependiendo de los objetos fuera del entorno de la función:
 
@@ -590,7 +590,7 @@ h05(ls())
 
 ### Argumentos faltantes {#sec-missing-arguments}
 
-\index{missing arguments!missing@\texttt{missing()}} \indexc{\%\textbar\textbar\%}
+\index{missing arguments!missing@\texttt{missing()}} \index{\%\textbar\textbar\%}
 
 Para determinar si el valor de un argumento proviene del usuario o de un valor predeterminado, puede usar `missing()`:
 
@@ -620,7 +620,7 @@ sample <- function(x, size = NULL, replace = FALSE, prob = NULL) {
 }
 ```
 
-Con el patrón binario creado por la función infija `%||%`, que usa el lado izquierdo si no es `NULL` y el lado derecho en caso contrario, podemos simplificar aún más `sample()`: \indexc{NULL}
+Con el patrón binario creado por la función infija `%||%`, que usa el lado izquierdo si no es `NULL` y el lado derecho en caso contrario, podemos simplificar aún más `sample()`: \index{NULL}
 
 ```{r}
 `%||%` <- function(lhs, rhs) {
@@ -708,7 +708,7 @@ Debido a la evaluación perezosa, no necesita preocuparse por cálculos innecesa
 
 ## `...` (punto-punto-punto) {#sec-fun-dot-dot-dot}
 
-\indexc{...}
+\index{...}
 
 \index{functions!variadic|see {...}} \index{ellipsis|see {...}} \index{dot-dot-dot|see {...}}
 
@@ -807,7 +807,7 @@ La mayoría de las funciones salen de una de dos maneras[^functions-5]: o devuel
 
 ### Rendimientos implícitos versus explícitos
 
-\index{functions!return value} \indexc{return()}
+\index{functions!return value} \index{return()}
 
 Hay dos formas en que una función puede devolver un valor:
 
@@ -839,7 +839,7 @@ Hay dos formas en que una función puede devolver un valor:
 
 ### Valores invisibles {#sec-invisible}
 
-\indexc{invisible()}
+\index{invisible()}
 
 \index{functions!invisible results} \index{assignment}
 
@@ -888,7 +888,7 @@ En general, cualquier función llamada principalmente por un efecto secundario (
 
 ### Errores
 
-\indexc{stop()}
+\index{stop()}
 
 \index{errors}
 
@@ -906,7 +906,7 @@ Un error indica que algo salió mal y obliga al usuario a solucionar el problema
 
 ### Controladores de salida {#sec-on-exit}
 
-\indexc{on.exit()}
+\index{on.exit()}
 
 \index{handlers!exit}
 
@@ -1034,7 +1034,7 @@ Si bien hay cuatro formas, en realidad solo necesita una porque cualquier llamad
 
 ### Reescritura en forma de prefijo {#sec-prefix-transform}
 
-\index{'@\texttt{`}} \index{backticks|see {\texttt{`}}} \indexc{sapply()}
+\index{'@\texttt{`}} \index{backticks|see {\texttt{`}}} \index{sapply()}
 
 Una propiedad interesante de R es que cada infijo, reemplazo o forma especial se puede reescribir en forma de prefijo. Hacerlo es útil porque lo ayuda a comprender mejor la estructura del lenguaje, le brinda el nombre real de cada función y le permite modificar esas funciones para divertirse y obtener ganancias.
 
@@ -1117,7 +1117,7 @@ x <- k01(a = 1, 2, 3)
 
 ### Funciones infijas {#sec-infix-functions}
 
-\index{functions!infix} \index{infix functions} \indexc{\%\%}
+\index{functions!infix} \index{infix functions} \index{\%\%}
 
 Las funciones infijas obtienen su nombre del hecho de que el nombre de la función se encuentra entre sus argumentos y, por lo tanto, tienen dos argumentos. R viene con una serie de operadores infijos incorporados: `:`, `::`, `:::`, `$`, `@`, `^`, `*`, `/`, `+`, `-`, `>`, `>=`, `<`, `<=`, `==`, `!=`, `!`, `&`, `&&`, `|`, `||`, `~`, `<-`, y `<<-`. También puede crear sus propias funciones infijas que comiencen y terminen con `%`. Base R usa este patrón para definir `%%`, `%*%`, `%/%`, `%in%`, `%o%`, y `%x%`.
 

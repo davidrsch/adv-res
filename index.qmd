@@ -1,7 +1,3 @@
-::: {.content-hidden unless-format="latex"}
-`r '<!--'`
-:::
-
 # Bienvenida {.unnumbered}
 
 Este es el sitio web de la segunda edición de **"[R Avanzado](https://amzn.to/2WoabjB)"**, un libro de la Serie R de Chapman & Hall. El libro está diseñado principalmente para usuarios de R que desean mejorar sus habilidades de programación y comprensión del lenguaje. También debería ser útil para los programadores que llegan a R desde otros lenguajes, ya que les ayuda a comprender por qué R funciona de la forma en que lo hace.
@@ -26,6 +22,3 @@ Usted también podría estar interesado en:
 
 -   **"[R Packages](https://r-pkgs.org/)"** que le enseña cómo aprovechar al máximo el fantástico sistema de paquetes de R.
 
-::: {.content-hidden unless-format="latex"}
-`r '-->'`
-:::

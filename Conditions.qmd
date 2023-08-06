@@ -30,7 +30,6 @@ También encontré útil trabajar con el código C subyacente que implementa est
 
 4.  ¿Por qué podría querer crear un objeto de error personalizado?
 
-
 ### Estructura {.unnumbered}
 
 -   La @sec-signalling-conditions presenta las herramientas básicas para las condiciones de señalización y analiza cuándo es apropiado usar cada tipo.
@@ -79,7 +78,7 @@ Las siguientes tres secciones describen errores, advertencias y mensajes con má
 
 ### Errores
 
-\index{errors} \indexc{stop()} \indexc{abort()}
+\index{errors} \index{stop()} \index{abort()}
 
 En base R, los errores son señalados, o **lanzados**, por `stop()`:
 
@@ -173,7 +172,7 @@ De lo contrario, use las advertencias con moderación y considere cuidadosamente
 
 ### Mensajes
 
-\index{messages} \indexc{cat()} \indexc{packageStartupMessage()}
+\index{messages} \index{cat()} \index{packageStartupMessage()}
 
 Los mensajes, señalados por `message()`, son informativos; utilícelos para decirle al usuario que ha hecho algo en su nombre. Los buenos mensajes son un acto de equilibrio: desea proporcionar la información suficiente para que el usuario sepa lo que está sucediendo, pero no tanto como para que se sienta abrumado.
 
@@ -194,7 +193,7 @@ fm()
 
 Buenos lugares para usar un mensaje son:
 
-- Cuando un argumento predeterminado requiere una cantidad de cálculo no trivial y desea decirle al usuario qué valor se utilizó. Por ejemplo, ggplot2 informa la cantidad de contenedores utilizados si no proporciona un `binwidth`.
+-   Cuando un argumento predeterminado requiere una cantidad de cálculo no trivial y desea decirle al usuario qué valor se utilizó. Por ejemplo, ggplot2 informa la cantidad de contenedores utilizados si no proporciona un `binwidth`.
 
 -   En funciones que son convocadas principalmente por sus efectos secundarios que de otro modo serían silenciosos. Por ejemplo, al escribir archivos en el disco, llamar a una API web o escribir en una base de datos, es útil proporcionar mensajes de estado regulares que le informen al usuario lo que está sucediendo.
 
@@ -220,11 +219,11 @@ Sin embargo, los *propósitos* de `cat()` y `message()` son diferentes. Usa `cat
 
 1.  Escriba un contenedor alrededor de `file.remove()` que arroje un error si el archivo a eliminar no existe.
 
-2. ¿Qué hace el argumento `appendLF` para `message()`? ¿Cómo se relaciona con `cat()`?
+2.  ¿Qué hace el argumento `appendLF` para `message()`? ¿Cómo se relaciona con `cat()`?
 
 ## Ignorando las condiciones {#sec-ignoring-conditions}
 
-\index{conditions!muffling} \indexc{try()} \indexc{suppressWarnings()} \indexc{suppressMessages()}
+\index{conditions!muffling} \index{try()} \index{suppressWarnings()} \index{suppressMessages()}
 
 La forma más sencilla de manejar las condiciones en R es simplemente ignorarlas:
 
@@ -291,7 +290,7 @@ suppressWarnings({
 
 ## Controladores de condiciones {#sec-handling-conditions}
 
-\index{errors!catching} \index{conditions!handling} \indexc{tryCatch()} \indexc{withCallingHandlers()}
+\index{errors!catching} \index{conditions!handling} \index{tryCatch()} \index{withCallingHandlers()}
 
 Cada condición tiene un comportamiento predeterminado: los errores detienen la ejecución y regresan al nivel superior, las advertencias se capturan y muestran en conjunto y los mensajes se muestran inmediatamente. Los **controladores** de condiciones nos permiten anular o complementar temporalmente el comportamiento predeterminado.
 
@@ -326,7 +325,7 @@ Pero antes de que podamos aprender y usar estos controladores, necesitamos habla
 
 ### Objetos de condición
 
-\index{conditions!objects} \indexc{catch\_cnd()}
+\index{conditions!objects} \index{catch\_cnd()}
 
 Hasta ahora, solo hemos señalado las condiciones y no hemos mirado los objetos que se crean detrás de escena. La forma más fácil de ver un objeto de condición es atrapar uno de una condición señalada. ese es el trabajo de `rlang::catch_cnd()`:
 
@@ -347,7 +346,7 @@ Las condiciones también tienen un atributo `class`, lo que las convierte en obj
 
 ### Controladores de salida
 
-\indexc{tryCatch()}
+\index{tryCatch()}
 
 \index{handlers!exiting}
 
@@ -406,7 +405,7 @@ tryCatch(
 )
 ```
 
-`tryCatch()` tiene otro argumento: `finally`. Especifica un bloque de código (no una función) para ejecutar independientemente de si la expresión inicial tiene éxito o falla. Esto puede ser útil para la limpieza, como eliminar archivos o cerrar conexiones. Esto es funcionalmente equivalente a usar `on.exit()` (y de hecho así es como se implementa), pero puede envolver fragmentos de código más pequeños que una función completa. \indexc{on.exit()}
+`tryCatch()` tiene otro argumento: `finally`. Especifica un bloque de código (no una función) para ejecutar independientemente de si la expresión inicial tiene éxito o falla. Esto puede ser útil para la limpieza, como eliminar archivos o cerrar conexiones. Esto es funcionalmente equivalente a usar `on.exit()` (y de hecho así es como se implementa), pero puede envolver fragmentos de código más pequeños que una función completa. \index{on.exit()}
 
 ```{r}
 path <- tempfile()
@@ -424,7 +423,7 @@ tryCatch(
 
 ### Controladores de llamadas
 
-\index{handlers!calling} \indexc{withCallingHandlers()}
+\index{handlers!calling} \index{withCallingHandlers()}
 
 Los controladores configurados por `tryCatch()` se denominan controladores de salida porque hacen que el código se cierre una vez que se ha detectado la condición. Por el contrario, `withCallingHandlers()` configura controladores de **llamadas**: la ejecución del código continúa normalmente una vez que el controlador regresa. Esto tiende a hacer que `withCallingHandlers()` sea un emparejamiento más natural con las condiciones sin error. Los controladores de salida y llamada usan "controlador" en sentidos ligeramente diferentes:
 
@@ -465,7 +464,7 @@ withCallingHandlers(
 
 El valor de retorno de un controlador de llamadas se ignora porque el código continúa ejecutándose después de que se completa el controlador; ¿Adónde iría el valor de retorno? Eso significa que los controladores de llamadas solo son útiles por sus efectos secundarios.
 
-\index{conditions!muffling} \indexc{cnd\_muffle()}
+\index{conditions!muffling} \index{cnd\_muffle()}
 
 Un efecto secundario importante exclusivo de los controladores de llamadas es la capacidad de **amortiguar** la señal. De forma predeterminada, una condición continuará propagándose a los controladores principales, hasta el controlador predeterminado (o un controlador existente, si se proporciona):
 
@@ -519,7 +518,7 @@ withCallingHandlers(
 
 ### Pilas de llamadas
 
-\index{call stacks} \indexc{cnd\_muffle()}
+\index{call stacks} \index{cnd\_muffle()}
 
 Para completar la sección, existen algunas diferencias importantes entre las pilas de llamadas de los controladores de salida y de llamada. Estas diferencias generalmente no son importantes, pero las incluyo aquí porque ocasionalmente las he encontrado útiles, ¡y no quiero olvidarme de ellas!
 
@@ -598,7 +597,7 @@ tryCatch(f(), message = function(cnd) lobstr::cst())
 
 ## Condiciones personalizadas {#sec-custom-conditions}
 
-\index{conditions!custom} \indexc{abort()}
+\index{conditions!custom} \index{abort()}
 
 Uno de los desafíos del manejo de errores en R es que la mayoría de las funciones generan una de las condiciones integradas, que contienen solo un "mensaje" y una "llamada". Eso significa que si desea detectar un tipo específico de error, solo puede trabajar con el texto del mensaje de error. Esto es propenso a errores, no solo porque el mensaje puede cambiar con el tiempo, sino también porque los mensajes se pueden traducir a otros idiomas.
 
@@ -771,7 +770,7 @@ Ahora que ha aprendido las herramientas básicas del sistema de condiciones de R
 
 ### Valor de falla
 
-\indexc{try()}
+\index{try()}
 
 Hay algunos patrones `tryCatch()` simples, pero útiles, basados en la devolución de un valor del controlador de errores. El caso más simple es un contenedor para devolver un valor predeterminado si ocurre un error:
 
@@ -988,10 +987,9 @@ Esta es la idea clave que subyace al paquete de evaluación [@evaluate] que impu
 ### Sin comportamiento predeterminado
 
 ```{=tex}
-\indexc{signal()}
-\indexc{cnd\_muffle()}
+\index{signal()}
+\index{cnd\_muffle()}
 ```
-
 Un último patrón útil es señalar una condición que no hereda de `message`, `warning` o `error`. Debido a que no hay un comportamiento predeterminado, esto significa que la condición no tiene efecto a menos que el usuario lo solicite específicamente. Por ejemplo, podría imaginar un sistema de registro basado en condiciones:
 
 ```{r}

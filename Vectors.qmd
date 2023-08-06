@@ -62,7 +62,7 @@ knitr::include_graphics("diagrams/vectors/summary-tree-atomic.png")
 
 ### Escalares {#sec-scalars}
 
-\index{scalars} \indexc{NaN} \indexc{Inf} \indexc{L} \indexc{""} \indexc{'}
+\index{scalars} \index{NaN} \index{Inf} \index{L} \index{""} \index{'}
 
 Cada uno de los cuatro tipos principales tiene una sintaxis especial para crear un valor individual, también conocido como **escalar**[^vectors-4]:
 
@@ -81,9 +81,9 @@ Cada uno de los cuatro tipos principales tiene una sintaxis especial para crear 
 ### Crear vectores más largos con `c()` {#sec-atomic-constructing}
 
 ```{=tex}
-\indexc{typeof()}
-\indexc{length()}
-\indexc{c()}
+\index{typeof()}
+\index{length()}
+\index{c()}
 ```
 Para crear vectores más largos a partir de otros más cortos, use `c()`, abreviatura de combinar:
 
@@ -120,8 +120,8 @@ typeof(chr_var)
 ### Valores Faltantes
 
 ```{=tex}
-\indexc{NA}
-\indexc{is.na}
+\index{NA}
+\index{is.na}
 ```
 \index{missing values|see {\texttt{NA}}}
 
@@ -160,7 +160,7 @@ NB: Técnicamente, hay cuatro valores faltantes[^vectors-7], uno para cada uno d
 
 ### Pruebas y coerción
 
-\index{coercion} \indexc{is.vector()} \indexc{is.atomic()} \indexc{is.numeric()}
+\index{coercion} \index{is.vector()} \index{is.atomic()} \index{is.numeric()}
 
 En general, puede **probar** si un vector es de un tipo dado con una función `is.*()`, pero estas funciones deben usarse con cuidado. `is.logical()`, `is.integer()`, `is.double()` y `is.character()` hacen lo que cabría esperar: prueban si un vector es un carácter, doble, entero o lógico. Evite `is.vector()`, `is.atomic()` y `is.numeric()`: no comprueban si tiene un vector, un vector atómico o un vector numérico; deberá leer detenidamente la documentación para descubrir qué es lo que realmente hacen.
 
@@ -215,9 +215,9 @@ Es posible que haya notado que el conjunto de vectores atómicos no incluye una 
 
 ### Conseguir y configurar
 
-\indexc{attr()}
+\index{attr()}
 
-\index{attributes!attributes@\texttt{attributes()}} \indexc{structure()}
+\index{attributes!attributes@\texttt{attributes()}} \index{structure()}
 
 Puede pensar en los atributos como pares de nombre-valor [^vectors-8] que adjuntan metadatos a un objeto. Los atributos individuales pueden recuperarse y modificarse con `attr()`, o recuperarse en masa con `attributes()`, y establecerse en masa con `structure()`.
 
@@ -260,7 +260,7 @@ Para conservar otros atributos, deberá crear su propia clase S3, el tema del @s
 
 ### Nombres {#sec-attr-names}
 
-\index{attributes!names} \indexc{names()} \indexc{setNames()}
+\index{attributes!names} \index{names()} \index{setNames()}
 
 Puede nombrar un vector de tres maneras:
 
@@ -379,8 +379,8 @@ knitr::include_graphics("diagrams/vectors/summary-tree-s3-1.png")
 ### Factores
 
 ```{=tex}
-\indexc{factor}
-\indexc{stringsAsFactors}
+\index{factor}
+\index{stringsAsFactors}
 ```
 Un factor es un vector que solo puede contener valores predefinidos. Se utiliza para almacenar datos categóricos. Los factores se construyen sobre un vector entero con dos atributos: una `class`, "factor", que hace que se comporte de manera diferente a los vectores enteros normales, y `levels`, que define el conjunto de valores permitidos.
 
@@ -421,7 +421,7 @@ Si bien los factores se ven (y a menudo se comportan como) vectores de caractere
 
 ### Fechas
 
-\indexc{Date}
+\index{Date}
 
 Los vectores de fecha se construyen sobre vectores dobles. Tienen clase "Date" y ningún otro atributo:
 
@@ -443,7 +443,7 @@ unclass(date)
 
 ### Fecha-Hora
 
-\index{date-times|see {\texttt{POSIXct}}} \indexc{POSIXct}
+\index{date-times|see {\texttt{POSIXct}}} \index{POSIXct}
 
 Base R[^vectors-11] proporciona dos formas de almacenar información de fecha y hora, POSIXct y POSIXlt. Estos son nombres ciertamente extraños: "POSIX" es la abreviatura de Portable Operating System Interface, que es una familia de estándares multiplataforma. "ct" representa la hora del calendario (el tipo `time_t` en C), y "lt" la hora local (el tipo `struct tm` en C). Aquí nos centraremos en `POSIXct`, porque es el más simple, está construido sobre un vector atómico y es más apropiado para usar en tramas de datos. Los vectores POSIXct se construyen sobre vectores dobles, donde el valor representa la cantidad de segundos desde 1970-01-01.
 
@@ -468,7 +468,7 @@ structure(now_ct, tzone = "Europe/Paris")
 
 ### Duraciones
 
-\index{durations|see {difftime}} \indexc{difftime}
+\index{durations|see {difftime}} \index{difftime}
 
 Las duraciones, que representan la cantidad de tiempo entre pares de fechas o fechas-horas, se almacenan en difftimes. Los tiempos de diferencia se construyen sobre los dobles y tienen un atributo de `unidades` que determina cómo se debe interpretar el número entero:
 
@@ -513,7 +513,7 @@ Las listas son un paso más en complejidad que los vectores atómicos: cada elem
 
 ### Creando {#sec-list-creating}
 
-\indexc{list()}
+\index{list()}
 
 Construyes listas con `list()`:
 
@@ -606,7 +606,7 @@ Estas estructuras de datos son relativamente esotéricas, pero pueden ser útile
 
 ## Data frames y tibbles {#sec-tibble}
 
-\index{data frames} \index{tibbles|see {data frames}} \indexc{row.names}
+\index{data frames} \index{tibbles|see {data frames}} \index{row.names}
 
 Los dos vectores S3 más importantes construidos sobre las listas son los data frames y los tibbles.
 
@@ -650,7 +650,7 @@ attributes(df2)
 
 ### Creando {#sec-df-create}
 
-\indexc{stringsAsFactors}
+\index{stringsAsFactors}
 
 \index{data frames!data.frame@\texttt{data.frame()}}
 
@@ -728,7 +728,7 @@ knitr::include_graphics("diagrams/vectors/data-frame-2.png")
 
 ### Nombres de filas {#sec-rownames}
 
-\indexc{row.names}
+\index{row.names}
 
 Los data frames le permiten etiquetar cada fila con un nombre, un vector de caracteres que contiene solo valores únicos:
 
@@ -838,7 +838,7 @@ Puede convertir un objeto en un data frame con `as.data.frame()` o en un tibble 
 
 ### Columnas de lista
 
-\index{data frames!list-columns} \indexc{I()}
+\index{data frames!list-columns} \index{I()}
 
 Dado que un data frame es una lista de vectores, es posible que un data frame tenga una columna que sea una lista. Esto es muy útil porque una lista puede contener cualquier otro objeto: esto significa que puede colocar cualquier objeto en un data frame. Esto le permite mantener los objetos relacionados juntos en una fila, sin importar cuán complejos sean los objetos individuales. Puede ver una aplicación de esto en el capítulo "Muchos modelos" de *R para la Ciencia de Datos*, <http://r4ds.had.co.nz/many-models.html>.
 
@@ -907,7 +907,7 @@ dfm[1, ]
 
 ## `NULL`
 
-\indexc{NULL}
+\index{NULL}
 
 Para terminar este capítulo, quiero hablar sobre una última estructura de datos importante que está estrechamente relacionada con los vectores: `NULL`. `NULL` es especial porque tiene un tipo único, siempre tiene una longitud cero y no puede tener ningún atributo:
 

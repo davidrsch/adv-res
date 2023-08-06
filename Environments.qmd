@@ -62,7 +62,7 @@ Exploremos estas ideas con código e imágenes.
 
 ### Lo esencial
 
-\index{environments!creating} \indexc{env()} \indexc{new.env()} \index{assignment}
+\index{environments!creating} \index{env()} \index{new.env()} \index{assignment}
 
 Para crear un entorno, utilice `rlang::env()`. Funciona como `list()`, tomando un conjunto de pares nombre-valor:
 
@@ -137,7 +137,7 @@ Accede al entorno global con `globalenv()` y al entorno actual con `environment(
 
 ### Padres
 
-\index{environments!parent} \indexc{env\_parent()}
+\index{environments!parent} \index{env\_parent()}
 
 Cada entorno tiene un **padre**, otro entorno. En los diagramas, el padre se muestra como un pequeño círculo azul pálido y una flecha que apunta a otro entorno. El padre es lo que se usa para implementar el scoping léxico: si un nombre no se encuentra en un entorno, entonces R buscará en su padre (y así sucesivamente). Puede configurar el entorno principal proporcionando un argumento sin nombre a `env()`. Si no lo proporciona, el valor predeterminado es el entorno actual. En el siguiente código, `e2a` es el padre de `e2b`.
 
@@ -189,7 +189,7 @@ Use `parent.env()` para encontrar el padre de un entorno. Ninguna función base 
 
 ### Asignación superior, `<<-`
 
-\indexc{<<-}
+\index{<<-}
 
 \index{assignment} \index{super assignment}
 
@@ -208,7 +208,7 @@ Si `<<-` no encuentra una variable existente, creará una en el entorno global. 
 
 ### Conseguir y configurar
 
-\index{environments!bindings} \indexc{env\_bind\_*}
+\index{environments!bindings} \index{env\_bind\_*}
 
 Puede obtener y establecer elementos de un entorno con `$` y `[[` de la misma manera que una lista:
 
@@ -278,12 +278,12 @@ env_has(e3, "a")
 Desvincular un nombre no elimina el objeto. Ese es el trabajo del recolector de basura, que elimina automáticamente los objetos sin nombres vinculados a ellos. Este proceso se describe con más detalle en la @sec-gc.
 
 ::: base
-\indexc{rm()}\index{assignment!assign()@\texttt{assign()}}\indexc{get()}\indexc{exists()} Consulte `get()`, `assign()`, `exists()` y `rm()`. Estos están diseñados de forma interactiva para su uso con el entorno actual, por lo que trabajar con otros entornos es un poco complicado. También tenga cuidado con el argumento `inherits`: por defecto es `TRUE`, lo que significa que los equivalentes base inspeccionarán el entorno suministrado y todos sus ancestros.
+\index{rm()}\index{assignment!assign()@\texttt{assign()}}\index{get()}\index{exists()} Consulte `get()`, `assign()`, `exists()` y `rm()`. Estos están diseñados de forma interactiva para su uso con el entorno actual, por lo que trabajar con otros entornos es un poco complicado. También tenga cuidado con el argumento `inherits`: por defecto es `TRUE`, lo que significa que los equivalentes base inspeccionarán el entorno suministrado y todos sus ancestros.
 :::
 
-### Enlaces avanzados{#advanced-dindings}
+### Enlaces avanzados {#sec-advanced-bindings}
 
-\index{bindings!delayed} \index{promises} \index{bindings!active} \index{active bindings} \indexc{env\_bind\_*}
+\index{bindings!delayed} \index{promises} \index{bindings!active} \index{active bindings} \index{env\_bind\_*}
 
 Hay dos variantes más exóticas de `env_bind()`:
 
@@ -458,9 +458,9 @@ La mayoría de los entornos no los crea usted (por ejemplo, con `env()`), sino q
 
 ### Entornos de paquetes y la ruta de búsqueda {#sec-search-path}
 
-\indexc{search()}
+\index{search()}
 
-\index{search path} \indexc{Autoloads} \index{environments!base}
+\index{search path} \index{Autoloads} \index{environments!base}
 
 Cada paquete adjunto por `library()` o `require()` se convierte en uno de los padres del entorno global. El padre inmediato del entorno global es el último paquete que adjuntó [^environments-2], el padre de ese paquete es el penúltimo paquete que adjuntó, ...
 
@@ -492,7 +492,7 @@ knitr::include_graphics("diagrams/environments/search-path-2.png")
 
 ### El entorno funcional {#sec-function-environments}
 
-\index{environments!function} \indexc{fn\_env()}
+\index{environments!function} \index{fn\_env()}
 
 Una función vincula el entorno actual cuando se crea. Esto se denomina **entorno de función** y se utiliza para el scoping léxico. En todos los lenguajes informáticos, las funciones que capturan (o encierran) sus entornos se denominan **cierres**, razón por la cual este término a menudo se usa indistintamente con *función* en la documentación de R.
 
@@ -681,7 +681,7 @@ Aprenderá más sobre las fábricas de funciones en la @sec-factory-fundamentals
 
 ## Pilas de llamadas {#sec-call-stack}
 
-\index{environments!calling} \indexc{parent.frame()} \index{call stacks}
+\index{environments!calling} \index{parent.frame()} \index{call stacks}
 
 Hay un último entorno que debemos explicar, el entorno **caller**, al que se accede con `rlang::caller_env()`. Esto proporciona el entorno desde el que se llamó a la función y, por lo tanto, varía en función de cómo se llame a la función, no de cómo se creó. Como vimos anteriormente, este es un valor predeterminado útil cada vez que escribe una función que toma un entorno como argumento.
 
@@ -696,8 +696,8 @@ Para comprender completamente el entorno de la persona que llama, debemos analiz
 ### Pilas de llamadas simples {#sec-simple-stack}
 
 ```{=tex}
-\indexc{cst()}
-\indexc{traceback()}
+\index{cst()}
+\index{traceback()}
 ```
 Ilustremos esto con una secuencia simple de llamadas: `f()` llama a `g()` llama a `h()`.
 
@@ -769,7 +769,7 @@ a(f())
 
 ### Marcos
 
-\index{frame} \indexc{parent.frame()}
+\index{frame} \index{parent.frame()}
 
 Cada elemento de la pila de llamadas es un **marco**[^environments-3], también conocido como contexto de evaluación. El marco es una estructura de datos interna extremadamente importante, y el código R solo puede acceder a una pequeña parte de la estructura de datos porque manipularlo romperá R. Un marco tiene tres componentes clave:
 

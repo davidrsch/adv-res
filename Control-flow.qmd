@@ -30,9 +30,9 @@ El sistema de condiciones (mensajes, advertencias y errores), del que aprenderá
 
 -   La @sec-loops comienza recordándole la estructura básica del bucle for en R, analiza algunos errores comunes y luego habla sobre las declaraciones `while` y `repeat` relacionadas.
 
-## Opciones{#sec-choices}
+## Opciones {#sec-choices}
 
-\indexc{if}
+\index{if}
 
 La forma básica de una sentencia if en R es la siguiente:
 
@@ -96,7 +96,7 @@ if (c(TRUE, FALSE)) 1
 
 ### if vectorizado
 
-\indexc{ifelse()}
+\index{ifelse()}
 
 Dado que `if` solo funciona con un solo `TRUE` o `FALSE`, es posible que se pregunte qué hacer si tiene un vector de valores lógicos. Manejar vectores de valores es el trabajo de `ifelse()`: una función vectorizada con vectores `test`, `sí` y `no` (que se reciclarán a la misma longitud):
 
@@ -125,7 +125,7 @@ dplyr::case_when(
 
 ### declaración `switch()` {#sec-switch}
 
-\indexc{switch()}
+\index{switch()}
 
 Estrechamente relacionada con `if` está la sentencia `switch()`. Es un equivalente compacto de propósito especial que le permite reemplazar código como:
 
@@ -184,7 +184,7 @@ También es posible usar `switch()` con una `x` numérica, pero es más difícil
 
 ### Ejercicios
 
-1. ¿Qué tipo de vector devuelve cada una de las siguientes llamadas a `ifelse()`?
+1.  ¿Qué tipo de vector devuelve cada una de las siguientes llamadas a `ifelse()`?
 
     ```{r, eval = FALSE}
     ifelse(TRUE, 1, "no")
@@ -206,7 +206,7 @@ También es posible usar `switch()` con una `x` numérica, pero es más difícil
 
 ## Bucles {#sec-loops}
 
-\index{loops} \index{loops!for@\texttt{for}} \indexc{for}
+\index{loops} \index{loops!for@\texttt{for}} \index{for}
 
 `for` los bucles se utilizan para iterar sobre los elementos de un vector. Tienen la siguiente forma básica:
 
@@ -233,8 +233,8 @@ i
 ```
 
 ```{=tex}
-\indexc{next}
-\indexc{break}
+\index{next}
+\index{break}
 ```
 Hay dos formas de terminar un bucle `for` antes de tiempo:
 
@@ -314,10 +314,9 @@ for (i in seq_along(xs)) {
 ### Herramientas relacionadas {#sec-for-family}
 
 ```{=tex}
-\indexc{while}
-\indexc{repeat}
+\index{while}
+\index{repeat}
 ```
-
 Los bucles `for` son útiles si conoce de antemano el conjunto de valores que desea iterar. Si no lo sabe, hay dos herramientas relacionadas con especificaciones más flexibles:
 
 -   `while(condition) action`: ejecuta `action` mientras `condition` sea `TRUE`.
