@@ -91,9 +91,6 @@ The translation was done using Google Translate and some grammar and coherence e
 -   Introduction
 -   Foundations
 -   Functional Programming
-    -   Introduction
-    -   Functionals
-    -   Function Factories
 
 # More info about the repository
 
