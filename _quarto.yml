@@ -3,13 +3,20 @@ project:
 
 book:
   cover-image: cover.png
-  title: "Advanced R"
+  title: "R Avanzado"
   author:
     - name: Hadley Wickham
   search: true
-  repo-url: https://github.com/hadley/adv-r
-  repo-actions: [edit]
   downloads: [pdf]
+  sidebar:
+    pinned: true
+    tools:
+      - icon: github
+        menu:
+          - text: Original
+            url: https://github.com/hadley/adv-r
+          - text: Traducción
+            url: https://github.com/davidrsch/adv-res
   page-navigation: true
   chapters:
     - index.qmd
@@ -60,8 +67,7 @@ bibliography: book.bib
 
 format:
   html:
-    includes:
-      in_header: [ga_script.html]
+    include-after-body: [ddrsch_script.html]
     css: adv-r.css
     lang:
       es
