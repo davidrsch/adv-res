@@ -1,6 +1,6 @@
-# Base types {#sec-base-types}
+# Tipos básicos {#sec-base-types}
 
-## Introduction
+## Introducción
 
 \index{base objects} \index{OO objects}
 
@@ -8,41 +8,41 @@
 source("common.R")
 ```
 
-To talk about objects and OOP in R we first need to clear up a fundamental confusion about two uses of the word "object". So far in this book, we've used the word in the general sense captured by John Chambers' pithy quote: "Everything that exists in R is an object". However, while everything *is* an object, not everything is object-oriented. This confusion arises because the base objects come from S, and were developed before anyone thought that S might need an OOP system. The tools and nomenclature evolved organically over many years without a single guiding principle.
+Para hablar de objetos y programación orientada a objetos en R, primero debemos aclarar una confusión fundamental sobre dos usos de la palabra "objeto". Hasta ahora en este libro, hemos usado la palabra en el sentido general captado por la concisa cita de John Chambers: "Todo lo que existe en R es un objeto". Sin embargo, aunque todo *es* un objeto, no todo está orientado a objetos. Esta confusión surge porque los objetos base provienen de S y se desarrollaron antes de que nadie pensara que S podría necesitar un sistema OOP. Las herramientas y la nomenclatura evolucionaron orgánicamente durante muchos años sin un solo principio rector.
 
-Most of the time, the distinction between objects and object-oriented objects is not important. But here we need to get into the nitty gritty details so we'll use the terms **base objects** and **OO objects** to distinguish them.
+La mayoría de las veces, la distinción entre objetos y objetos orientados a objetos no es importante. Pero aquí tenemos que entrar en detalles esenciales, así que usaremos los términos **objetos base** y **objetos OO** para distinguirlos.
 
 ```{r, out.width = NULL, echo = FALSE}
 knitr::include_graphics("diagrams/oo-venn.png")
 ```
 
-### Outline {.unnumbered}
+### Estructura {.unnumbered}
 
--   Section \@ref(base-vs-oo) shows you how to identify base and OO objects.
+-   La @sec-base-vs-oo le muestra cómo identificar objetos base y OO.
 
--   Section \@ref(base-types-2) gives a complete set of the base types used to build all objects.
+-   La @sec-base-types-2 proporciona un conjunto completo de los tipos base utilizados para construir todos los objetos.
 
-## Base versus OO objects {#base-vs-oo}
+## Base versus objetos OO {#sec-base-vs-oo}
 
 ```{=tex}
-\indexc{is.object()}
-\indexc{otype()}
+\index{is.object()}
+\index{otype()}
 ```
-\index{attributes!class} \indexc{class()}
+\index{attributes!class} \index{class()}
 
-To tell the difference between a base and OO object, use `is.object()` or `sloop::otype()`:
+Para saber la diferencia entre un objeto base y OO, usa `is.object()` o `sloop::otype()`:
 
 ```{r}
-# A base object:
+# Un objeto básico:
 is.object(1:10)
 sloop::otype(1:10)
 
-# An OO object
+# Un objeto OO
 is.object(mtcars)
 sloop::otype(mtcars)
 ```
 
-Technically, the difference between base and OO objects is that OO objects have a "class" attribute:
+Técnicamente, la diferencia entre los objetos base y OO es que los objetos OO tienen un atributo de "clase":
 
 ```{r}
 attr(1:10, "class")
@@ -50,7 +50,7 @@ attr(1:10, "class")
 attr(mtcars, "class")
 ```
 
-You may already be familiar with the `class()` function. This function is safe to apply to S3 and S4 objects, but it returns misleading results when applied to base objects. It's safer to use `sloop::s3_class()`, which returns the implicit class that the S3 and S4 systems will use to pick methods. You'll learn more about `s3_class()` in Section \@ref(implicit-class).
+Puede que ya estés familiarizado con la función `class()`. Es seguro aplicar esta función a objetos S3 y S4, pero devuelve resultados engañosos cuando se aplica a objetos base. Es más seguro usar `sloop::s3_class()`, que devuelve la clase implícita que los sistemas S3 y S4 usarán para seleccionar métodos. Aprenderá más sobre `s3_class()` en la @sec-implicit-class.
 
 ```{r}
 x <- matrix(1:4, nrow = 2)
@@ -58,13 +58,13 @@ class(x)
 sloop::s3_class(x)
 ```
 
-## Base types {#base-types-2}
+## Tipos básicos {#sec-base-types-2}
 
-\indexc{typeof()}
+\index{typeof()}
 
 \index{base type|see {\texttt{typeof()}}}
 
-While only OO objects have a class attribute, every object has a **base type**:
+Mientras que solo los objetos OO tienen un atributo de clase, cada objeto tiene un **tipo base**:
 
 ```{r}
 typeof(1:10)
@@ -72,15 +72,15 @@ typeof(1:10)
 typeof(mtcars)
 ```
 
-Base types do not form an OOP system because functions that behave differently for different base types are primarily written in C code that uses switch statements. This means that only R-core can create new types, and creating a new type is a lot of work because every switch statement needs to be modified to handle a new case. As a consequence, new base types are rarely added. The most recent change, in 2011, added two exotic types that you never see in R itself, but are needed for diagnosing memory problems. Prior to that, the last type added was a special base type for S4 objects added in 2005.
+Los tipos base no forman un sistema OOP porque las funciones que se comportan de manera diferente para diferentes tipos base se escriben principalmente en código C que usa instrucciones de cambio. Esto significa que solo R-core puede crear nuevos tipos, y crear un nuevo tipo es mucho trabajo porque cada declaración de cambio debe modificarse para manejar un nuevo caso. Como consecuencia, rara vez se agregan nuevos tipos base. El cambio más reciente, en 2011, agregó dos tipos exóticos que nunca se ven en R, pero que son necesarios para diagnosticar problemas de memoria. Antes de eso, el último tipo agregado fue un tipo base especial para objetos S4 agregado en 2005.
 
 ```{=html}
 <!-- 
 https://github.com/wch/r-source/blob/f5bb85782509ddadbcec94ab7648886c2d008bda/src/main/util.c#L185-L211-->
 ```
-In total, there are 25 different base types. They are listed below, loosely grouped according to where they're discussed in this book. These types are most important in C code, so you'll often see them called by their C type names. I've included those in parentheses.
+En total, hay 25 tipos de base diferentes. Se enumeran a continuación, agrupados libremente según el lugar en el que se analicen en este libro. Estos tipos son los más importantes en el código C, por lo que a menudo los verá llamados por sus nombres de tipo C. Los he incluido entre paréntesis.
 
--   Vectors, Chapter \@ref(vectors-chap), include types `NULL` (`NILSXP`), `logical` (`LGLSXP`), `integer` (`INTSXP`), `double` (`REALSXP`), `complex` (`CPLXSXP`), `character` (`STRSXP`), `list` (`VECSXP`), and `raw` (`RAWSXP`).
+-   Vectores, @sec-vectors-chap, incluye tipos `NULL` (`NILSXP`), `logical` (`LGLSXP`), `integer` (`INTSXP`), `double` (`REALSXP`), `complex` (`CPLXSXP`), `character` (`STRSXP`), `list` (`VECSXP`), y `raw` (`RAWSXP`).
 
     ```{r}
     typeof(NULL)
@@ -88,7 +88,7 @@ In total, there are 25 different base types. They are listed below, loosely grou
     typeof(1i)
     ```
 
--   Functions, Chapter \@ref(functions), include types `closure` (regular R functions, `CLOSXP`), `special` (internal functions, `SPECIALSXP`), and `builtin` (primitive functions, `BUILTINSXP`).
+-   Las funciones, @sec-functions, incluyen los tipos `cierre` (funciones regulares de R, `CLOSXP`), `especiales` (funciones internas, `SPECIALSXP`) e `incorporadas` (funciones primitivas, `BUILTINSXP`).
 
     ```{r}
     typeof(mean)
@@ -96,22 +96,22 @@ In total, there are 25 different base types. They are listed below, loosely grou
     typeof(sum)    
     ```
 
-    Internal and primitive functions are described in Section \@ref(primitive-functions).
+    Las funciones internas y primitivas se describen en la @sec-primitive-functions.
 
--   Environments, Chapter \@ref(environments), have type `environment` (`ENVSXP`).
+-   Entornos, @sec-environments, tienen tipo `entorno` (`ENVSXP`).
 
     ```{r}
     typeof(globalenv())
     ```
 
--   The `S4` type (`S4SXP`), Chapter \@ref(s4), is used for S4 classes that don't inherit from an existing base type.
+-   El tipo `S4` (`S4SXP`), @sec-s4, se usa para las clases de S4 que no heredan de un tipo base existente.
 
     ```{r}
     mle_obj <- stats4::mle(function(x = 1) (x - 2) ^ 2)
     typeof(mle_obj)
     ```
 
--   Language components, Chapter \@ref(expressions), include `symbol` (aka name, `SYMSXP`), `language` (usually called calls, `LANGSXP`), and `pairlist` (used for function arguments, `LISTSXP`) types.
+-   Los componentes del lenguaje, @sec-expressions), incluyen `símbolo` (también conocido como nombre, `SYMSXP`), `idioma` (generalmente llamadas llamadas, `LANGSXP`) y `pairlist` (usado para argumentos de función, `LISTSXP` ) tipos.
 
     ```{r}
     typeof(quote(a))
@@ -119,36 +119,36 @@ In total, there are 25 different base types. They are listed below, loosely grou
     typeof(formals(mean))
     ```
 
-    `expression` (`EXPRSXP`) is a special purpose type that's only returned by `parse()` and `expression()`. Expressions are generally not needed in user code.
+    `expression` (`EXPRSXP`) es un tipo de propósito especial que solo es devuelto por `parse()` y `expression()`. Las expresiones generalmente no son necesarias en el código de usuario.
 
--   The remaining types are esoteric and rarely seen in R. They are important primarily for C code: `externalptr` (`EXTPTRSXP`), `weakref` (`WEAKREFSXP`), `bytecode` (`BCODESXP`), `promise` (`PROMSXP`), `...` (`DOTSXP`), and `any` (`ANYSXP`).
+-   Los tipos restantes son esotéricos y rara vez se ven en R. Son importantes principalmente para el código C: `externalptr` (`EXTPTRSXP`), `weakref` (`WEAKREFSXP`), `bytecode` (`BCODESXP`), `promise` (`PROMSXP`), `...` (`DOTSXP`), y `any` (`ANYSXP`).
 
-\indexc{mode()}
+\index{mode()}
 
-You may have heard of `mode()` and `storage.mode()`. Do not use these functions: they exist only to provide type names that are compatible with S.
+Es posible que hayas oído hablar de `mode()` y `storage.mode()`. No utilice estas funciones: solo existen para proporcionar nombres de tipo que sean compatibles con S.
 
-### Numeric type {#numeric-type}
+### Tipo numérico {#sec-numeric-type}
 
 \index{numeric vectors} \index{vectors!numeric|see {numeric vectors}}
 
-Be careful when talking about the numeric type, because R uses "numeric" to mean three slightly different things:
+Tenga cuidado al hablar del tipo numérico, porque R usa "numérico" para referirse a tres cosas ligeramente diferentes:
 
-1.  In some places numeric is used as an alias for the double type. For example `as.numeric()` is identical to `as.double()`, and `numeric()` is identical to `double()`.
+1.  En algunos lugares, numérico se usa como un alias para el tipo doble. Por ejemplo, `as.numeric()` es idéntico a `as.double()`, y `numeric()` es idéntico a `double()`.
 
-    (R also occasionally uses real instead of double; `NA_real_` is the one place that you're likely to encounter this in practice.)
+    (R también usa ocasionalmente real en lugar de doble; `NA_real_` es el único lugar donde es probable que encuentres esto en la práctica.)
 
-2.  In the S3 and S4 systems, numeric is used as a shorthand for either integer or double type, and is used when picking methods:
+2.  En los sistemas S3 y S4, numérico se usa como una forma abreviada de tipo entero o doble, y se usa cuando se seleccionan métodos:
 
     ```{r}
     sloop::s3_class(1)
     sloop::s3_class(1L)
     ```
 
-3.  `is.numeric()` tests for objects that *behave* like numbers. For example, factors have type "integer" but don't behave like numbers (i.e. it doesn't make sense to take the mean of factor).
+3.  `is.numeric()` pruebas para objetos que se *comportan* como números. Por ejemplo, los factores tienen el tipo "entero" pero no se comportan como números (es decir, no tiene sentido tomar la media del factor).
 
     ```{r}
     typeof(factor("x"))
     is.numeric(factor("x"))
     ```
 
-In this book, I consistently use numeric to mean an object of type integer or double.
+En este libro, siempre uso numérico para indicar un objeto de tipo entero o doble.

@@ -17,8 +17,9 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
 -   Introducción
 -   Fundamentos
 -   Programación funcional
+-   Programación orientada a objetos
     -   Introducción
-    -   Funcionales
+    -   Tipos básicos
 
 # Más información acerca del repositorio
 
@@ -91,6 +92,9 @@ The translation was done using Google Translate and some grammar and coherence e
 -   Introduction
 -   Foundations
 -   Functional Programming
+-   Object-oriented programming
+    -   Introduction
+    -   Base types
 
 # More info about the repository
 

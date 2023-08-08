@@ -5,47 +5,47 @@ source("common.R")
 library(sloop)
 ```
 
-# Introduction {#oo .unnumbered}
+# Introdución {#sec-oo .unnumbered}
 
-In the following five chapters you'll learn about **object-oriented programming** (OOP). OOP is a little more challenging in R than in other languages because:
+En los cinco capítulos siguientes, aprenderá sobre la **programación orientada a objetos** (POO). POO es un poco más desafiante en R que en otros lenguajes porque:
 
--   There are multiple OOP systems to choose from. In this book, I'll focus on the three that I believe are most important: **S3**, **R6**, and **S4**. S3 and S4 are provided by base R. R6 is provided by the R6 package, and is similar to the Reference Classes, or **RC** for short, from base R.
+-   Hay múltiples sistemas de POO para elegir. En este libro, me concentraré en los tres que considero más importantes: **S3**, **R6** y **S4**. S3 y S4 son proporcionados por la base R. R6 es proporcionado por el paquete R6 y es similar a las clases de referencia, o **RC** para abreviar, desde la base R.
 
--   There is disagreement about the relative importance of the OOP systems. I think S3 is most important, followed by R6, then S4. Others believe that S4 is most important, followed by RC, and that S3 should be avoided. This means that different R communities use different systems.
+-   Hay desacuerdo sobre la importancia relativa de los sistemas de POO. Creo que S3 es el más importante, seguido de R6, luego S4. Otros creen que S4 es el más importante, seguido de RC, y que S3 debe evitarse. Esto significa que diferentes comunidades R usan diferentes sistemas.
 
--   S3 and S4 use generic function OOP which is rather different from the encapsulated OOP used by most languages popular today[^oo-1]. We'll come back to precisely what those terms mean shortly, but basically, while the underlying ideas of OOP are the same across languages, their expressions are rather different. This means that you can't immediately transfer your existing OOP skills to R.
+-   S3 y S4 utilizan la función POO genérica, que es bastante diferente de la programación orientada a objetos encapsulada utilizada por la mayoría de los lenguajes populares en la actualidad[^oo-1]. Volveremos precisamente a lo que significan esos términos en breve, pero básicamente, aunque las ideas subyacentes de POO son las mismas en todos los idiomas, sus expresiones son bastante diferentes. Esto significa que no puede transferir inmediatamente sus habilidades de POO existentes a R.
 
-[^oo-1]: The exception is Julia, which also uses generic function OOP. Compared to R, Julia's implementation is fully developed and extremely performant.
+[^oo-1]: La excepción es Julia, que también usa la función genérica de POO. En comparación con R, la implementación de Julia está completamente desarrollada y tiene un rendimiento extremo.
 
-Generally in R, functional programming is much more important than object-oriented programming, because you typically solve complex problems by decomposing them into simple functions, not simple objects. Nevertheless, there are important reasons to learn each of the three systems:
+En general, en R, la programación funcional es mucho más importante que la programación orientada a objetos, porque normalmente resuelve problemas complejos descomponiéndolos en funciones simples, no en objetos simples. Sin embargo, hay razones importantes para aprender cada uno de los tres sistemas:
 
--   S3 allows your functions to return rich results with user-friendly display and programmer-friendly internals. S3 is used throughout base R, so it's important to master if you want to extend base R functions to work with new types of input.
+-   S3 permite que sus funciones devuelvan resultados enriquecidos con una pantalla fácil de usar y componentes internos fáciles de usar para el programador. S3 se usa en toda la base R, por lo que es importante dominarlo si desea extender las funciones base R para trabajar con nuevos tipos de entrada.
 
--   R6 provides a standardised way to escape R's copy-on-modify semantics. This is particularly important if you want to model objects that exist independently of R. Today, a common need for R6 is to model data that comes from a web API, and where changes come from inside or outside of R.
+-   R6 proporciona una forma estandarizada de escapar de la semántica de copia al modificar de R. Esto es particularmente importante si desea modelar objetos que existen independientemente de R. Hoy en día, una necesidad común para R6 es modelar datos que provienen de una API web y dónde los cambios provienen de dentro o fuera de R.
 
--   S4 is a rigorous system that forces you to think carefully about program design. It's particularly well-suited for building large systems that evolve over time and will receive contributions from many programmers. This is why it is used by the Bioconductor project, so another reason to learn S4 is to equip you to contribute to that project.
+-   S4 es un sistema riguroso que lo obliga a pensar cuidadosamente sobre el diseño del programa. Es particularmente adecuado para construir grandes sistemas que evolucionan con el tiempo y recibirá contribuciones de muchos programadores. Es por eso que lo utiliza el proyecto Bioconductor, por lo que otra razón para aprender S4 es equiparlo para contribuir a ese proyecto.
 
-The goal of this brief introductory chapter is to give you some important vocabulary and some tools to identify OOP systems in the wild. The following chapters then dive into the details of R's OOP systems:
+El objetivo de este breve capítulo introductorio es brindarle un vocabulario importante y algunas herramientas para identificar los sistemas de POO en la naturaleza. Luego, los siguientes capítulos se sumergen en los detalles de los sistemas de POO de R:
 
-1.  Chapter \@ref(base-types) details the base types which form the foundation underlying all other OO system.
+1.  @sec-base-types detalla los tipos básicos que forman la base subyacente a todos los demás sistemas OO.
 
-2.  Chapter \@ref(s3) introduces S3, the simplest and most commonly used OO system.
+2.  @sec-s3 presenta S3, el sistema OO más simple y más utilizado.
 
-3.  Chapter \@ref(r6) discusses R6, an encapsulated OO system built on top of environments.
+3.  @sec-r6 analiza R6, un sistema OO encapsulado creado sobre entornos.
 
-4.  Chapter \@ref(s4) introduces S4, which is similar to S3 but more formal and more strict.
+4.  @sec-s4 introduce S4, que es similar a S3 pero más formal y más estricto.
 
-5.  Chapter \@ref(oo-tradeoffs) compares these three main OO systems. By understanding the trade-offs of each system you can appreciate when to use one or the other.
+5.  @sec-oo-tradeoffs compara estos tres sistemas OO principales. Al comprender las ventajas y desventajas de cada sistema, puede apreciar cuándo usar uno u otro.
 
-This book focusses on the mechanics of OOP, not its effective use, and it may be challenging to fully understand if you have not done object-oriented programming before. You might wonder why I chose not to provide more immediately useful coverage. I have focused on mechanics here because they need to be well described somewhere (writing these chapters required a considerable amount of reading, exploration, and synthesis on my part), and using OOP effectively is sufficiently complex to require a book-length treatment; there's simply not enough room in *Advanced R* to cover it in the depth required.
+Este libro se centra en la mecánica de la programación orientada a objetos, no en su uso efectivo, y puede ser un desafío comprenderlo completamente si no ha realizado antes programación orientada a objetos. Quizás se pregunte por qué elegí no proporcionar una cobertura útil más inmediata. Me he centrado en la mecánica aquí porque necesitan estar bien descritas en alguna parte (escribir estos capítulos requirió una cantidad considerable de lectura, exploración y síntesis de mi parte), y usar OOP de manera efectiva es lo suficientemente complejo como para requerir un tratamiento del tamaño de un libro; simplemente no hay suficiente espacio en *R Avanzado* para cubrirlo con la profundidad requerida.
 
-## OOP systems {.unnumbered}
+## Sistemas de POO {.unnumbered}
 
-Different people use OOP terms in different ways, so this section provides a quick overview of important vocabulary. The explanations are necessarily compressed, but we will come back to these ideas multiple times.
+Diferentes personas usan los términos de programación orientada a objetos de diferentes maneras, por lo que esta sección proporciona una descripción general rápida del vocabulario importante. Las explicaciones están necesariamente comprimidas, pero volveremos a estas ideas varias veces.
 
-The main reason to use OOP is **polymorphism** (literally: many shapes). Polymorphism means that a developer can consider a function's interface separately from its implementation, making it possible to use the same function form for different types of input. This is closely related to the idea of **encapsulation**: the user doesn't need to worry about details of an object because they are encapsulated behind a standard interface.
+La razón principal para usar POO es **polimorfismo** (literalmente: muchas formas). El polimorfismo significa que un desarrollador puede considerar la interfaz de una función por separado de su implementación, lo que hace posible usar la misma forma de función para diferentes tipos de entrada. Esto está estrechamente relacionado con la idea de **encapsulación**: el usuario no necesita preocuparse por los detalles de un objeto porque están encapsulados detrás de una interfaz estándar.
 
-To be concrete, polymorphism is what allows `summary()` to produce different outputs for numeric and factor variables:
+Para ser concretos, el polimorfismo es lo que permite que `summary()` produzca diferentes salidas para variables numéricas y factoriales:
 
 ```{r}
 diamonds <- ggplot2::diamonds
@@ -55,49 +55,49 @@ summary(diamonds$carat)
 summary(diamonds$cut)
 ```
 
-You could imagine `summary()` containing a series of if-else statements, but that would mean only the original author could add new implementations. An OOP system makes it possible for any developer to extend the interface with implementations for new types of input.
+Podrías imaginar `summary()` que contiene una serie de declaraciones if-else, pero eso significaría que solo el autor original podría agregar nuevas implementaciones. Un sistema OOP hace posible que cualquier desarrollador amplíe la interfaz con implementaciones para nuevos tipos de entrada.
 
-To be more precise, OO systems call the type of an object its **class**, and an implementation for a specific class is called a **method**. Roughly speaking, a class defines what an object *is* and methods describe what that object can *do*. The class defines the **fields**, the data possessed by every instance of that class. Classes are organised in a hierarchy so that if a method does not exist for one class, its parent's method is used, and the child is said to **inherit** behaviour. For example, in R, an ordered factor inherits from a regular factor, and a generalised linear model inherits from a linear model. The process of finding the correct method given a class is called **method dispatch**.
+Para ser más precisos, los sistemas OO llaman al tipo de un objeto su **clase**, y una implementación para una clase específica se llama **método**. En términos generales, una clase define lo que un objeto *es* y los métodos describen lo que ese objeto puede *hacer*. La clase define los **campos**, los datos que posee cada instancia de esa clase. Las clases están organizadas en una jerarquía de modo que si no existe un método para una clase, se usa el método de su padre y se dice que el hijo **hereda** el comportamiento. Por ejemplo, en R, un factor ordenado hereda de un factor regular y un modelo lineal generalizado hereda de un modelo lineal. El proceso de encontrar el método correcto dada una clase se llama **despacho de métodos**.
 
-There are two main paradigms of object-oriented programming which differ in how methods and classes are related. In this book, we'll borrow the terminology of *Extending R* [@extending-R] and call these paradigms encapsulated and functional:
+Hay dos paradigmas principales de programación orientada a objetos que difieren en cómo se relacionan los métodos y las clases. En este libro, tomaremos prestada la terminología de *Extending R* [@extending-R] y llamaremos a estos paradigmas encapsulados y funcionales:
 
--   In **encapsulated** OOP, methods belong to objects or classes, and method calls typically look like `object.method(arg1, arg2)`. This is called encapsulated because the object encapsulates both data (with fields) and behaviour (with methods), and is the paradigm found in most popular languages.
+-   En la programación orientada a objetos **encapsulada**, los métodos pertenecen a objetos o clases, y las llamadas a métodos normalmente se ven como `object.method(arg1, arg2)`. Esto se denomina encapsulado porque el objeto encapsula tanto los datos (con campos) como el comportamiento (con métodos), y es el paradigma que se encuentra en los lenguajes más populares.
 
--   In **functional** OOP, methods belong to **generic** functions, and method calls look like ordinary function calls: `generic(object, arg2, arg3)`. This is called functional because from the outside it looks like a regular function call, and internally the components are also functions.
+-   En la programación orientada a objetos **funcional**, los métodos pertenecen a funciones **genéricas** y las llamadas a métodos se parecen a las llamadas a funciones ordinarias: `generic(object, arg2, arg3)`. Esto se llama funcional porque desde el exterior parece una llamada de función regular, e internamente los componentes también son funciones.
 
-With this terminology in hand, we can now talk precisely about the different OO systems available in R.
+Con esta terminología en la mano, ahora podemos hablar precisamente de los diferentes sistemas OO disponibles en R.
 
-## OOP in R {.unnumbered}
+## POO en R {.unnumbered}
 
-Base R provides three OOP systems: S3, S4, and reference classes (RC):
+Base R proporciona tres sistemas OOP: S3, S4 y clases de referencia (RC):
 
--   **S3** is R's first OOP system, and is described in *Statistical Models in S* [@white-book]. S3 is an informal implementation of functional OOP and relies on common conventions rather than ironclad guarantees. This makes it easy to get started with, providing a low cost way of solving many simple problems.
+-   **S3** es el primer sistema de POO de R y se describe en *Modelos estadísticos en S* [@white-book]. S3 es una implementación informal de POO funcional y se basa en convenciones comunes en lugar de garantías inquebrantables. Esto hace que sea fácil comenzar, proporcionando una forma económica de resolver muchos problemas simples.
 
--   **S4** is a formal and rigorous rewrite of S3, and was introduced in *Programming with Data* [@programming-with-data]. It requires more upfront work than S3, but in return provides more guarantees and greater encapsulation. S4 is implemented in the base **methods** package, which is always installed with R.
+-   **S4** es una reescritura formal y rigurosa de S3 y se introdujo en *Programación con datos* [@programming-with-data]. Requiere más trabajo inicial que S3, pero a cambio ofrece más garantías y una mayor encapsulación. S4 se implementa en el paquete base de **métodos**, que siempre se instala con R.
 
-    (You might wonder if S1 and S2 exist. They don't: S3 and S4 were named according to the versions of S that they accompanied. The first two versions of S didn't have any OOP framework.)
+    (Quizás se pregunte si existen S1 y S2. No lo hacen: S3 y S4 fueron nombrados de acuerdo con las versiones de S que acompañaban. Las dos primeras versiones de S no tenían ningún marco de POO.)
 
--   **RC** implements encapsulated OO. RC objects are a special type of S4 objects that are also **mutable**, i.e., instead of using R's usual copy-on-modify semantics, they can be modified in place. This makes them harder to reason about, but allows them to solve problems that are difficult to solve in the functional OOP style of S3 and S4.
+-   **RC** implementa OO encapsulado. Los objetos RC son un tipo especial de objetos S4 que también son **mutables**, es decir, en lugar de usar la semántica habitual de copiar al modificar de R, se pueden modificar en su lugar. Esto los hace más difíciles de razonar, pero les permite resolver problemas que son difíciles de resolver en el estilo OOP funcional de S3 y S4.
 
-A number of other OOP systems are provided by CRAN packages:
+Los paquetes CRAN proporcionan otros sistemas de POO:
 
--   **R6** [@R6] implements encapsulated OOP like RC, but resolves some important issues. In this book, you'll learn about R6 instead of RC, for reasons described in Section \@ref(why-r6).
+-   **R6** [@R6] implementa OOP encapsulado como RC, pero resuelve algunos problemas importantes. En este libro, aprenderá sobre R6 en lugar de RC, por las razones descritas en la @sec-why-r6.
 
--   **R.oo** [@R.oo] provides some formalism on top of S3, and makes it possible to have mutable S3 objects.
+-   **R.oo** [@R.oo] proporciona algo de formalismo además de S3 y hace posible tener objetos mutables de S3.
 
--   **proto** [@proto] implements another style of OOP based on the idea of **prototypes**, which blur the distinctions between classes and instances of classes (objects). I was briefly enamoured with prototype based programming [@mutatr] and used it in ggplot2, but now think it's better to stick with the standard forms.
+-   **proto** [@proto] implementa otro estilo de programación orientada a objetos basado en la idea de **prototipos**, que desdibujan las distinciones entre clases e instancias de clases (objetos). Me enamoré brevemente de la programación basada en prototipos [@mutatr] y la usé en ggplot2, pero ahora creo que es mejor seguir con los formularios estándar.
 
-Apart from R6, which is widely used, these systems are primarily of theoretical interest. They do have their strengths, but few R users know and understand them, so it is hard for others to read and contribute to your code.
+Aparte del R6, que es ampliamente utilizado, estos sistemas son principalmente de interés teórico. Tienen sus puntos fuertes, pero pocos usuarios de R los conocen y los entienden, por lo que es difícil que otros los lean y contribuyan a su código.
 
 ## sloop {.unnumbered}
 
-Before we go on I want to introduce the sloop package:
+Antes de continuar, quiero presentar el paquete sloop:
 
 ```{r}
 library(sloop)
 ```
 
-The sloop package (think "sail the seas of OOP") provides a number of helpers that fill in missing pieces in base R. The first of these is `sloop::otype()`. It makes it easy to figure out the OOP system used by a wild-caught object:
+El paquete sloop (piense en "navegar los mares de OOP") proporciona una serie de ayudantes que completan las piezas que faltan en la base R. El primero de ellos es `sloop::otype()`. Hace que sea fácil descifrar el sistema OOP utilizado por un objeto capturado de forma salvaje:
 
 ```{r}
 otype(1:10)
@@ -108,4 +108,4 @@ mle_obj <- stats4::mle(function(x = 1) (x - 2) ^ 2)
 otype(mle_obj)
 ```
 
-Use this function to figure out which chapter to read to understand how to work with an existing object.
+Utilice esta función para averiguar qué capítulo leer para entender cómo trabajar con un objeto existente.
