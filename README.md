@@ -20,6 +20,7 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
 -   Programación orientada a objetos
     -   Introducción
     -   Tipos básicos
+    -   S3
 
 # Más información acerca del repositorio
 
@@ -95,6 +96,7 @@ The translation was done using Google Translate and some grammar and coherence e
 -   Object-oriented programming
     -   Introduction
     -   Base types
+    -   S3
 
 # More info about the repository
 

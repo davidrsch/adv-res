@@ -4,45 +4,45 @@
 source("common.R")
 ```
 
-## Introduction
+## Introducción
 
 \index{S3}
 
-S3 is R's first and simplest OO system. S3 is informal and ad hoc, but there is a certain elegance in its minimalism: you can't take away any part of it and still have a useful OO system. For these reasons, you should use it, unless you have a compelling reason to do otherwise. S3 is the only OO system used in the base and stats packages, and it's the most commonly used system in CRAN packages.
+S3 es el primer y más simple sistema OO de R. S3 es informal y ad hoc, pero hay cierta elegancia en su minimalismo: no se le puede quitar ninguna parte y seguir teniendo un sistema OO útil. Por estas razones, debe usarlo, a menos que tenga una razón convincente para hacerlo de otra manera. S3 es el único sistema OO utilizado en los paquetes base y stats, y es el sistema más utilizado en los paquetes CRAN.
 
-S3 is very flexible, which means it allows you to do things that are quite ill-advised. If you're coming from a strict environment like Java this will seem pretty frightening, but it gives R programmers a tremendous amount of freedom. It may be very difficult to prevent people from doing something you don't want them to do, but your users will never be held back because there is something you haven't implemented yet. Since S3 has few built-in constraints, the key to its successful use is applying the constraints yourself. This chapter will therefore teach you the conventions you should (almost) always follow.
+S3 es muy flexible, lo que significa que te permite hacer cosas que son bastante desaconsejables. Si viene de un entorno estricto como Java, esto parecerá bastante aterrador, pero le da a los programadores de R una gran libertad. Puede ser muy difícil evitar que las personas hagan algo que usted no quiere que hagan, pero sus usuarios nunca se detendrán porque hay algo que aún no ha implementado. Dado que S3 tiene pocas restricciones integradas, la clave para su uso exitoso es aplicar las restricciones usted mismo. Por lo tanto, este capítulo le enseñará las convenciones que debe seguir (casi) siempre.
 
-The goal of this chapter is to show you how the S3 system works, not how to use it effectively to create new classes and generics. I'd recommend coupling the theoretical knowledge from this chapter with the practical knowledge encoded in the [vctrs package](https://vctrs.r-lib.org).
+El objetivo de este capítulo es mostrarle cómo funciona el sistema S3, no cómo usarlo de manera efectiva para crear nuevas clases y genéricos. Recomiendo combinar el conocimiento teórico de este capítulo con el conocimiento práctico codificado en el [paquete vctrs](https://vctrs.r-lib.org).
 
-### Outline {.unnumbered}
+### Estructura {.unnumbered}
 
--   Section \@ref(s3-basics) gives a rapid overview of all the main components of S3: classes, generics, and methods. You'll also learn about `sloop::s3_dispatch()`, which we'll use throughout the chapter to explore how S3 works.
+-   La @sec-s3-basics brinda una descripción general rápida de todos los componentes principales de S3: clases, genéricos y métodos. También aprenderá sobre `sloop::s3_dispatch()`, que usaremos a lo largo del capítulo para explorar cómo funciona S3.
 
--   Section \@ref(s3-classes) goes into the details of creating a new S3 class, including the three functions that should accompany most classes: a constructor, a helper, and a validator.
+-   La @sec-s3-classes entra en los detalles de la creación de una nueva clase S3, incluidas las tres funciones que deberían acompañar a la mayoría de las clases: un constructor, un ayudante y un validador.
 
--   Section \@ref(s3-methods) describes how S3 generics and methods work, including the basics of method dispatch.
+-   La @sec-s3-methods describe cómo funcionan los métodos y genéricos de S3, incluidos los aspectos básicos del envío de métodos.
 
--   Section \@ref(object-styles) discusses the four main styles of S3 objects: vector, record, data frame, and scalar.
+-   La @sec-object-styles analiza los cuatro estilos principales de los objetos de S3: vector, registro, marco de datos y escalar.
 
--   Section \@ref(s3-inheritance) demonstrates how inheritance works in S3, and shows you what you need to make a class "subclassable".
+-   La @sec-s3-inheritance demuestra cómo funciona la herencia en S3 y le muestra lo que necesita para hacer que una clase sea "subclasificable".
 
--   Section \@ref(s3-dispatch) concludes the chapter with a discussion of the finer details of method dispatch including base types, internal generics, group generics, and double dispatch.
+-   La @sec-s3-dispatch concluye el capítulo con una discusión de los detalles más finos del envío de métodos, incluidos los tipos base, los genéricos internos, los genéricos de grupo y el envío doble.
 
-### Prerequisites {.unnumbered}
+### Requisitos previos {.unnumbered}
 
-S3 classes are implemented using attributes, so make sure you're familiar with the details described in Section \@ref(attributes). We'll use existing base S3 vectors for examples and exploration, so make sure that you're familiar with the factor, Date, difftime, POSIXct, and POSIXlt classes described in Section \@ref(s3-atomic-vectors).
+Las clases de S3 se implementan mediante atributos, así que asegúrese de estar familiarizado con los detalles descritos en la @sec-attributes. Usaremos vectores S3 base existentes para ejemplos y exploración, así que asegúrese de estar familiarizado con las clases factor, Date, difftime, POSIXct y POSIXlt descritas en la @sec-s3-atomic-vectors.
 
-We'll use the [sloop](https://sloop.r-lib.org) package for its interactive helpers.
+Usaremos el paquete [sloop](https://sloop.r-lib.org) para sus ayudantes interactivos.
 
 ```{r setup, messages = FALSE}
 library(sloop)
 ```
 
-## Basics {#s3-basics}
+## Lo esencial {#sec-s3-basics}
 
-\index{attributes!class} \index{classes!S3} \indexc{class()}
+\index{attributes!class} \index{classes!S3} \index{class()}
 
-An S3 object is a base type with at least a `class` attribute (other attributes may be used to store other data). For example, take the factor. Its base type is the integer vector, it has a `class` attribute of "factor", and a `levels` attribute that stores the possible levels:
+Un objeto S3 es un tipo base con al menos un atributo de "clase" (se pueden usar otros atributos para almacenar otros datos). Por ejemplo, tome el factor. Su tipo base es el vector entero, tiene un atributo `clase` de "factor", y un atributo `niveles` que almacena los niveles posibles:
 
 ```{r}
 f <- factor(c("a", "b", "c"))
@@ -51,7 +51,7 @@ typeof(f)
 attributes(f)
 ```
 
-You can get the underlying base type by `unclass()`ing it, which strips the class attribute, causing it to lose its special behaviour:
+Puede obtener el tipo base subyacente al `unclass()`, lo que elimina el atributo de clase, lo que hace que pierda su comportamiento especial:
 
 ```{r}
 unclass(f)
@@ -59,7 +59,7 @@ unclass(f)
 
 \index{generics} \index{functions!generic}
 
-An S3 object behaves differently from its underlying base type whenever it's passed to a **generic** (short for generic function). The easiest way to tell if a function is a generic is to use `sloop::ftype()` and look for "generic" in the output:
+Un objeto de S3 se comporta de manera diferente a su tipo base subyacente cada vez que se pasa a un **genérico** (abreviatura de función genérica). La forma más fácil de saber si una función es genérica es usar `sloop::ftype()` y buscar "genérica" en la salida:
 
 ```{r}
 ftype(print)
@@ -67,16 +67,16 @@ ftype(str)
 ftype(unclass)
 ```
 
-A generic function defines an interface, which uses a different implementation depending on the class of an argument (almost always the first argument). Many base R functions are generic, including the important `print()`:
+Una función genérica define una interfaz, que utiliza una implementación diferente según la clase de un argumento (casi siempre el primer argumento). Muchas funciones básicas de R son genéricas, incluida la importante `print()`:
 
 ```{r}
 print(f)
 
-# stripping class reverts to integer behaviour
+# la eliminación de clase vuelve al comportamiento de entero
 print(unclass(f))
 ```
 
-Beware that `str()` is generic, and some S3 classes use that generic to hide the internal details. For example, the `POSIXlt` class used to represent date-time data is actually built on top of a list, a fact which is hidden by its `str()` method:
+Tenga en cuenta que `str()` es genérico, y algunas clases de S3 usan ese genérico para ocultar los detalles internos. Por ejemplo, la clase `POSIXlt` que se usa para representar datos de fecha y hora en realidad está construida encima de una lista, un hecho que está oculto por su método `str()`:
 
 ```{r}
 time <- strptime(c("2017-01-01", "2020-05-04 03:21"), "%Y-%m-%d")
@@ -85,26 +85,26 @@ str(time)
 str(unclass(time))
 ```
 
-The generic is a middleman: its job is to define the interface (i.e. the arguments) then find the right implementation for the job. The implementation for a specific class is called a **method**, and the generic finds that method by performing **method dispatch**.
+El genérico es un intermediario: su trabajo es definir la interfaz (es decir, los argumentos) y luego encontrar la implementación correcta para el trabajo. La implementación para una clase específica se denomina **método**, y el genérico encuentra ese método realizando **despacho de métodos**.
 
-You can use `sloop::s3_dispatch()` to see the process of method dispatch:
+Puede usar `sloop::s3_dispatch()` para ver el proceso de envío del método:
 
 ```{r}
 s3_dispatch(print(f))
 ```
 
-\index{S3!methods} We'll come back to the details of dispatch in Section \@ref(method-dispatch), for now note that S3 methods are functions with a special naming scheme, `generic.class()`. For example, the `factor` method for the `print()` generic is called `print.factor()`. You should never call the method directly, but instead rely on the generic to find it for you.
+\index{S3!methods} Volveremos a los detalles del envío en la @sec-method-dispatch, por ahora tenga en cuenta que los métodos S3 son funciones con un esquema de nombres especial, `generic.class()`. Por ejemplo, el método `factor` para el genérico `print()` se llama `print.factor()`. Nunca debe llamar al método directamente, sino confiar en el genérico para encontrarlo por usted.
 
-Generally, you can identify a method by the presence of `.` in the function name, but there are a number of important functions in base R that were written before S3, and hence use `.` to join words. If you're unsure, check with `sloop::ftype()`:
+En general, puede identificar un método por la presencia de `.` en el nombre de la función, pero hay una serie de funciones importantes en base R que se escribieron antes de S3 y, por lo tanto, usan `.` para unir palabras. Si no está seguro, verifique con `sloop::ftype()`:
 
 ```{r}
 ftype(t.test)
 ftype(t.data.frame)
 ```
 
-\index{S3!finding source} Unlike most functions, you can't see the source code for most S3 methods[^s3-1] just by typing their names. That's because S3 methods are not usually exported: they live only inside the package, and are not available from the global environment. Instead, you can use `sloop::s3_get_method()`, which will work regardless of where the method lives:
+\index{S3!finding source} A diferencia de la mayoría de las funciones, no puede ver el código fuente de la mayoría de los métodos S3 [^s3-1] simplemente escribiendo sus nombres. Esto se debe a que los métodos de S3 generalmente no se exportan: viven solo dentro del paquete y no están disponibles en el entorno global. En su lugar, puede usar `sloop::s3_get_method()`, que funcionará independientemente de dónde resida el método:
 
-[^s3-1]: The exceptions are methods found in the base package, like `t.data.frame`, and methods that you've created.
+[^s3-1]: Las excepciones son los métodos que se encuentran en el paquete base, como `t.data.frame`, y los métodos que ha creado.
 
 ```{r, error = TRUE}
 weighted.mean.Date
@@ -112,15 +112,15 @@ weighted.mean.Date
 s3_get_method(weighted.mean.Date)
 ```
 
-### Exercises
+### Ejercicios
 
-1.  Describe the difference between `t.test()` and `t.data.frame()`. When is each function called?
+1.  Describe la diferencia entre `t.test()` y `t.data.frame()`. ¿Cuándo se llama cada función?
 
-2.  Make a list of commonly used base R functions that contain `.` in their name but are not S3 methods.
+2.  Haga una lista de las funciones básicas de R que se usan comúnmente y que contienen `.` en su nombre, pero que no son métodos de S3.
 
-3.  What does the `as.data.frame.data.frame()` method do? Why is it confusing? How could you avoid this confusion in your own code?
+3.  ¿Qué hace el método `as.data.frame.data.frame()`? ¿Por qué es confuso? ¿Cómo podría evitar esta confusión en su propio código?
 
-4.  Describe the difference in behaviour in these two calls.
+4.  Describa la diferencia de comportamiento en estas dos llamadas.
 
     ```{r}
     set.seed(1014)
@@ -130,36 +130,36 @@ s3_get_method(weighted.mean.Date)
     mean(unclass(some_days))
     ```
 
-5.  What class of object does the following code return? What base type is it built on? What attributes does it use?
+5.  ¿Qué clase de objeto devuelve el siguiente código? ¿Sobre qué tipo de base está construido? ¿Qué atributos utiliza?
 
     ```{r}
     x <- ecdf(rpois(100, 10))
     x
     ```
 
-6.  What class of object does the following code return? What base type is it built on? What attributes does it use?
+6.  ¿Qué clase de objeto devuelve el siguiente código? ¿Sobre qué tipo de base está construido? ¿Qué atributos utiliza?
 
     ```{r}
     x <- table(rpois(100, 5))
     x
     ```
 
-## Classes {#s3-classes}
+## Clases {#sec-s3-classes}
 
-\index{S3!classes} \index{attributes!class} \indexc{class()}
+\index{S3!classes} \index{attributes!class} \index{class()}
 
-If you have done object-oriented programming in other languages, you may be surprised to learn that S3 has no formal definition of a class: to make an object an instance of a class, you simply set the **class attribute**. You can do that during creation with `structure()`, or after the fact with `class<-()`:
+Si ha realizado programación orientada a objetos en otros lenguajes, se sorprenderá al saber que S3 no tiene una definición formal de una clase: para convertir un objeto en una instancia de una clase, simplemente establezca el **atributo de clase**. Puedes hacerlo durante la creación con `structure()`, o después del hecho con `class<-()`:
 
 ```{r}
-# Create and assign class in one step
+# Crear y asignar clases en un solo paso
 x <- structure(list(), class = "my_class")
 
-# Create, then set class
+# Crear, luego establecer la clase
 x <- list()
 class(x) <- "my_class"
 ```
 
-You can determine the class of an S3 object with `class(x)`, and see if an object is an instance of a class using `inherits(x, "classname")`.
+Puede determinar la clase de un objeto S3 con `class(x)` y ver si un objeto es una instancia de una clase usando `inherits(x, "classname")`.
 
 ```{r}
 class(x)
@@ -167,54 +167,54 @@ inherits(x, "my_class")
 inherits(x, "your_class")
 ```
 
-The class name can be any string, but I recommend using only letters and `_`. Avoid `.` because (as mentioned earlier) it can be confused with the `.` separator between a generic name and a class name. When using a class in a package, I recommend including the package name in the class name. That ensures you won't accidentally clash with a class defined by another package.
+El nombre de la clase puede ser cualquier cadena, pero recomiendo usar solo letras y `_`. Evite `.` porque (como se mencionó anteriormente) puede confundirse con el separador `.` entre un nombre genérico y un nombre de clase. Al usar una clase en un paquete, recomiendo incluir el nombre del paquete en el nombre de la clase. Eso asegura que no chocará accidentalmente con una clase definida por otro paquete.
 
-S3 has no checks for correctness which means you can change the class of existing objects:
+S3 no tiene comprobaciones de corrección, lo que significa que puede cambiar la clase de los objetos existentes:
 
 ```{r, error = TRUE}
-# Create a linear model
+# Crear un modelo lineal
 mod <- lm(log(mpg) ~ log(disp), data = mtcars)
 class(mod)
 print(mod)
 
-# Turn it into a date (?!)
+# Conviértelo en una fecha (?!)
 class(mod) <- "Date"
 
-# Unsurprisingly this doesn't work very well
+# Como era de esperar, esto no funciona muy bien
 print(mod)
 ```
 
-If you've used other OO languages, this might make you feel queasy, but in practice this flexibility causes few problems. R doesn't stop you from shooting yourself in the foot, but as long as you don't aim the gun at your toes and pull the trigger, you won't have a problem.
+Si ha usado otros lenguajes orientados a objetos, esto podría hacerle sentir mareado, pero en la práctica esta flexibilidad causa pocos problemas. R no evita que te dispares en el pie, pero mientras no apuntes el arma a los dedos de los pies y aprietes el gatillo, no tendrás ningún problema.
 
-To avoid foot-bullet intersections when creating your own class, I recommend that you usually provide three functions:
+Para evitar las intersecciones de pie y bala al crear su propia clase, le recomiendo que proporcione generalmente tres funciones:
 
--   A low-level **constructor**, `new_myclass()`, that efficiently creates new objects with the correct structure.
+-   Un **constructor** de bajo nivel, `new_myclass()`, que crea eficientemente nuevos objetos con la estructura correcta.
 
--   A **validator**, `validate_myclass()`, that performs more computationally expensive checks to ensure that the object has correct values.
+-   Un **validador**, `validate_myclass()`, que realiza verificaciones más costosas desde el punto de vista computacional para garantizar que el objeto tenga los valores correctos.
 
--   A user-friendly **helper**, `myclass()`, that provides a convenient way for others to create objects of your class.
+-   Un **ayudante** fácil de usar, `myclass()`, que proporciona una manera conveniente para que otros creen objetos de su clase.
 
-You don't need a validator for very simple classes, and you can skip the helper if the class is for internal use only, but you should always provide a constructor.
+No necesita un validador para clases muy simples, y puede omitir el asistente si la clase es solo para uso interno, pero siempre debe proporcionar un constructor.
 
-### Constructors {#s3-constructor}
+### Constructores {#sec-s3-constructor}
 
 \index{S3!constructors} \index{constructors!S3}
 
-S3 doesn't provide a formal definition of a class, so it has no built-in way to ensure that all objects of a given class have the same structure (i.e. the same base type and the same attributes with the same types). Instead, you must enforce a consistent structure by using a **constructor**.
+S3 no proporciona una definición formal de una clase, por lo que no tiene una forma integrada de garantizar que todos los objetos de una clase determinada tengan la misma estructura (es decir, el mismo tipo base y los mismos atributos con los mismos tipos). En su lugar, debe aplicar una estructura coherente mediante el uso de un **constructor**.
 
-The constructor should follow three principles:
+El constructor debe seguir tres principios:
 
--   Be called `new_myclass()`.
+-   Se llamará `new_myclass()`.
 
--   Have one argument for the base object, and one for each attribute.
+-   Tener un argumento para el objeto base y uno para cada atributo.
 
--   Check the type of the base object and the types of each attribute.
+-   Comprobar el tipo del objeto base y los tipos de cada atributo.
 
-I'll illustrate these ideas by creating constructors for base classes[^s3-2] that you're already familiar with. To start, lets make a constructor for the simplest S3 class: `Date`. A `Date` is just a double with a single attribute: its `class` is "Date". This makes for a very simple constructor:
+Ilustraré estas ideas creando constructores para las clases base[^s3-2] con las que ya está familiarizado. Para comenzar, hagamos un constructor para la clase S3 más simple: `Date`. Una fecha es simplemente un doble con un único atributo: su `clase` es `Date`. Esto lo convierte en un constructor muy simple:
 
-[^s3-2]: Recent versions of R have `.Date()`, `.difftime()`, `.POSIXct()`, and `.POSIXlt()` constructors but they are internal, not well documented, and do not follow the principles that I recommend.
+[^s3-2]: Las versiones recientes de R tienen constructores `.Date()`, `.difftime()`, `.POSIXct()` y `.POSIXlt()`, pero son internos, no están bien documentados y no siguen los principios que Recomiendo.
 
-\indexc{Date}
+\index{Date}
 
 ```{r}
 new_Date <- function(x = double()) {
@@ -225,11 +225,11 @@ new_Date <- function(x = double()) {
 new_Date(c(-1, 0, 1))
 ```
 
-The purpose of constructors is to help you, the developer. That means you can keep them simple, and you don't need to optimise error messages for public consumption. If you expect users to also create objects, you should create a friendly helper function, called `class_name()`, which I'll describe shortly.
+El propósito de los constructores es ayudarte a ti, el desarrollador. Eso significa que puede mantenerlos simples y no necesita optimizar los mensajes de error para el consumo público. Si espera que los usuarios también creen objetos, debe crear una función de ayuda amigable, llamada `class_name()`, que describiré en breve.
 
-A slightly more complicated constructor is that for `difftime`, which is used to represent time differences. It is again built on a double, but has a `units` attribute that must take one of a small set of values:
+Un constructor un poco más complicado es el de `difftime`, que se usa para representar diferencias de tiempo. Se basa de nuevo en un doble, pero tiene un atributo de `unidades` que debe tomar uno de un pequeño conjunto de valores:
 
-\indexc{difftime}
+\index{difftime}
 
 ```{r}
 new_difftime <- function(x = double(), units = "secs") {
@@ -246,15 +246,15 @@ new_difftime(c(1, 10, 3600), "secs")
 new_difftime(52, "weeks")
 ```
 
-The constructor is a developer function: it will be called in many places, by an experienced user. That means it's OK to trade a little safety in return for performance, and you should avoid potentially time-consuming checks in the constructor.
+El constructor es una función de desarrollador: será llamado en muchos lugares por un usuario experimentado. Eso significa que está bien intercambiar un poco de seguridad a cambio de rendimiento, y debe evitar verificaciones potencialmente lentas en el constructor.
 
-### Validators
+### Validadores
 
 \index{S3!validators} \index{validators!S3}
 
-More complicated classes require more complicated checks for validity. Take factors, for example. A constructor only checks that types are correct, making it possible to create malformed factors:
+Las clases más complicadas requieren controles de validez más complicados. Tome factores, por ejemplo. Un constructor solo verifica que los tipos sean correctos, lo que permite crear factores con formato incorrecto:
 
-\indexc{factor}
+\index{factor}
 
 ```{r, error = TRUE}
 new_factor <- function(x = integer(), levels = character()) {
@@ -272,7 +272,7 @@ new_factor(1:5, "a")
 new_factor(0:1, "a")
 ```
 
-Rather than encumbering the constructor with complicated checks, it's better to put them in a separate function. Doing so allows you to cheaply create new objects when you know that the values are correct, and easily re-use the checks in other places.
+En lugar de sobrecargar al constructor con controles complicados, es mejor ponerlos en una función separada. Si lo hace, le permite crear nuevos objetos de forma económica cuando sabe que los valores son correctos y reutilizar fácilmente las comprobaciones en otros lugares.
 
 ```{r, error = TRUE}
 validate_factor <- function(x) {
@@ -281,14 +281,14 @@ validate_factor <- function(x) {
 
   if (!all(!is.na(values) & values > 0)) {
     stop(
-      "All `x` values must be non-missing and greater than zero",
+      "Todos los valores `x` deben ser no faltantes y mayores que cero",
       call. = FALSE
     )
   }
 
   if (length(levels) < max(values)) {
     stop(
-      "There must be at least as many `levels` as possible values in `x`",
+      "Debe haber al menos tantos `levels` como valores posibles en `x`",
       call. = FALSE
     )
   }
@@ -300,31 +300,31 @@ validate_factor(new_factor(1:5, "a"))
 validate_factor(new_factor(0:1, "a"))
 ```
 
-This validator function is called primarily for its side-effects (throwing an error if the object is invalid) so you'd expect it to invisibly return its primary input (as described in Section \@ref(invisible)). However, it's useful for validation methods to return visibly, as we'll see next.
+Esta función de validación se llama principalmente por sus efectos secundarios (arrojar un error si el objeto no es válido), por lo que esperaría que devuelva su entrada principal de forma invisible (como se describe en la @sec-invisible). Sin embargo, es útil que los métodos de validación regresen visiblemente, como veremos a continuación.
 
-### Helpers
+### Ayudantes
 
 \index{S3!helpers} \index{helpers!S3}
 
-If you want users to construct objects from your class, you should also provide a helper method that makes their life as easy as possible. A helper should always:
+Si desea que los usuarios construyan objetos de su clase, también debe proporcionar un método auxiliar que les haga la vida lo más fácil posible. Un ayudante siempre debe:
 
--   Have the same name as the class, e.g. `myclass()`.
+-   Tener el mismo nombre que la clase, p. `myclass()`.
 
--   Finish by calling the constructor, and the validator, if it exists.
+-   Termine llamando al constructor y al validador, si existe.
 
--   Create carefully crafted error messages tailored towards an end-user.
+-   Cree mensajes de error cuidadosamente elaborados y adaptados a un usuario final.
 
--   Have a thoughtfully crafted user interface with carefully chosen default values and useful conversions.
+-   Tenga una interfaz de usuario cuidadosamente diseñada con valores predeterminados cuidadosamente seleccionados y conversiones útiles.
 
-The last bullet is the trickiest, and it's hard to give general advice. However, there are three common patterns:
+La última viñeta es la más complicada y es difícil dar consejos generales. Sin embargo, hay tres patrones comunes:
 
--   Sometimes all the helper needs to do is coerce its inputs to the desired type. For example, `new_difftime()` is very strict, and violates the usual convention that you can use an integer vector wherever you can use a double vector:
+-   A veces, todo lo que necesita hacer el ayudante es forzar sus entradas al tipo deseado. Por ejemplo, `new_difftime()` es muy estricto y viola la convención habitual de que puede usar un vector entero siempre que pueda usar un vector doble:
 
     ```{r, error = TRUE}
     new_difftime(1:10)
     ```
 
-    It's not the job of the constructor to be flexible, so here we create a helper that just coerces the input to a double.
+    No es el trabajo del constructor ser flexible, así que aquí creamos un ayudante que solo fuerza la entrada a un doble.
 
     ```{r}
     difftime <- function(x = double(), units = "secs") {
@@ -335,9 +335,9 @@ The last bullet is the trickiest, and it's hard to give general advice. However,
     difftime(1:10)
     ```
 
-    \indexc{difftime}
+    \index{difftime}
 
--   Often, the most natural representation of a complex object is a string. For example, it's very convenient to specify factors with a character vector. The code below shows a simple version of `factor()`: it takes a character vector, and guesses that the levels should be the unique values. This is not always correct (since some levels might not be seen in the data), but it's a useful default.
+-   A menudo, la representación más natural de un objeto complejo es una cadena. Por ejemplo, es muy conveniente especificar factores con un vector de caracteres. El siguiente código muestra una versión simple de `factor()`: toma un vector de caracteres y supone que los niveles deberían ser valores únicos. Esto no siempre es correcto (ya que es posible que algunos niveles no se vean en los datos), pero es un valor predeterminado útil.
 
     ```{r, error = TRUE}
     factor <- function(x = character(), levels = unique(x)) {
@@ -348,10 +348,9 @@ The last bullet is the trickiest, and it's hard to give general advice. However,
     factor(c("a", "a", "b"))
     ```
 
-    \indexc{factor}
+    \index{factor}
 
--   Some complex objects are most naturally specified by multiple simple\
-    components. For example, I think it's natural to construct a date-time by supplying the individual components (year, month, day etc). That leads me to this `POSIXct()` helper that resembles the existing `ISODatetime()` function[^s3-3]:
+-   Algunos objetos complejos se especifican de manera más natural mediante múltiples componentes simples. Por ejemplo, creo que es natural construir una fecha y hora proporcionando los componentes individuales (año, mes, día, etc.). Eso me lleva a este ayudante `POSIXct()` que se parece a la función existente `ISODatetime()`[^s3-3]:
 
     ```{r}
     POSIXct <- function(year = integer(), 
@@ -367,41 +366,41 @@ The last bullet is the trickiest, and it's hard to give general advice. However,
     POSIXct(2020, 1, 1, tzone = "America/New_York")
     ```
 
-    \indexc{POSIXct}
+    \index{POSIXct}
 
-[^s3-3]: This helper is not efficient: behind the scenes `ISODatetime()` works by pasting the components into a string and then using `strptime()`. A more efficient equivalent is available in `lubridate::make_datetime()`.
+[^s3-3]: Este ayudante no es eficiente: en segundo plano `ISODatetime()` funciona pegando los componentes en una cadena y luego usando `strptime()`. Un equivalente más eficiente está disponible en `lubridate::make_datetime()`.
 
-For more complicated classes, you should feel free to go beyond these patterns to make life as easy as possible for your users.
+Para clases más complicadas, debe sentirse libre de ir más allá de estos patrones para hacer la vida lo más fácil posible para sus usuarios.
 
-### Exercises
+### Ejercicios
 
-1.  Write a constructor for `data.frame` objects. What base type is a data frame built on? What attributes does it use? What are the restrictions placed on the individual elements? What about the names?
+1.  Escribe un constructor para los objetos `data.frame`. ¿Sobre qué tipo base se construye un marco de datos? ¿Qué atributos utiliza? ¿Cuáles son las restricciones impuestas a los elementos individuales? ¿Qué pasa con los nombres?
 
-2.  Enhance my `factor()` helper to have better behaviour when one or more `values` is not found in `levels`. What does `base::factor()` do in this situation?
+2.  Mejore mi ayudante `factor()` para que tenga un mejor comportamiento cuando uno o más `valores` no se encuentran en los `niveles`. ¿Qué hace `base::factor()` en esta situación?
 
-3.  Carefully read the source code of `factor()`. What does it do that my constructor does not?
+3.  Lee atentamente el código fuente de `factor()`. ¿Qué hace que mi constructor no hace?
 
-4.  Factors have an optional "contrasts" attribute. Read the help for `C()`, and briefly describe the purpose of the attribute. What type should it have? Rewrite the `new_factor()` constructor to include this attribute.
+4.  Los factores tienen un atributo opcional de "contrastes". Lea la ayuda de `C()` y describa brevemente el propósito del atributo. ¿Qué tipo debe tener? Reescriba el constructor `new_factor()` para incluir este atributo.
 
-5.  Read the documentation for `utils::as.roman()`. How would you write a constructor for this class? Does it need a validator? What might a helper do?
+5.  Lea la documentación de `utils::as.roman()`. ¿Cómo escribirías un constructor para esta clase? ¿Necesita un validador? ¿Qué podría hacer un ayudante?
 
-## Generics and methods {#s3-methods}
+## Genéricos y métodos {#sec-s3-methods}
 
-\indexc{UseMethod()}
+\index{UseMethod()}
 
 \index{S3!generics} \index{generics!S3}
 
-The job of an S3 generic is to perform method dispatch, i.e. find the specific implementation for a class. Method dispatch is performed by `UseMethod()`, which every generic calls[^s3-4]. `UseMethod()` takes two arguments: the name of the generic function (required), and the argument to use for method dispatch (optional). If you omit the second argument, it will dispatch based on the first argument, which is almost always what is desired.
+El trabajo de un genérico S3 es realizar el envío de métodos, es decir, encontrar la implementación específica para una clase. El envío de métodos se realiza mediante `UseMethod()`, al que todos los genéricos llaman[^s3-4]. `UseMethod()` toma dos argumentos: el nombre de la función genérica (obligatorio) y el argumento a usar para el envío del método (opcional). Si omite el segundo argumento, se enviará en función del primer argumento, que casi siempre es lo que se desea.
 
-[^s3-4]: The exception is internal generics, which are implemented in C, and are the topic of Section \@ref(internal-generics).
+[^s3-4]: La excepción son los genéricos internos, que se implementan en C y son el tema de la @sec-internal-generics.
 
-Most generics are very simple, and consist of only a call to `UseMethod()`. Take `mean()` for example:
+La mayoría de los genéricos son muy simples y consisten solo en una llamada a `UseMethod()`. Tome `mean()` por ejemplo:
 
 ```{r}
 mean
 ```
 
-Creating your own generic is similarly simple:
+Crear su propio genérico es igualmente simple:
 
 ```{r}
 my_new_generic <- function(x) {
@@ -409,29 +408,29 @@ my_new_generic <- function(x) {
 }
 ```
 
-(If you wonder why we have to repeat `my_new_generic` twice, think back to Section \@ref(first-class-functions).)
+(Si se pregunta por qué tenemos que repetir `my_new_generic` dos veces, piense en la @sec-first-class-functions.)
 
-You don't pass any of the arguments of the generic to `UseMethod()`; it uses deep magic to pass to the method automatically. The precise process is complicated and frequently surprising, so you should avoid doing any computation in a generic. To learn the full details, carefully read the Technical Details section in `?UseMethod`.
+No pasa ninguno de los argumentos del genérico a `UseMethod()`; utiliza magia profunda para pasar al método automáticamente. El proceso preciso es complicado y con frecuencia sorprendente, por lo que debe evitar realizar cualquier cálculo de forma genérica. Para conocer todos los detalles, lea detenidamente la sección Detalles técnicos en `?UseMethod`.
 
-### Method dispatch
+### Método de envío {#sec-method-dispatch}
 
 \index{S3!method dispatch} \index{method dispatch!S3}
 
-How does `UseMethod()` work? It basically creates a vector of method names, `paste0("generic", ".", c(class(x), "default"))`, and then looks for each potential method in turn. We can see this in action with `sloop::s3_dispatch()`. You give it a call to an S3 generic, and it lists all the possible methods. For example, what method is called when you print a `Date` object?
+¿Cómo funciona `UseMethod()`? Básicamente, crea un vector de nombres de métodos, `paste0("generic", ".", c(class(x), "default"))`, y luego busca cada método potencial a su vez. Podemos ver esto en acción con `sloop::s3_dispatch()`. Le das una llamada a un genérico S3 y enumera todos los métodos posibles. Por ejemplo, ¿qué método se llama cuando imprime un objeto `Date`?
 
 ```{r}
 x <- Sys.Date()
 s3_dispatch(print(x))
 ```
 
-The output here is simple:
+La salida aquí es simple:
 
--   `=>` indicates the method that is called, here `print.Date()`
--   `*` indicates a method that is defined, but not called, here `print.default()`.
+-   `=>` indica el método que se llama, aquí `print.Date()`
+-   `*` indica un método que está definido, pero no llamado, aquí `print.default()`.
 
-The "default" class is a special **pseudo-class**. This is not a real class, but is included to make it possible to define a standard fallback that is found whenever a class-specific method is not available.
+La clase "predeterminada" es una **pseudoclase** especial. Esta no es una clase real, pero se incluye para que sea posible definir un respaldo estándar que se encuentra siempre que un método específico de clase no está disponible.
 
-The essence of method dispatch is quite simple, but as the chapter proceeds you'll see it get progressively more complicated to encompass inheritance, base types, internal generics, and group generics. The code below shows a couple of more complicated cases which we'll come back to in Sections \@ref(inheritance) and \@ref(s3-dispatch).
+La esencia del envío de métodos es bastante simple, pero a medida que avanza el capítulo, verá que se vuelve progresivamente más complicado para abarcar la herencia, los tipos base, los genéricos internos y los genéricos de grupo. El siguiente código muestra un par de casos más complicados a los que volveremos en las secciones, @sec-s3-inheritance y @sec-s3-dispatch.
 
 ```{r}
 x <- matrix(1:10, nrow = 2)
@@ -440,11 +439,11 @@ s3_dispatch(mean(x))
 s3_dispatch(sum(Sys.time()))
 ```
 
-### Finding methods
+### Encontrar métodos
 
 \index{S3!methods!locating}
 
-`sloop::s3_dispatch()` lets you find the specific method used for a single call. What if you want to find all methods defined for a generic or associated with a class? That's the job of `sloop::s3_methods_generic()` and `sloop::s3_methods_class()`:
+`sloop::s3_dispatch()` te permite encontrar el método específico usado para una sola llamada. ¿Qué sucede si desea encontrar todos los métodos definidos para un genérico o asociados con una clase? Ese es el trabajo de `sloop::s3_methods_generic()` y `sloop::s3_methods_class()`:
 
 ```{r}
 s3_methods_generic("mean")
@@ -452,36 +451,36 @@ s3_methods_generic("mean")
 s3_methods_class("ordered")
 ```
 
-### Creating methods {#s3-arguments}
+### Crear métodos {#sec-s3-arguments}
 
 \index{S3!methods!creating} \index{methods!S3}
 
-There are two wrinkles to be aware of when you create a new method:
+Hay dos arrugas a tener en cuenta cuando crea un nuevo método:
 
--   First, you should only ever write a method if you own the generic or the class. R will allow you to define a method even if you don't, but it is exceedingly bad manners. Instead, work with the author of either the generic or the class to add the method in their code.
+-   Primero, solo debe escribir un método si posee el genérico o la clase. R le permitirá definir un método incluso si no lo hace, pero es de muy mala educación. En su lugar, trabaje con el autor del genérico o de la clase para agregar el método en su código.
 
--   A method must have the same arguments as its generic. This is enforced in packages by `R CMD check`, but it's good practice even if you're not creating a package.
+-   Un método debe tener los mismos argumentos que su genérico. Esto se aplica en los paquetes mediante `R CMD check`, pero es una buena práctica incluso si no está creando un paquete.
 
-    There is one exception to this rule: if the generic has `...`, the method can contain a superset of the arguments. This allows methods to take arbitrary additional arguments. The downside of using `...`, however, is that any misspelled arguments will be silently swallowed[^s3-5], as mentioned in Section \@ref(fun-dot-dot-dot).
+    Hay una excepción a esta regla: si el genérico tiene `...`, el método puede contener un superconjunto de argumentos. Esto permite que los métodos tomen argumentos adicionales arbitrarios. La desventaja de usar `...`, sin embargo, es que cualquier argumento mal escrito se tragará silenciosamente [^s3-5], como se menciona en la @sec-fun-dot-dot-dot.
 
-[^s3-5]: See <https://github.com/hadley/ellipsis> for an experimental way of warning when methods fail to use all the arguments in `...`, providing a potential resolution of this issue.
+[^s3-5]: Consulte <https://github.com/hadley/ellipsis> para ver una forma experimental de advertir cuando los métodos no usan todos los argumentos en `...`, lo que proporciona una posible resolución de este problema.
 
-### Exercises
+### Ejercicios
 
-1.  Read the source code for `t()` and `t.test()` and confirm that `t.test()` is an S3 generic and not an S3 method. What happens if you create an object with class `test` and call `t()` with it? Why?
+1.  Lea el código fuente de `t()` y `t.test()` y confirme que `t.test()` es un método genérico de S3 y no un método de S3. ¿Qué pasa si creas un objeto con la clase `test` y llamas `t()` con él? ¿Por qué?
 
     ```{r, results = FALSE}
     x <- structure(1:10, class = "test")
     t(x)
     ```
 
-2.  What generics does the `table` class have methods for?
+2.  ¿Para qué genéricos tiene métodos la clase `table`?
 
-3.  What generics does the `ecdf` class have methods for?
+3.  ¿Para qué genéricos tiene métodos la clase `ecdf`?
 
-4.  Which base generic has the greatest number of defined methods?
+4.  ¿Qué base genérica tiene el mayor número de métodos definidos?
 
-5.  Carefully read the documentation for `UseMethod()` and explain why the following code returns the results that it does. What two usual rules of function evaluation does `UseMethod()` violate?
+5.  Lea detenidamente la documentación de `UseMethod()` y explique por qué el siguiente código devuelve los resultados que devuelve. ¿Qué dos reglas usuales de evaluación de funciones viola `UseMethod()`?
 
     ```{r}
     g <- function(x) {
@@ -496,15 +495,15 @@ There are two wrinkles to be aware of when you create a new method:
     g(x)
     ```
 
-6.  What are the arguments to `[`? Why is this a hard question to answer?
+6.  ¿Cuáles son los argumentos para `[`? ¿Por qué es una pregunta difícil de responder?
 
-## Object styles
+## Estilos de objeto {#sec-object-styles}
 
 \index{S3!object styles}
 
-So far I've focussed on vector style classes like `Date` and `factor`. These have the key property that `length(x)` represents the number of observations in the vector. There are three variants that do not have this property:
+Hasta ahora me he centrado en clases de estilo vectorial como `Date` y `factor`. Estos tienen la propiedad clave de que `length(x)` representa el número de observaciones en el vector. Hay tres variantes que no tienen esta propiedad:
 
--   Record style objects use a list of equal-length vectors to represent individual components of the object. The best example of this is `POSIXlt`, which underneath the hood is a list of 11 date-time components like year, month, and day. Record style classes override `length()` and subsetting methods to conceal this implementation detail.
+-   Los objetos de estilo de registro utilizan una lista de vectores de igual longitud para representar componentes individuales del objeto. El mejor ejemplo de esto es `POSIXlt`, que debajo del capó es una lista de 11 componentes de fecha y hora como año, mes y día. Las clases de estilo de registro anulan `longitud()` y los métodos de creación de subconjuntos para ocultar este detalle de implementación.
 
     ```{r}
     x <- as.POSIXlt(ISOdatetime(2020, 1, 1, 0, 0, 1:3))
@@ -517,9 +516,9 @@ So far I've focussed on vector style classes like `Date` and `factor`. These hav
     unclass(x)[[1]] # the first component, the number of seconds
     ```
 
-    \indexc{POSIXlt}
+    \index{POSIXlt}
 
--   Data frames are similar to record style objects in that both use lists of equal length vectors. However, data frames are conceptually two dimensional, and the individual components are readily exposed to the user. The number of observations is the number of rows, not the length:
+-   Los marcos de datos son similares a los objetos de estilo de registro en que ambos usan listas de vectores de igual longitud. Sin embargo, los marcos de datos son conceptualmente bidimensionales y los componentes individuales se exponen fácilmente al usuario. El número de observaciones es el número de filas, no la longitud:
 
     ```{r}
     x <- data.frame(x = 1:100, y = 1:100)
@@ -527,71 +526,71 @@ So far I've focussed on vector style classes like `Date` and `factor`. These hav
     nrow(x)
     ```
 
-    \indexc{Date}
+    \index{Date}
 
--   Scalar objects typically use a list to represent a single thing. For example, an `lm` object is a list of length 12 but it represents one model.
+-   Los objetos escalares normalmente usan una lista para representar una sola cosa. Por ejemplo, un objeto `lm` es una lista de longitud 12 pero representa un modelo.
 
     ```{r}
     mod <- lm(mpg ~ wt, data = mtcars)
     length(mod)
     ```
 
-    Scalar objects can also be built on top of functions, calls, and environments[^s3-6]. This is less generally useful, but you can see applications in `stats::ecdf()`, R6 (Chapter \@ref(r6)), and `rlang::quo()` (Chapter \@ref(quasiquotation)). \indexc{lm()}
+    Los objetos escalares también se pueden construir sobre funciones, llamadas y entornos[^s3-6]. En general, esto es menos útil, pero puede ver aplicaciones en `stats::ecdf()`, R6 (@sec-r6) y `rlang::quo()` (@sec-quasiquotation) . \index{lm()}
 
-[^s3-6]: You can also build an object on top of a pairlist, but I have yet to find a good reason to do so.
+[^s3-6]: También puede construir un objeto encima de una lista de pares, pero todavía tengo que encontrar una buena razón para hacerlo.
 
-Unfortunately, describing the appropriate use of each of these object styles is beyond the scope of this book. However, you can learn more from the documentation of the vctrs package (<https://vctrs.r-lib.org>); the package also provides constructors and helpers that make implementation of the different styles easier.
+Desafortunadamente, describir el uso apropiado de cada uno de estos estilos de objeto está más allá del alcance de este libro. Sin embargo, puede obtener más información en la documentación del paquete vctrs (<https://vctrs.r-lib.org>); el paquete también proporciona constructores y ayudantes que facilitan la implementación de los diferentes estilos.
 
-### Exercises
+### Ejercicios
 
-1.  Categorise the objects returned by `lm()`, `factor()`, `table()`, `as.Date()`, `as.POSIXct()` `ecdf()`, `ordered()`, `I()` into the styles described above.
+1.  Categorice los objetos devueltos por `lm()`, `factor()`, `table()`, `as.Date()`, `as.POSIXct()` `ecdf()`, `ordered()`, `I()` en los estilos descritos anteriormente.
 
-2.  What would a constructor function for `lm` objects, `new_lm()`, look like? Use `?lm` and experimentation to figure out the required fields and their types.
+2.  ¿Cómo sería una función constructora para objetos `lm`, `new_lm()`? Use `?lm` y experimente para descubrir los campos obligatorios y sus tipos.
 
-## Inheritance {#s3-inheritance}
+## Herencia {#sec-s3-inheritance}
 
 \index{S3!inheritance} \index{S3!methods!inheriting} \index{inheritance!S3}
 
-S3 classes can share behaviour through a mechanism called **inheritance**. Inheritance is powered by three ideas:
+Las clases de S3 pueden compartir el comportamiento a través de un mecanismo llamado **herencia**. La herencia está impulsada por tres ideas:
 
--   The class can be a character *vector*. For example, the `ordered` and `POSIXct` classes have two components in their class:
+-   La clase puede ser un carácter *vector*. Por ejemplo, las clases `ordered` y `POSIXct` tienen dos componentes en su clase:
 
     ```{r}
     class(ordered("x"))
     class(Sys.time())
     ```
 
-    \indexc{POSIXct}
+    \index{POSIXct}
 
--   If a method is not found for the class in the first element of the vector, R looks for a method for the second class (and so on):
+-   Si no se encuentra un método para la clase en el primer elemento del vector, R busca un método para la segunda clase (y así sucesivamente):
 
     ```{r}
     s3_dispatch(print(ordered("x")))
     s3_dispatch(print(Sys.time()))
     ```
 
--   A method can delegate work by calling `NextMethod()`. We'll come back to that very shortly; for now, note that `s3_dispatch()` reports delegation with `->`.
+-   Un método puede delegar trabajo llamando a `NextMethod()`. Volveremos a eso muy pronto; por ahora, tenga en cuenta que `s3_dispatch()` informa delegación con `->`.
 
     ```{r}
     s3_dispatch(ordered("x")[1])
     s3_dispatch(Sys.time()[1])
     ```
 
-Before we continue we need a bit of vocabulary to describe the relationship between the classes that appear together in a class vector. We'll say that `ordered` is a **subclass** of `factor` because it always appears before it in the class vector, and, conversely, we'll say `factor` is a **superclass** of `ordered`.
+Antes de continuar, necesitamos un poco de vocabulario para describir la relación entre las clases que aparecen juntas en un vector de clase. Diremos que `ordered` es una **subclase** de `factor` porque siempre aparece antes que él en el vector de clase y, a la inversa, diremos que `factor` es una **superclase** de `ordered`.
 
-S3 imposes no restrictions on the relationship between sub- and superclasses but your life will be easier if you impose some. I recommend that you adhere to two simple principles when creating a subclass:
+S3 no impone restricciones en la relación entre subclases y superclases, pero su vida será más fácil si impone algunas. Le recomiendo que se adhiera a dos principios simples al crear una subclase:
 
--   The base type of the subclass should be that same as the superclass.
+-   El tipo base de la subclase debe ser el mismo que el de la superclase.
 
--   The attributes of the subclass should be a superset of the attributes of the superclass.
+-   Los atributos de la subclase deben ser un superconjunto de los atributos de la superclase.
 
-`POSIXt` does not adhere to these principles because `POSIXct` has type double, and `POSIXlt` has type list. This means that `POSIXt` is not a superclass, and illustrates that it's quite possible to use the S3 inheritance system to implement other styles of code sharing (here `POSIXt` plays a role more like an interface), but you'll need to figure out safe conventions yourself. \indexc{POSIXt}
+`POSIXt` no se adhiere a estos principios porque `POSIXct` tiene tipo doble y `POSIXlt` tiene tipo lista. Esto significa que `POSIXt` no es una superclase, e ilustra que es bastante posible usar el sistema de herencia S3 para implementar otros estilos de código compartido (aquí `POSIXt` juega un papel más como una interfaz), pero necesitará descubra convenciones seguras usted mismo. \index{POSIXt}
 
 ### `NextMethod()`
 
-\indexc{NextMethod()}
+\index{NextMethod()}
 
-`NextMethod()` is the hardest part of inheritance to understand, so we'll start with a concrete example for the most common use case: `[`. We'll start by creating a simple toy class: a `secret` class that hides its output when printed:
+`NextMethod()` es la parte más difícil de entender de la herencia, por lo que comenzaremos con un ejemplo concreto para el caso de uso más común: `[`. Comenzaremos creando una clase de juguete simple: una clase `secreta` que oculta su salida cuando se imprime:
 
 ```{r}
 new_secret <- function(x = double()) {
@@ -608,14 +607,14 @@ x <- new_secret(c(15, 1, 456))
 x
 ```
 
-This works, but the default `[` method doesn't preserve the class:
+Esto funciona, pero el método predeterminado `[` no conserva la clase:
 
 ```{r}
 s3_dispatch(x[1])
 x[1]
 ```
 
-To fix this, we need to provide a `[.secret` method. How could we implement this method? The naive approach won't work because we'll get stuck in an infinite loop:
+Para arreglar esto, necesitamos proporcionar un método `[.secret`. ¿Cómo podríamos implementar este método? El enfoque ingenuo no funcionará porque nos quedaremos atrapados en un bucle infinito:
 
 ```{r}
 `[.secret` <- function(x, i) {
@@ -623,7 +622,7 @@ To fix this, we need to provide a `[.secret` method. How could we implement this
 }
 ```
 
-Instead, we need some way to call the underlying `[` code, i.e. the implementation that would get called if we didn't have a `[.secret` method. One approach would be to `unclass()` the object:
+En su lugar, necesitamos alguna forma de llamar al código `[` subyacente, es decir, la implementación que sería llamada si no tuviéramos un método `[.secret`. Un enfoque sería `unclass()` el objeto:
 
 ```{r}
 `[.secret` <- function(x, i) {
@@ -633,7 +632,7 @@ Instead, we need some way to call the underlying `[` code, i.e. the implementati
 x[1]
 ```
 
-This works, but is inefficient because it creates a copy of `x`. A better approach is to use `NextMethod()`, which concisely solves the problem of delegating to the method that would have been called if `[.secret` didn't exist:
+Esto funciona, pero es ineficiente porque crea una copia de `x`. Un mejor enfoque es usar `NextMethod()`, que resuelve de manera concisa el problema de delegar al método que se habría llamado si `[.secret` no existiera:
 
 ```{r}
 `[.secret` <- function(x, i) {
@@ -642,23 +641,23 @@ This works, but is inefficient because it creates a copy of `x`. A better approa
 x[1]
 ```
 
-We can see what's going on with `sloop::s3_dispatch()`:
+Podemos ver lo que está pasando con `sloop::s3_dispatch()`:
 
 ```{r}
 s3_dispatch(x[1])
 ```
 
-The `=>` indicates that `[.secret` is called, but that `NextMethod()` delegates work to the underlying internal `[` method, as shown by the `->`.
+El `=>` indica que se llama a `[.secret`, pero que `NextMethod()` delega el trabajo al método interno subyacente `[`, como se muestra en `->`.
 
-As with `UseMethod()`, the precise semantics of `NextMethod()` are complex. In particular, it tracks the list of potential next methods with a special variable, which means that modifying the object that's being dispatched upon will have no impact on which method gets called next.
+Al igual que con `UseMethod()`, la semántica precisa de `NextMethod()` es compleja. En particular, realiza un seguimiento de la lista de posibles métodos siguientes con una variable especial, lo que significa que la modificación del objeto que se envía no tendrá ningún impacto en el método que se llamará a continuación.
 
-### Allowing subclassing {#s3-subclassing}
+### Permitir subclases {#sec-s3-subclassing}
 
 \index{S3!subclassing}
 
-When you create a class, you need to decide if you want to allow subclasses, because it requires some changes to the constructor and careful thought in your methods.
+Cuando crea una clase, debe decidir si desea permitir subclases, ya que requiere algunos cambios en el constructor y una reflexión cuidadosa en sus métodos.
 
-To allow subclasses, the parent constructor needs to have `...` and `class` arguments:
+Para permitir subclases, el constructor principal debe tener argumentos `...` y `class`:
 
 ```{r}
 new_secret <- function(x, ..., class = character()) {
@@ -672,7 +671,7 @@ new_secret <- function(x, ..., class = character()) {
 }
 ```
 
-Then the subclass constructor can just call to the parent class constructor with additional arguments as needed. For example, imagine we want to create a supersecret class which also hides the number of characters:
+Luego, el constructor de la subclase puede simplemente llamar al constructor de la clase principal con argumentos adicionales según sea necesario. Por ejemplo, imagina que queremos crear una clase supersecreta que también oculta la cantidad de caracteres:
 
 ```{r}
 new_supersecret <- function(x) {
@@ -688,9 +687,9 @@ x2 <- new_supersecret(c(15, 1, 456))
 x2
 ```
 
-To allow inheritance, you also need to think carefully about your methods, as you can no longer use the constructor. If you do, the method will always return the same class, regardless of the input. This forces whoever makes a subclass to do a lot of extra work.
+Para permitir la herencia, también debe pensar detenidamente en sus métodos, ya que ya no puede usar el constructor. Si lo hace, el método siempre devolverá la misma clase, independientemente de la entrada. Esto obliga a quien hace una subclase a hacer mucho trabajo extra.
 
-Concretely, this means we need to revise the `[.secret` method. Currently it always returns a `secret()`, even when given a supersecret:
+Concretamente, esto significa que debemos revisar el método `[.secret`. Actualmente siempre devuelve un `secret()`, incluso cuando se le da un supersecreto:
 
 ```{r}
 `[.secret` <- function(x, ...) {
@@ -700,20 +699,20 @@ Concretely, this means we need to revise the `[.secret` method. Currently it alw
 x2[1:3]
 ```
 
-\indexc{vec\_restore()}
+\index{vec\_restore()}
 
-We want to make sure that `[.secret` returns the same class as `x` even if it's a subclass. As far as I can tell, there is no way to solve this problem using base R alone. Instead, you'll need to use the vctrs package, which provides a solution in the form of the `vctrs::vec_restore()` generic. This generic takes two inputs: an object which has lost subclass information, and a template object to use for restoration.
+Queremos asegurarnos de que `[.secret` devuelva la misma clase que `x` incluso si es una subclase. Por lo que puedo decir, no hay forma de resolver este problema usando solo la base R. En su lugar, deberá utilizar el paquete vctrs, que proporciona una solución en forma de `vctrs::vec_restore()` genérico. Este genérico toma dos entradas: un objeto que ha perdido información de subclase y un objeto de plantilla para usar para la restauración.
 
-Typically `vec_restore()` methods are quite simple: you just call the constructor with appropriate arguments:
+Por lo general, los métodos `vec_restore()` son bastante simples: simplemente llama al constructor con los argumentos apropiados:
 
 ```{r}
 vec_restore.secret <- function(x, to, ...) new_secret(x)
 vec_restore.supersecret <- function(x, to, ...) new_supersecret(x)
 ```
 
-(If your class has attributes, you'll need to pass them from `to` into the constructor.)
+(Si su clase tiene atributos, deberá pasarlos de `to` al constructor).
 
-Now we can use `vec_restore()` in the `[.secret` method:
+Ahora podemos usar `vec_restore()` en el método `[.secret`:
 
 ```{r}
 `[.secret` <- function(x, ...) {
@@ -722,17 +721,17 @@ Now we can use `vec_restore()` in the `[.secret` method:
 x2[1:3]
 ```
 
-(I only fully understood this issue quite recently, so at time of writing it is not used in the tidyverse. Hopefully by the time you're reading this, it will have rolled out, making it much easier to (e.g.) subclass tibbles.)
+(Solo entendí completamente este problema recientemente, por lo que al momento de escribir no se usa en el tidyverse. Con suerte, para cuando estés leyendo esto, se habrá implementado, lo que hará que sea mucho más fácil (por ejemplo) subclasificar tibbles. )
 
-If you build your class using the tools provided by the vctrs package, `[` will gain this behaviour automatically. You will only need to provide your own `[` method if you use attributes that depend on the data or want non-standard subsetting behaviour. See `?vctrs::new_vctr` for details.
+Si construye su clase usando las herramientas provistas por el paquete vctrs, `[` obtendrá este comportamiento automáticamente. Solo necesitará proporcionar su propio método `[` si usa atributos que dependen de los datos o desea un comportamiento de subconjunto no estándar. Ver `?vctrs::new_vctr` para más detalles.
 
-### Exercises
+### Ejercicios
 
-1.  How does `[.Date` support subclasses? How does it fail to support subclasses?
+1.  ¿Cómo admite subclases `[.Date`? ¿Cómo no admite subclases?
 
-2.  R has two classes for representing date time data, `POSIXct` and `POSIXlt`, which both inherit from `POSIXt`. Which generics have different behaviours for the two classes? Which generics share the same behaviour?
+2.  R tiene dos clases para representar datos de fecha y hora, `POSIXct` y `POSIXlt`, que heredan ambas de `POSIXt`. ¿Qué genéricos tienen comportamientos diferentes para las dos clases? ¿Qué genéricos comparten el mismo comportamiento?
 
-3.  What do you expect this code to return? What does it actually return? Why?
+3.  ¿Qué espera que devuelva este código? ¿Qué devuelve realmente? ¿Por qué?
 
     ```{r, eval = FALSE}
     generic2 <- function(x) UseMethod("generic2")
@@ -746,41 +745,41 @@ If you build your class using the tools provided by the vctrs package, `[` will 
     generic2(structure(list(), class = c("b", "a2")))
     ```
 
-## Dispatch details {#s3-dispatch}
+## Detalles de envío {#sec-s3-dispatch}
 
 \index{S3!method dispatch}
 
-This chapter concludes with a few additional details about method dispatch. It is safe to skip these details if you're new to S3.
+Este capítulo concluye con algunos detalles adicionales sobre el envío de métodos. Es seguro omitir estos detalles si es nuevo en S3.
 
-### S3 and base types {#implicit-class}
+### S3 y tipos básicos {#sec-implicit-class}
 
 \index{implicit class} \index{S3!implicit class}
 
-What happens when you call an S3 generic with a base object, i.e. an object with no class? You might think it would dispatch on what `class()` returns:
+¿Qué sucede cuando llama a un genérico S3 con un objeto base, es decir, un objeto sin clase? Podrías pensar que enviaría lo que `class()` devuelve:
 
 ```{r}
 class(matrix(1:5))
 ```
 
-But unfortunately dispatch actually occurs on the **implicit class**, which has three components:
+Pero, lamentablemente, el envío se produce en la **clase implícita**, que tiene tres componentes:
 
--   The string "array" or "matrix" if the object has dimensions
--   The result of `typeof()` with a few minor tweaks
--   The string "numeric" if object is "integer" or "double"
+-   La cadena "array" o "matrix" si el objeto tiene dimensiones
+-   El resultado de `typeof()` con algunos ajustes menores
+-   La cadena "numeric" si el objeto es "integer" o "double"
 
-There is no base function that will compute the implicit class, but you can use `sloop::s3_class()`
+No hay una función base que calcule la clase implícita, pero puede usar `sloop::s3_class()`
 
 ```{r}
 s3_class(matrix(1:5))
 ```
 
-This is used by `s3_dispatch()`:
+Esto es usado por `s3_dispatch()`:
 
 ```{r}
 s3_dispatch(print(matrix(1:5)))
 ```
 
-This means that the `class()` of an object does not uniquely determine its dispatch:
+Esto significa que la clade, `class()`, de un objeto no determina de forma única su envío:
 
 ```{r}
 x1 <- 1:5
@@ -792,48 +791,48 @@ class(x2)
 s3_dispatch(mean(x2))
 ```
 
-### Internal generics {#internal-generics}
+### Genéricos internos {#sec-internal-generics}
 
 \index{generics!internal}
 
-Some base functions, like `[`, `sum()`, and `cbind()`, are called **internal generics** because they don't call `UseMethod()` but instead call the C functions `DispatchGroup()` or `DispatchOrEval()`. `s3_dispatch()` shows internal generics by including the name of the generic followed by `(internal)`:
+Algunas funciones básicas, como `[`, `sum()` y `cbind()`, se denominan **genéricos internos** porque no llaman a `UseMethod()` sino que llaman a las funciones de C `DispatchGroup( )` o `DispatchOrEval()`. `s3_dispatch()` muestra genéricos internos al incluir el nombre del genérico seguido de `(internal)`:
 
 ```{r}
 s3_dispatch(Sys.time()[1])
 ```
 
-For performance reasons, internal generics do not dispatch to methods unless the class attribute has been set, which means that internal generics do not use the implicit class. Again, if you're ever confused about method dispatch, you can rely on `s3_dispatch()`.
+Por motivos de rendimiento, los genéricos internos no envían a los métodos a menos que se haya establecido el atributo de clase, lo que significa que los genéricos internos no utilizan la clase implícita. Nuevamente, si alguna vez se siente confundido acerca del envío de métodos, puede confiar en `s3_dispatch()`.
 
-### Group generics
+### Genéricos del grupo
 
 \index{S3!group generics} \index{generics!group}
 
-Group generics are the most complicated part of S3 method dispatch because they involve both `NextMethod()` and internal generics. Like internal generics, they only exist in base R, and you cannot define your own group generic.
+Los genéricos de grupo son la parte más complicada del envío de métodos de S3 porque involucran tanto `NextMethod()` como genéricos internos. Al igual que los genéricos internos, solo existen en la base R y no puede definir su propio grupo genérico.
 
-There are four group generics:
+Hay cuatro genéricos de grupo:
 
--   **Math**: `abs()`, `sign()`, `sqrt()`, `floor()`, `cos()`, `sin()`, `log()`, and more (see `?Math` for the complete list).
+-   **Matemáticas**: `abs()`, `sign()`, `sqrt()`, `floor()`, `cos()`, `sin()`, `log()`, y más (ver `?Math` para la lista completa).
 
--   **Ops**: `+`, `-`, `*`, `/`, `^`, `%%`, `%/%`, `&`, `|`, `!`, `==`, `!=`, `<`, `<=`, `>=`, and `>`.
+-   **Operaciones**: `+`, `-`, `*`, `/`, `^`, `%%`, `%/%`, `&`, `|`, `!`, `==`, `!=`, `<`, `<=`, `>=`, y `>`.
 
--   **Summary**: `all()`, `any()`, `sum()`, `prod()`, `min()`, `max()`, and `range()`.
+-   **Resumen**: `all()`, `any()`, `sum()`, `prod()`, `min()`, `max()`, y `range()`.
 
--   **Complex**: `Arg()`, `Conj()`, `Im()`, `Mod()`, `Re()`.
+-   **Complejo**: `Arg()`, `Conj()`, `Im()`, `Mod()`, `Re()`.
 
-Defining a single group generic for your class overrides the default behaviour for all of the members of the group. Methods for group generics are looked for only if the methods for the specific generic do not exist:
+La definición de un solo grupo genérico para su clase anula el comportamiento predeterminado para todos los miembros del grupo. Los métodos para genéricos grupales se buscan solo si los métodos para el genérico específico no existen:
 
 ```{r}
 s3_dispatch(sum(Sys.time()))
 ```
 
-Most group generics involve a call to `NextMethod()`. For example, take `difftime()` objects. If you look at the method dispatch for `abs()`, you'll see there's a `Math` group generic defined.
+La mayoría de los genéricos de grupo implican una llamada a `NextMethod()`. Por ejemplo, tome los objetos `difftime()`. Si observa el envío del método para `abs()`, verá que hay un grupo genérico `Math` definido.
 
 ```{r}
 y <- as.difftime(10, units = "mins")
 s3_dispatch(abs(y))
 ```
 
-`Math.difftime` basically looks like this:
+`Math.difftime` básicamente se ve así:
 
 ```{r}
 Math.difftime <- function(x, ...) {
@@ -841,15 +840,15 @@ Math.difftime <- function(x, ...) {
 }
 ```
 
-It dispatches to the next method, here the internal default, to perform the actual computation, then restore the class and attributes. (To better support subclasses of `difftime` this would need to call `vec_restore()`, as described in Section \@ref(s3-subclassing).)
+Despacha al siguiente método, aquí el valor predeterminado interno, para realizar el cálculo real y luego restaurar la clase y los atributos. (Para admitir mejor las subclases de `difftime`, sería necesario llamar a `vec_restore()`, como se describe en la @sec-s3-subclassing.)
 
-Inside a group generic function a special variable `.Generic` provides the actual generic function called. This can be useful when producing error messages, and can sometimes be useful if you need to manually re-call the generic with different arguments.
+Dentro de una función genérica de grupo, una variable especial `.Generic` proporciona la función genérica real llamada. Esto puede ser útil cuando se producen mensajes de error y, a veces, puede ser útil si necesita recuperar manualmente el genérico con diferentes argumentos.
 
-### Double dispatch
+### Despacho doble
 
 \index{double dispatch} \index{method dispatch!S3!double dispatch}
 
-Generics in the Ops group, which includes the two-argument arithmetic and Boolean operators like `-` and `&`, implement a special type of method dispatch. They dispatch on the type of *both* of the arguments, which is called **double dispatch**. This is necessary to preserve the commutative property of many operators, i.e. `a + b` should equal `b + a`. Take the following simple example:
+Los genéricos del grupo Ops, que incluye la aritmética de dos argumentos y los operadores booleanos como `-` y `&`, implementan un tipo especial de envío de métodos. Despachan en el tipo de *ambos* argumentos, que se llama **despacho doble**. Esto es necesario para preservar la propiedad conmutativa de muchos operadores, es decir, `a + b` debería ser igual a `b + a`. Tome el siguiente ejemplo simple:
 
 ```{r}
 date <- as.Date("2017-01-01")
@@ -859,19 +858,19 @@ date + integer
 integer + date
 ```
 
-If `+` dispatched only on the first argument, it would return different values for the two cases. To overcome this problem, generics in the Ops group use a slightly different strategy from usual. Rather than doing a single method dispatch, they do two, one for each input. There are three possible outcomes of this lookup:
+Si `+` se enviara solo en el primer argumento, devolvería valores diferentes para los dos casos. Para superar este problema, los genéricos del grupo Ops utilizan una estrategia ligeramente diferente a la habitual. En lugar de hacer un envío de un solo método, hacen dos, uno para cada entrada. Hay tres posibles resultados de esta búsqueda:
 
--   The methods are the same, so it doesn't matter which method is used.
+-   Los métodos son los mismos, por lo que no importa qué método se utilice.
 
--   The methods are different, and R falls back to the internal method with a warning.
+-   Los métodos son diferentes y R recurre al método interno con una advertencia.
 
--   One method is internal, in which case R calls the other method.
+-   Un método es interno, en cuyo caso R llama al otro método.
 
-This approach is error prone so if you want to implement robust double dispatch for algebraic operators, I recommend using the vctrs package. See `?vctrs::vec_arith` for details.
+Este enfoque es propenso a errores, por lo que si desea implementar un despacho doble robusto para operadores algebraicos, le recomiendo usar el paquete vctrs. Ver `?vctrs::vec_arith` para más detalles.
 
-### Exercises
+### Ejercicios
 
-1.  Explain the differences in dispatch below:
+1.  Explique las diferencias en el envío a continuación:
 
     ```{r}
     length.integer <- function(x) 10
@@ -885,6 +884,6 @@ This approach is error prone so if you want to implement robust double dispatch 
     s3_dispatch(length(x2))
     ```
 
-2.  What classes have a method for the `Math` group generic in base R? Read the source code. How do the methods work?
+2.  ¿Qué clases tienen un método para el grupo `Math` genérico en base R? Lee el código fuente. ¿Cómo funcionan los métodos?
 
-3.  `Math.difftime()` is more complicated than I described. Why?
+3.  `Math.difftime()` es más complicado de lo que describí. ¿Por qué?
