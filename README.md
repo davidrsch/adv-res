@@ -21,6 +21,7 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
     -   Introducción
     -   Tipos básicos
     -   S3
+    -   R6
 
 # Más información acerca del repositorio
 
@@ -97,6 +98,7 @@ The translation was done using Google Translate and some grammar and coherence e
     -   Introduction
     -   Base types
     -   S3
+    -   R6
 
 # More info about the repository
 
