@@ -11,54 +11,53 @@ setValidity <- function(...) invisible(methods::setValidity(...))
 code <- function(...) paste0("`", ..., "`")
 ```
 
-## Introduction
+## Introducción
 
-S4 provides a formal approach to functional OOP. The underlying ideas are similar to S3 (the topic of Chapter \@ref(s3)), but implementation is much stricter and makes use of specialised functions for creating classes (`setClass()`), generics (`setGeneric()`), and methods (`setMethod()`). Additionally, S4 provides both multiple inheritance (i.e. a class can have multiple parents) and multiple dispatch (i.e. method dispatch can use the class of multiple arguments).
+S4 proporciona un enfoque formal para la programación orientada a objetos funcional. Las ideas subyacentes son similares a S3 (el tema del @sec-s3), pero la implementación es mucho más estricta y utiliza funciones especializadas para crear clases (`setClass()`), genéricos (`setGeneric()`) y métodos (`setMethod()`). Además, S4 proporciona herencia múltiple (es decir, una clase puede tener varios padres) y envío múltiple (es decir, el envío del método puede usar la clase de varios argumentos).
 
-An important new component of S4 is the **slot**, a named component of the object that is accessed using the specialised subsetting operator `@` (pronounced at). The set of slots, and their classes, forms an important part of the definition of an S4 class.
+Un nuevo componente importante de S4 es la **ranura**, un componente con nombre del objeto al que se accede mediante el operador de subconjunto especializado `@`. El conjunto de ranuras y sus clases forma una parte importante de la definición de una clase S4.
 
-### Outline {.unnumbered}
+### Estructura {.unnumbered}
 
--   Section \@ref(s4-basics) gives a quick overview of the main components of S4: classes, generics, and methods.
+-   La @sec-s4-basics brinda una descripción general rápida de los componentes principales de S4: clases, genéricos y métodos.
 
--   Section \@ref(s4-classes) dives into the details of S4 classes, including prototypes, constructors, helpers, and validators.
+-   La @sec-s4-classes se sumerge en los detalles de las clases de S4, incluidos prototipos, constructores, ayudantes y validadores.
 
--   Section \@ref(s4-generics) shows you how to create new S4 generics, and how to supply those generics with methods. You'll also learn about accessor functions which are designed to allow users to safely inspect and modify object slots.
+-   La @sec-s4-generics le muestra cómo crear nuevos genéricos S4 y cómo proporcionar métodos a esos genéricos. También aprenderá acerca de las funciones de acceso que están diseñadas para permitir que los usuarios inspeccionen y modifiquen las ranuras de objetos de manera segura.
 
--   Section \@ref(s4-dispatch) dives into the full details of method dispatch in S4. The basic idea is simple, then it rapidly gets more complex once multiple inheritance and multiple dispatch are combined.
+-   La @sec-s4-dispatch se sumerge en los detalles completos del envío de métodos en S4. La idea básica es simple, pero rápidamente se vuelve más compleja una vez que se combinan la herencia múltiple y el envío múltiple.
 
--   Section \@ref(s4-s3) discusses the interaction between S4 and S3, showing you how to use them together.
+-   La @sec-s4-s3 analiza la interacción entre S4 y S3 y le muestra cómo usarlos juntos.
 
-### Learning more {.unnumbered}
+### Aprendiendo más {.unnumbered}
 
-Like the other OO chapters, the focus here will be on how S4 works, not how to deploy it most effectively. If you do want to use it in practice, there are two main challenges:
+Al igual que los otros capítulos de OO, el enfoque aquí será cómo funciona S4, no cómo implementarlo de manera más efectiva. Si desea usarlo en la práctica, hay dos desafíos principales:
 
--   There is no one reference that will answer all your questions about S4.
+-   No hay una referencia que responda a todas sus preguntas sobre S4.
 
--   R's built-in documentation sometimes clashes with community best practices.
+-   La documentación integrada de R a veces choca con las mejores prácticas de la comunidad.
 
-As you move towards more advanced usage, you will need to piece together needed information by carefully reading the documentation, asking questions on StackOverflow, and performing experiments. Some recommendations:
+A medida que avanza hacia un uso más avanzado, deberá reunir la información necesaria leyendo detenidamente la documentación, haciendo preguntas sobre StackOverflow y realizando experimentos. Algunas recomendaciones:
 
--   The Bioconductor community is a long-term user of S4 and has produced much of the best material about its effective use. Start with [S4 classes and methods](https://bioconductor.org/help/course-materials/2017/Zurich/S4-classes-and-methods.html) taught by Martin Morgan and Hervé Pagès, or check for a newer version at [Bioconductor course materials](https://bioconductor.org/help/course-materials/).
+-   La comunidad de bioconductores es un usuario de S4 desde hace mucho tiempo y ha producido gran parte del mejor material sobre su uso efectivo. Comience con [Clases y métodos de S4](https://bioconductor.org/help/course-materials/2017/Zurich/S4-classes-and-methods.html) impartido por Martin Morgan y Hervé Pagès, o busque uno más nuevo versión en \[Materiales del curso de bioconductores\] (https://bioconductor.org/help/course-materials/).
 
-    Martin Morgan is a ex-member of R-core and the project lead of Bioconductor. He's a world expert on the practical use of S4, and I recommend reading anything he has written about it, starting with the questions he has answered on [stackoverflow](http://stackoverflow.com/search?tab=votes&q=user%3a547331%20%5bs4%5d%20is%3aanswe).
+    Martin Morgan es un ex miembro de R-core y líder del proyecto de Bioconductor. Es un experto mundial en el uso práctico de S4 y recomiendo leer todo lo que ha escrito al respecto, comenzando con las preguntas que ha respondido en [stackoverflow](http://stackoverflow.com/search?tab=votes&q=user%%203a547331%20%5bs4%5d%20is%3arespuesta).
 
--   John Chambers is the author of the S4 system, and provides an overview\
-    of its motivation and historical context in *Object-oriented programming, functional programming and R* [@chambers-2014]. For a fuller exploration of S4, see his book *Software for Data Analysis* [@s4da].
+-   John Chambers es el autor del sistema S4 y proporciona una descripción general de su motivación y contexto histórico en *Programación orientada a objetos, programación funcional y R* [@chambers-2014]. Para una exploración más completa de S4, consulte su libro *Software for Data Analysis* [@s4da].
 
-### Prerequisites {.unnumbered}
+### Requisitos previos {.unnumbered}
 
-All functions related to S4 live in the methods package. This package is always available when you're running R interactively, but may not be available when running R in batch mode, i.e. from `Rscript`[^s4-1]. For this reason, it's a good idea to call `library(methods)` whenever you use S4. This also signals to the reader that you'll be using the S4 object system.
+Todas las funciones relacionadas con S4 viven en el paquete de métodos. Este paquete siempre está disponible cuando ejecuta R de forma interactiva, pero es posible que no esté disponible cuando ejecuta R en modo por lotes, es decir, desde `Rscript`[^s4-1]. Por esta razón, es una buena idea llamar a `library(methods)` siempre que use S4. Esto también indica al lector que utilizará el sistema de objetos S4.
 
-[^s4-1]: This is a historical quirk introduced because the methods package used to take a long time to load and `Rscript` is optimised for fast command line invocation.
+[^s4-1]: Esta es una peculiaridad histórica introducida porque el paquete de métodos solía tardar mucho tiempo en cargarse y `Rscript` está optimizado para una invocación rápida de la línea de comandos.
 
 ```{r}
 library(methods)
 ```
 
-## Basics {#s4-basics}
+## Lo escencial {#sec-s4-basics}
 
-We'll start with a quick overview of the main components of S4. You define an S4 class by calling `setClass()` with the class name and a definition of its slots, and the names and classes of the class data:
+Comenzaremos con una descripción general rápida de los componentes principales de S4. Una clase de S4 se define llamando a `setClass()` con el nombre de la clase y una definición de sus ranuras, y los nombres y clases de los datos de la clase:
 
 ```{r}
 setClass("Person", 
@@ -69,19 +68,19 @@ setClass("Person",
 )
 ```
 
-Once the class is defined, you can construct new objects from it by calling `new()` with the name of the class and a value for each slot:
+Una vez que se define la clase, puede construir nuevos objetos a partir de ella llamando a `new()` con el nombre de la clase y un valor para cada ranura:
 
 ```{r}
 john <- new("Person", name = "John Smith", age = NA_real_)
 ```
 
 ```{=tex}
-\indexc{"@}
-\indexc{slot()}
+\index{"@}
+\index{slot()}
 ```
 \index{subsetting!S4} \index{S4!subsetting}
 
-Given an S4 object you can see its class with `is()` and access slots with `@` (equivalent to `$`) and `slot()` (equivalent to `[[`):
+Dado un objeto S4, puede ver su clase con `is()` y acceder a las ranuras con `@` (equivalente a `$`) y `slot()` (equivalente a `[[`):
 
 ```{r}
 is(john)
@@ -89,16 +88,16 @@ john@name
 slot(john, "age")
 ```
 
-Generally, you should only use `@` in your methods. If you're working with someone else's class, look for **accessor** functions that allow you to safely set and get slot values. As the developer of a class, you should also provide your own accessor functions. Accessors are typically S4 generics allowing multiple classes to share the same external interface.
+En general, solo debe usar `@` en sus métodos. Si está trabajando con la clase de otra persona, busque funciones de **accesorio** que le permitan establecer y obtener valores de ranura de forma segura. Como desarrollador de una clase, también debe proporcionar sus propias funciones de acceso. Los accesores suelen ser genéricos de S4 que permiten que varias clases compartan la misma interfaz externa.
 
-Here we'll create a setter and getter for the `age` slot by first creating generics with `setGeneric()`:
+Aquí crearemos un setter y getter para el espacio `age` creando primero genéricos con `setGeneric()`:
 
 ```{r}
 setGeneric("age", function(x) standardGeneric("age"))
 setGeneric("age<-", function(x, value) standardGeneric("age<-"))
 ```
 
-And then defining methods with `setMethod()`:
+Y luego definiendo métodos con `setMethod()`:
 
 ```{r}
 setMethod("age", "Person", function(x) x@age)
@@ -111,36 +110,36 @@ age(john) <- 50
 age(john)
 ```
 
-If you're using an S4 class defined in a package, you can get help on it with `class?Person`. To get help for a method, put `?` in front of a call (e.g. `?age(john)`) and `?` will use the class of the arguments to figure out which help file you need.
+Si está utilizando una clase S4 definida en un paquete, puede obtener ayuda con `class?Person`. Para obtener ayuda para un método, coloque `?` delante de una llamada (por ejemplo, `?age(john)`) y `?` usará la clase de los argumentos para averiguar qué archivo de ayuda necesita.
 
-Finally, you can use sloop functions to identify S4 objects and generics found in the wild:
+Finalmente, puede usar las funciones de sloop para identificar los objetos y genéricos de S4 que se encuentran en la naturaleza:
 
 ```{r}
 sloop::otype(john)
 sloop::ftype(age)
 ```
 
-### Exercises
+### Ejercicios
 
-1.  `lubridate::period()` returns an S4 class. What slots does it have? What class is each slot? What accessors does it provide?
+1.  `lubridate::period()` devuelve una clase S4. ¿Qué ranuras tiene? ¿Qué clase es cada ranura? ¿Qué accesorios proporciona?
 
-2.  What other ways can you find help for a method? Read `?"?"` and summarise the details.
+2.  ¿De qué otras formas puede encontrar ayuda para un método? Lea `?"?"` y resuma los detalles.
 
-## Classes {#s4-classes}
+## Clases {#sec-s4-classes}
 
-\index{classes!S4} \index{S4!classes} \indexc{setClass()}
+\index{classes!S4} \index{S4!classes} \index{setClass()}
 
-To define an S4 class, call `setClass()` with three arguments:
+Para definir una clase S4, llama a `setClass()` con tres argumentos:
 
--   The class **name**. By convention, S4 class names use `UpperCamelCase`.
+-   La clase **nombre**. Por convención, los nombres de clase de S4 usan `UpperCamelCase`.
 
--   A named character vector that describes the names and classes of the **slots** (fields). For example, a person might be represented by a character name and a numeric age: `c(name = "character", age = "numeric")`. The pseudo-class `ANY` allows a slot to accept objects of any type.
+-   Un vector de caracteres con nombre que describe los nombres y las clases de las **ranuras** (campos). Por ejemplo, una persona puede estar representada por un nombre de personaje y una edad numérica: `c(name = "personaje", age = "numérico")`. La pseudoclase `ANY` permite que una ranura acepte objetos de cualquier tipo.
 
--   A **prototype**, a list of default values for each slot. Technically, the prototype is optional[^s4-2], but you should always provide it.
+-   Un **prototipo**, una lista de valores predeterminados para cada ranura. Técnicamente, el prototipo es opcional[^s4-2], pero siempre debes proporcionarlo.
 
-[^s4-2]: `?setClass` recommends that you avoid the `prototype` argument, but this is generally considered to be bad advice.
+[^s4-2]: `?setClass` recomienda que evite el argumento `prototype`, pero esto generalmente se considera un mal consejo.
 
-The code below illustrates the three arguments by creating a `Person` class with character `name` and numeric `age` slots.
+El siguiente código ilustra los tres argumentos mediante la creación de una clase `Person` con el carácter `name` y las ranuras numéricas `age`.
 
 ```{r, cache = FALSE}
 setClass("Person", 
@@ -158,11 +157,11 @@ me <- new("Person", name = "Hadley")
 str(me)
 ```
 
-### Inheritance
+### Herencia {#sec-s4-inheritance}
 
 \index{S4!inheritance} \index{inheritance!S4}
 
-There is one other important argument to `setClass()`: `contains`. This specifies a class (or classes) to inherit slots and behaviour from. For example, we can create an `Employee` class that inherits from the `Person` class, adding an extra slot that describes their `boss`.
+Hay otro argumento importante para `setClass()`: `contains`. Esto especifica una clase (o clases) de las que heredar las ranuras y el comportamiento. Por ejemplo, podemos crear una clase `Employee` que herede de la clase `Person`, agregando un espacio adicional que describa su `boss`.
 
 ```{r}
 setClass("Employee", 
@@ -178,28 +177,28 @@ setClass("Employee",
 str(new("Employee"))
 ```
 
-`setClass()` has 9 other arguments but they are either deprecated or not recommended.
+`setClass()` tiene otros 9 argumentos pero están en desuso o no se recomiendan.
 
-### Introspection
+### Introspección {#sec-s4-introspection}
 
-\index{S4!introspection} \indexc{is()}
+\index{S4!introspection} \index{is()}
 
-To determine what classes an object inherits from, use `is()`:
+Para determinar de qué clases hereda un objeto, usa `is()`:
 
 ```{r}
 is(new("Person"))
 is(new("Employee"))
 ```
 
-To test if an object inherits from a specific class, use the second argument of `is()`:
+Para probar si un objeto hereda de una clase específica, usa el segundo argumento de `is()`:
 
 ```{r}
 is(john, "Person")
 ```
 
-### Redefinition
+### Redefinición
 
-In most programming languages, class definition occurs at compile-time and object construction occurs later, at run-time. In R, however, both definition and construction occur at run time. When you call `setClass()`, you are registering a class definition in a (hidden) global variable. As with all state-modifying functions you need to use `setClass()` with care. It's possible to create invalid objects if you redefine a class after already having instantiated an object:
+En la mayoría de los lenguajes de programación, la definición de clase ocurre en tiempo de compilación y la construcción de objetos ocurre más tarde, en tiempo de ejecución. En R, sin embargo, tanto la definición como la construcción ocurren en tiempo de ejecución. Cuando llamas a `setClass()`, estás registrando una definición de clase en una variable global (oculta). Al igual que con todas las funciones de modificación de estado, debe usar `setClass()` con cuidado. Es posible crear objetos no válidos si redefine una clase después de haber creado una instancia de un objeto:
 
 ```{r, error = TRUE}
 setClass("A", slots = c(x = "numeric"))
@@ -209,23 +208,23 @@ setClass("A", slots = c(a_different_slot = "numeric"))
 a
 ```
 
-This can cause confusion during interactive creation of new classes. (R6 classes have the same problem, as described in Section \@ref(r6-important-methods).)
+Esto puede causar confusión durante la creación interactiva de nuevas clases. (Las clases R6 tienen el mismo problema, como se describe en la @sec-r6-important-methods.)
 
-### Helper
+### Ayudante
 
-\index{helpers!S4} \index{constructors!S4} \index{S4!helpers} \indexc{new()}
+\index{helpers!S4} \index{constructors!S4} \index{S4!helpers} \index{new()}
 
-`new()` is a low-level constructor suitable for use by you, the developer. User-facing classes should always be paired with a user-friendly helper. A helper should always:
+`new()` es un constructor de bajo nivel adecuado para que lo use usted, el desarrollador. Las clases orientadas al usuario siempre deben combinarse con un asistente fácil de usar. Un ayudante siempre debe:
 
--   Have the same name as the class, e.g. `myclass()`.
+-   Tener el mismo nombre que la clase, p. `myclass()`.
 
--   Have a thoughtfully crafted user interface with carefully chosen default values and useful conversions.
+-   Tenga una interfaz de usuario cuidadosamente diseñada con valores predeterminados cuidadosamente seleccionados y conversiones útiles.
 
--   Create carefully crafted error messages tailored towards an end-user.
+-   Cree mensajes de error cuidadosamente elaborados y adaptados a un usuario final.
 
--   Finish by calling `methods::new()`.
+-   Termine llamando a `methods::new()`.
 
-The `Person` class is so simple so a helper is almost superfluous, but we can use it to clearly define the contract: `age` is optional but `name` is required. We'll also coerce age to a double so the helper also works when passed an integer.
+La clase `Person` es tan simple que un ayudante es casi superfluo, pero podemos usarlo para definir claramente el contrato: `age` es opcional pero `name` es obligatorio. También forzaremos la edad a un doble para que el ayudante también funcione cuando se pasa un número entero.
 
 ```{r}
 Person <- function(name, age = NA) {
@@ -237,23 +236,23 @@ Person <- function(name, age = NA) {
 Person("Hadley")
 ```
 
-### Validator
+### Validador
 
-\index{validators!S4} \index{S4!validators} \indexc{setValidity()}
+\index{validators!S4} \index{S4!validators} \index{setValidity()}
 
-The constructor automatically checks that the slots have correct classes:
+El constructor verifica automáticamente que las ranuras tengan las clases correctas:
 
 ```{r, error = TRUE}
 Person(mtcars)
 ```
 
-You will need to implement more complicated checks (i.e. checks that involve lengths, or multiple slots) yourself. For example, we might want to make it clear that the Person class is a vector class, and can store data about multiple people. That's not currently clear because `@name` and `@age` can be different lengths:
+Deberá implementar verificaciones más complicadas (es decir, verificaciones que involucren longitudes o múltiples ranuras) usted mismo. Por ejemplo, es posible que queramos dejar en claro que la clase Person es una clase vectorial y puede almacenar datos sobre varias personas. Eso no está claro actualmente porque `@name` y `@age` pueden tener diferentes longitudes:
 
 ```{r}
 Person("Hadley", age = c(30, 37))
 ```
 
-To enforce these additional constraints we write a validator with `setValidity()`. It takes a class and a function that returns `TRUE` if the input is valid, and otherwise returns a character vector describing the problem(s):
+Para hacer cumplir estas restricciones adicionales, escribimos un validador con `setValidity()`. Toma una clase y una función que devuelve `TRUE` si la entrada es válida y, de lo contrario, devuelve un vector de caracteres que describe los problemas:
 
 ```{r}
 setValidity("Person", function(object) {
@@ -265,52 +264,52 @@ setValidity("Person", function(object) {
 })
 ```
 
-Now we can no longer create an invalid object:
+Ahora ya no podemos crear un objeto no válido:
 
 ```{r, error = TRUE}
 Person("Hadley", age = c(30, 37))
 ```
 
-NB: The validity method is only called automatically by `new()`, so you can still create an invalid object by modifying it:
+NB: El método de validez solo es llamado automáticamente por `new()`, por lo que aún puede crear un objeto no válido modificándolo:
 
 ```{r}
 alex <- Person("Alex", age = 30)
 alex@age <- 1:10
 ```
 
-\indexc{validObject()}
+\index{validObject()}
 
-You can explicitly check the validity yourself by calling `validObject()`:
+Puedes verificar explícitamente la validez tú mismo llamando a `validObject()`:
 
 ```{r, error = TRUE}
 validObject(alex)
 ```
 
-In Section \@ref(accessors), we'll use `validObject()` to create accessors that can not create invalid objects.
+En la @sec-accessors, usaremos `validObject()` para crear accesores que no pueden crear objetos no válidos.
 
-### Exercises
+### Ejercicios
 
-1.  Extend the Person class with fields to match `utils::person()`. Think about what slots you will need, what class each slot should have, and what you'll need to check in your validity method.
+1.  Extiende la clase Person con campos para que coincidan con `utils::person()`. Piense en qué ranuras necesitará, qué clase debe tener cada ranura y qué necesitará verificar en su método de validez.
 
-2.  What happens if you define a new S4 class that doesn't have any slots? (Hint: read about virtual classes in `?setClass`.)
+2.  ¿Qué sucede si define una nueva clase S4 que no tiene ranuras? (Sugerencia: lea acerca de las clases virtuales en `?setClass`).
 
-3.  Imagine you were going to reimplement factors, dates, and data frames in S4. Sketch out the `setClass()` calls that you would use to define the classes. Think about appropriate `slots` and `prototype`.
+3.  Imagine que iba a volver a implementar factores, fechas y marcos de datos en S4. Esboce las llamadas `setClass()` que usaría para definir las clases. Piense en `slots` y `prototypes` apropiados.
 
-## Generics and methods {#s4-generics}
+## Genéricos y métodos {#sec-s4-generics}
 
-\index{S4!generics} \index{generics!S4} \indexc{setGeneric()} \indexc{standardGeneric()}
+\index{S4!generics} \index{generics!S4} \index{setGeneric()} \index{standardGeneric()}
 
-The job of a generic is to perform method dispatch, i.e. find the specific implementation for the combination of classes passed to the generic. Here you'll learn how to define S4 generics and methods, then in the next section we'll explore precisely how S4 method dispatch works.
+El trabajo de un genérico es realizar el envío de métodos, es decir, encontrar la implementación específica para la combinación de clases pasadas al genérico. Aquí aprenderá a definir métodos y genéricos de S4; luego, en la siguiente sección, exploraremos con precisión cómo funciona el envío de métodos de S4.
 
-To create a new S4 generic, call `setGeneric()` with a function that calls `standardGeneric()`:
+Para crear un nuevo S4 genérico, llame a `setGeneric()` con una función que llame a `standardGeneric()`:
 
 ```{r}
 setGeneric("myGeneric", function(x) standardGeneric("myGeneric"))
 ```
 
-By convention, new S4 generics should use `lowerCamelCase`.
+Por convención, los nuevos genéricos de S4 deben usar `lowerCamelCase`.
 
-It is bad practice to use `{}` in the generic as it triggers a special case that is more expensive, and generally best avoided.
+Es una mala práctica usar `{}` en el genérico, ya que desencadena un caso especial que es más costoso y, en general, es mejor evitarlo.
 
 ```{r}
 # Don't do this!
@@ -319,11 +318,11 @@ setGeneric("myGeneric", function(x) {
 })
 ```
 
-### Signature
+### Firma
 
 \index{signature}
 
-Like `setClass()`, `setGeneric()` has many other arguments. There is only one that you need to know about: `signature`. This allows you to control the arguments that are used for method dispatch. If `signature` is not supplied, all arguments (apart from `...`) are used. It is occasionally useful to remove arguments from dispatch. This allows you to require that methods provide arguments like `verbose = TRUE` or `quiet = FALSE`, but they don't take part in dispatch.
+Al igual que `setClass()`, `setGeneric()` tiene muchos otros argumentos. Solo hay uno que debe conocer: `signature`. Esto le permite controlar los argumentos que se utilizan para el envío de métodos. Si no se proporciona `signature`, se utilizan todos los argumentos (excepto `...`). Ocasionalmente, es útil eliminar argumentos del envío. Esto le permite requerir que los métodos proporcionen argumentos como `verbose = TRUE` o `quiet = FALSE`, pero no toman parte en el envío.
 
 ```{r}
 setGeneric("myGeneric", 
@@ -332,13 +331,13 @@ setGeneric("myGeneric",
 )
 ```
 
-### Methods
+### Métodos
 
-\indexc{setMethod()}
+\index{setMethod()}
 
 \index{methods!S4} \index{S4!methods}
 
-A generic isn't useful without some methods, and in S4 you define methods with `setMethod()`. There are three important arguments: the name of the generic, the name of the class, and the method itself.
+Un genérico no es útil sin algunos métodos, y en S4 se definen métodos con `setMethod()`. Hay tres argumentos importantes: el nombre del genérico, el nombre de la clase y el método en sí.
 
 ```{r}
 setMethod("myGeneric", "Person", function(x) {
@@ -346,23 +345,23 @@ setMethod("myGeneric", "Person", function(x) {
 })
 ```
 
-More formally, the second argument to `setMethod()` is called the **signature**. In S4, unlike S3, the signature can include multiple arguments. This makes method dispatch in S4 substantially more complicated, but avoids having to implement double-dispatch as a special case. We'll talk more about multiple dispatch in the next section. `setMethod()` has other arguments, but you should never use them.
+Más formalmente, el segundo argumento de `setMethod()` se llama **signature**. En S4, a diferencia de S3, la firma puede incluir múltiples argumentos. Esto hace que el envío de métodos en S4 sea sustancialmente más complicado, pero evita tener que implementar el envío doble como un caso especial. Hablaremos más sobre el envío múltiple en la siguiente sección. `setMethod()` tiene otros argumentos, pero nunca debes usarlos.
 
-To list all the methods that belong to a generic, or that are associated with a class, use `methods("generic")` or `methods(class = "class")`; to find the implementation of a specific method, use `selectMethod("generic", "class")`.
+Para listar todos los métodos que pertenecen a un genérico, o que están asociados con una clase, use `methods("generic")` o `methods(class = "class")`; para encontrar la implementación de un método específico, use `selectMethod("generic", "class")`.
 
-### Show method
+### Mostrar método {#sec-show-method}
 
-\indexc{show()}
+\index{show()}
 
 \index{S4!show()@\texttt{show()}}
 
-The most commonly defined S4 method that controls printing is `show()`, which controls how the object appears when it is printed. To define a method for an existing generic, you must first determine the arguments. You can get those from the documentation or by looking at the `args()` of the generic:
+El método S4 más comúnmente definido que controla la impresión es `show()`, que controla cómo aparece el objeto cuando se imprime. Para definir un método para un genérico existente, primero debe determinar los argumentos. Puede obtenerlos de la documentación o mirando los `args()` del genérico:
 
 ```{r}
 args(getGeneric("show"))
 ```
 
-Our show method needs to have a single argument `object`:
+Nuestro método show necesita tener un solo argumento `object`:
 
 ```{r}
 setMethod("show", "Person", function(object) {
@@ -375,17 +374,17 @@ setMethod("show", "Person", function(object) {
 john
 ```
 
-### Accessors
+### Accesorios {#sec-accessors}
 
 \index{S4!accessors}
 
-Slots should be considered an internal implementation detail: they can change without warning and user code should avoid accessing them directly. Instead, all user-accessible slots should be accompanied by a pair of **accessors**. If the slot is unique to the class, this can just be a function:
+Las ranuras deben considerarse un detalle de implementación interna: pueden cambiar sin previo aviso y el código de usuario debe evitar acceder a ellas directamente. En su lugar, todas las ranuras accesibles para el usuario deben ir acompañadas de un par de **accesorios**. Si la ranura es única para la clase, esto puede ser solo una función:
 
 ```{r}
 person_name <- function(x) x@name
 ```
 
-Typically, however, you'll define a generic so that multiple classes can use the same interface:
+Sin embargo, por lo general, definirá un genérico para que varias clases puedan usar la misma interfaz:
 
 ```{r}
 setGeneric("name", function(x) standardGeneric("name"))
@@ -394,7 +393,7 @@ setMethod("name", "Person", function(x) x@name)
 name(john)
 ```
 
-If the slot is also writeable, you should provide a setter function. You should always include `validObject()` in the setter to prevent the user from creating invalid objects.
+Si la ranura también se puede escribir, debe proporcionar una función de establecimiento. Siempre debe incluir `validObject()` en el setter para evitar que el usuario cree objetos no válidos.
 
 ```{r, error = TRUE}
 setGeneric("name<-", function(x, value) standardGeneric("name<-"))
@@ -410,160 +409,160 @@ name(john)
 name(john) <- letters
 ```
 
-(If the `name<-` notation is unfamiliar, review Section \@ref(function-forms).)
+(Si la notación `name<-` no le resulta familiar, revise la @sec-function-forms.)
 
-### Exercises
+### Ejercicios
 
-1.  Add `age()` accessors for the `Person` class.
+1.  Agregue accesores `age()` para la clase `Person`.
 
-2.  In the definition of the generic, why is it necessary to repeat the name of the generic twice?
+2.  En la definición de genérico, ¿por qué es necesario repetir dos veces el nombre del genérico?
 
-3.  Why does the `show()` method defined in Section \@ref(show-method) use `is(object)[[1]]`? (Hint: try printing the employee subclass.)
+3.  ¿Por qué el método `show()` definido en la @sec-show-method usa `is(object)[[1]]`? (Sugerencia: intente imprimir la subclase de empleado).
 
-4.  What happens if you define a method with different argument names to the generic?
+4.  ¿Qué pasa si defines un método con nombres de argumentos diferentes al genérico?
 
-## Method dispatch {#s4-dispatch}
+## Método de envío {#sec-s4-dispatch}
 
 \index{S4!method dispatch} \index{method dispatch!S4}
 
-S4 dispatch is complicated because S4 has two important features:
+El envío de S4 es complicado porque S4 tiene dos características importantes:
 
--   Multiple inheritance, i.e. a class can have multiple parents,
--   Multiple dispatch, i.e. a generic can use multiple arguments to pick a method.
+-   Herencia múltiple, es decir, una clase puede tener múltiples padres,
+-   Envío múltiple, es decir, un genérico puede usar múltiples argumentos para elegir un método.
 
-These features make S4 very powerful, but can also make it hard to understand which method will get selected for a given combination of inputs. In practice, keep method dispatch as simple as possible by avoiding multiple inheritance, and reserving multiple dispatch only for where it is absolutely necessary.
+Estas características hacen que S4 sea muy potente, pero también pueden dificultar la comprensión de qué método se seleccionará para una determinada combinación de entradas. En la práctica, mantenga el envío de métodos lo más simple posible evitando la herencia múltiple y reservando el envío múltiple solo cuando sea absolutamente necesario.
 
-But it's important to describe the full details, so here we'll start simple with single inheritance and single dispatch, and work our way up to the more complicated cases. To illustrate the ideas without getting bogged down in the details, we'll use an imaginary **class graph** based on emoji:
+Pero es importante describir los detalles completos, por lo que aquí comenzaremos de manera simple con herencia única y despacho único, y avanzaremos hasta los casos más complicados. Para ilustrar las ideas sin atascarse en los detalles, usaremos un **gráfico de clase** imaginario basado en emoji:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/emoji.png")
 ```
 
-Emoji give us very compact class names that evoke the relationships between the classes. It should be straightforward to remember that `r emoji("stuck_out_tongue_winking_eye")` inherits from `r emoji("wink")` which inherits from `r emoji("no_mouth")`, and that `r emoji("sunglasses")` inherits from both `r emoji("dark_sunglasses")` and `r emoji("slightly_smiling_face")`.
+Emoji nos da nombres de clase muy compactos que evocan las relaciones entre las clases. Debería ser sencillo recordar que `r emoji("stuck_out_tongue_winking_eye")` hereda de `r emoji("wink")` que hereda de `r emoji("no_mouth")`, y que `r emoji("sunglasses")` hereda tanto de `r emoji("dark_sunglasses")` como de `r emoji("slightly_smiling_face")`.
 
-### Single dispatch
+### Envío único
 
 \index{S4!single dispatch}
 
-Let's start with the simplest case: a generic function that dispatches on a single class with a single parent. The method dispatch here is simple so it's a good place to define the graphical conventions we'll use for the more complex cases.
+Comencemos con el caso más simple: una función genérica que se distribuye en una sola clase con un solo padre. El método de envío aquí es simple, por lo que es un buen lugar para definir las convenciones gráficas que usaremos para los casos más complejos.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/single.png")
 ```
 
-There are two parts to this diagram:
+Hay dos partes en este diagrama:
 
--   The top part, `f(...)`, defines the scope of the diagram. Here we have a generic with one argument, that has a class hierarchy that is three levels deep.
+-   La parte superior, `f(...)`, define el alcance del diagrama. Aquí tenemos un genérico con un argumento, que tiene una jerarquía de clases de tres niveles de profundidad.
 
--   The bottom part is the **method graph** and displays all the possible methods that could be defined. Methods that exist, i.e. that have been defined with `setMethod()`, have a grey background.
+-   La parte inferior es el **gráfico de métodos** y muestra todos los métodos posibles que podrían definirse. Los métodos que existen, es decir, que se han definido con `setMethod()`, tienen un fondo gris.
 
-To find the method that gets called, you start with the most specific class of the actual arguments, then follow the arrows until you find a method that exists. For example, if you called the function with an object of class `r emoji("wink")` you would follow the arrow right to find the method defined for the more general `r emoji("no_mouth")` class. If no method is found, method dispatch has failed and an error is thrown. In practice, this means that you should alway define methods defined for the terminal nodes, i.e. those on the far right.
+Para encontrar el método que se llama, comience con la clase más específica de los argumentos reales, luego siga las flechas hasta que encuentre un método que exista. Por ejemplo, si llamaste a la función con un objeto de la clase `r emoji("wink")`, seguirías la flecha hacia la derecha para encontrar el método definido para la clase más general `r emoji("no_mouth")`. Si no se encuentra ningún método, el envío del método ha fallado y se genera un error. En la práctica, esto significa que siempre debe definir métodos definidos para los nodos terminales, es decir, los del extremo derecho.
 
-\index{S4!pseudo-classes} \indexc{ANY} There are two **pseudo-classes** that you can define methods for. These are called pseudo-classes because they don't actually exist, but allow you to define useful behaviours. The first pseudo-class is `ANY` which matches any class[^s4-3]. For technical reasons that we'll get to later, the link to the `ANY` method is longer than the links between the other classes:
+\index{S4!pseudo-classes} \index{ANY} Hay dos **pseudoclases** para las que puede definir métodos. Estas se denominan pseudoclases porque en realidad no existen, pero le permiten definir comportamientos útiles. La primera pseudoclase es `ANY` que coincide con cualquier clase[^s4-3]. Por razones técnicas que veremos más adelante, el enlace al método `ANY` es más largo que los enlaces entre las otras clases:
 
-[^s4-3]: The S4 `ANY` pseudo-class plays the same role as the S3 `default` pseudo-class.
+[^s4-3]: La pseudoclase `ANY` de S4 desempeña el mismo papel que la pseudoclase `default` de S3.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/single-any.png")
 ```
 
-\indexc{MISSING}
+\index{MISSING}
 
-The second pseudo-class is `MISSING`. If you define a method for this pseudo-class, it will match whenever the argument is missing. It's not useful for single dispatch, but is important for functions like `+` and `-` that use double dispatch and behave differently depending on whether they have one or two arguments.
+La segunda pseudoclase es `MISSING`. Si define un método para esta pseudoclase, coincidirá siempre que falte el argumento. No es útil para envío único, pero es importante para funciones como `+` y `-` que usan envío doble y se comportan de manera diferente dependiendo de si tienen uno o dos argumentos.
 
-### Multiple inheritance
+### Herencia múltiple
 
 \index{S4!multiple inheritance} \index{multiple inheritance}
 
-Things get more complicated when the class has multiple parents.
+Las cosas se complican más cuando la clase tiene varios padres.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/multiple.png")
 ```
 
-The basic process remains the same: you start from the actual class supplied to the generic, then follow the arrows until you find a defined method. The wrinkle is that now there are multiple arrows to follow, so you might find multiple methods. If that happens, you pick the method that is closest, i.e. requires travelling the fewest arrows.
+El proceso básico sigue siendo el mismo: comienza desde la clase real suministrada al genérico, luego sigue las flechas hasta encontrar un método definido. El problema es que ahora hay varias flechas a seguir, por lo que es posible que encuentre varios métodos. Si eso sucede, elige el método más cercano, es decir, requiere viajar con la menor cantidad de flechas.
 
-NB: While the method graph is a powerful metaphor for understanding method dispatch, implementing it in this way would be rather inefficient, so the actual approach that S4 uses is somewhat different. You can read the details in `?Methods_Details`.
+NB: Si bien el gráfico de métodos es una poderosa metáfora para comprender el envío de métodos, implementarlo de esta manera sería bastante ineficiente, por lo que el enfoque real que usa S4 es algo diferente. Puede leer los detalles en `?Methods_Details`.
 
-What happens if methods are the same distance? For example, imagine we've defined methods for `r emoji("dark_sunglasses")` and `r emoji("slightly_smiling_face")`, and we call the generic with `r emoji("sunglasses")`. Note that no method can be found for the `r emoji("no_mouth")` class, which I'll highlight with a red double outline.
+¿Qué sucede si los métodos están a la misma distancia? Por ejemplo, imagina que hemos definido métodos para `r emoji("dark_sunglasses")` y `r emoji("slightly_smiling_face")`, y llamamos al genérico `r emoji("sunglasses")`. Tenga en cuenta que no se puede encontrar ningún método para la clase `r emoji ("no_mouth")`, que resaltaré con un doble contorno rojo.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/multiple-ambig.png")
 ```
 
-This is called an **ambiguous** method, and in diagrams I'll illustrate it with a thick dotted border. When this happens in R, you'll get a warning, and the method for the class that comes earlier in the alphabet will be picked (this is effectively random and should not be relied upon). When you discover ambiguity you should always resolve it by providing a more precise method:
+Esto se llama método **ambiguo**, y en los diagramas lo ilustraré con un borde de puntos gruesos. Cuando esto sucede en R, recibirá una advertencia y se elegirá el método para la clase que aparece antes en el alfabeto (esto es efectivamente aleatorio y no se debe confiar en él). Cuando descubra una ambigüedad, siempre debe resolverla proporcionando un método más preciso:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/multiple-ambig-2.png")
 ```
 
-The fallback `ANY` method still exists but the rules are little more complex. As indicated by the wavy dotted lines, the `ANY` method is always considered further away than a method for a real class. This means that it will never contribute to ambiguity.
+El método alternativo `ANY` aún existe, pero las reglas son un poco más complejas. Como lo indican las líneas punteadas onduladas, el método `ANY` siempre se considera más lejano que un método para una clase real. Esto significa que nunca contribuirá a la ambigüedad.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/multiple-any.png")
 ```
 
-With multiple inheritances it is hard to simultaneously prevent ambiguity, ensure that every terminal method has an implementation, and minimise the number of defined methods (in order to benefit from OOP). For example, of the six ways to define only two methods for this call, only one is free from problems. For this reason, I recommend using multiple inheritance with extreme care: you will need to carefully think about the method graph and plan accordingly.
+Con herencias múltiples, es difícil evitar simultáneamente la ambigüedad, asegurarse de que cada método de terminal tenga una implementación y minimizar la cantidad de métodos definidos (para beneficiarse de OOP). Por ejemplo, de las seis formas de definir solo dos métodos para esta llamada, solo una está libre de problemas. Por esta razón, recomiendo utilizar la herencia múltiple con sumo cuidado: deberá pensar detenidamente en el gráfico del método y planificar en consecuencia.
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/multiple-all.png")
 ```
 
-### Multiple dispatch
+### Envío múltiple
 
 \index{S4!multiple dispatch} \index{multiple dispatch}
 
-Once you understand multiple inheritance, understanding multiple dispatch is straightforward. You follow multiple arrows in the same way as previously, but now each method is specified by two classes (separated by a comma).
+Una vez que comprenda la herencia múltiple, comprender el envío múltiple es sencillo. Sigue varias flechas de la misma manera que antes, pero ahora cada método se especifica mediante dos clases (separadas por una coma).
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/single-single.png")
 ```
 
-I'm not going to show examples of dispatching on more than two arguments, but you can follow the basic principles to generate your own method graphs.
+No voy a mostrar ejemplos de despacho en más de dos argumentos, pero puede seguir los principios básicos para generar sus propios gráficos de métodos.
 
-The main difference between multiple inheritance and multiple dispatch is that there are many more arrows to follow. The following diagram shows four defined methods which produce two ambiguous cases:
+La principal diferencia entre la herencia múltiple y el envío múltiple es que hay muchas más flechas a seguir. El siguiente diagrama muestra cuatro métodos definidos que producen dos casos ambiguos:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/single-single-ambig.png")
 ```
 
-Multiple dispatch tends to be less tricky to work with than multiple inheritance because there are usually fewer terminal class combinations. In this example, there's only one. That means, at a minimum, you can define a single method and have default behaviour for all inputs.
+El envío múltiple tiende a ser menos complicado para trabajar que la herencia múltiple porque generalmente hay menos combinaciones de clases de terminales. En este ejemplo, solo hay uno. Eso significa que, como mínimo, puede definir un solo método y tener un comportamiento predeterminado para todas las entradas.
 
-### Multiple dispatch and multiple inheritance
+### Despacho múltiple y herencia múltiple
 
-Of course you can combine multiple dispatch with multiple inheritance:
+Por supuesto, puede combinar envío múltiple con herencia múltiple:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/single-multiple.png")
 ```
 
-A still more complicated case dispatches on two classes, both of which have multiple inheritance:
+Un caso aún más complicado se despacha en dos clases, las cuales tienen herencia múltiple:
 
 ```{r, echo = FALSE, out.width = NULL}
 knitr::include_graphics("diagrams/s4/multiple-multiple.png")
 ```
 
-As the method graph gets more and more complicated it gets harder and harder to predict which method will get called given a combination of inputs, and it gets harder and harder to make sure that you haven't introduced ambiguity. If you have to draw diagrams to figure out what method is actually going to be called, it's a strong indication that you should go back and simplify your design.
+A medida que el gráfico del método se vuelve más y más complicado, se vuelve más y más difícil predecir qué método se llamará dada una combinación de entradas, y se vuelve más y más difícil asegurarse de que no se ha introducido ambigüedad. Si tiene que dibujar diagramas para averiguar qué método se llamará realmente, es una fuerte indicación de que debe volver atrás y simplificar su diseño.
 
-### Exercises
+### Ejercicios
 
-1.  Draw the method graph for `r paste0(code("f("), emoji("sweat_smile"), ", ", emoji("kissing_cat"), code(")"))`.
+1.  Dibuje el gráfico del método para `r paste0(code("f("), emoji("sweat_smile"), ", ", emoji("kissing_cat"), code(")"))`.
 
-2.  Draw the method graph for `r paste0(code("f("), emoji("smiley"), ", ", emoji("wink"), ", ", emoji("kissing_smiling_eyes"), code(")"))`.
+2.  Dibuje el gráfico del método para `r paste0(code("f("), emoji("smiley"), ", ", emoji("wink"), ", ", emoji("kissing_smiling_eyes"), code(")"))`.
 
-3.  Take the last example which shows multiple dispatch over two classes that use multiple inheritance. What happens if you define a method for all terminal classes? Why does method dispatch not save us much work here?
+3.  Tome el último ejemplo que muestra envío múltiple sobre dos clases que usan herencia múltiple. ¿Qué sucede si define un método para todas las clases de terminal? ¿Por qué el método de envío no nos ahorra mucho trabajo aquí?
 
-## S4 and S3 {#s4-s3}
+## S4 y S3 {#sec-s4-s3}
 
 \index{S4!working with S3} \index{S3!working with S4}
 
-When writing S4 code, you'll often need to interact with existing S3 classes and generics. This section describes how S4 classes, methods, and generics interact with existing code.
+Al escribir código S4, a menudo necesitará interactuar con clases y genéricos existentes de S3. Esta sección describe cómo las clases, los métodos y los genéricos de S4 interactúan con el código existente.
 
-### Classes
+### Clases
 
-\indexc{setOldClass()}
+\index{setOldClass()}
 
-In `slots` and `contains` you can use S4 classes, S3 classes, or the implicit class (Section \@ref(implicit-class)) of a base type. To use an S3 class, you must first register it with `setOldClass()`. You call this function once for each S3 class, giving it the class attribute. For example, the following definitions are already provided by base R:
+En `slots` y `contains` puede usar clases S4, clases S3 o la clase implícita (@sec-implicit-class) de un tipo base. Para usar una clase S3, primero debe registrarla con `setOldClass()`. Llame a esta función una vez para cada clase de S3, dándole el atributo de clase. Por ejemplo, la base R ya proporciona las siguientes definiciones:
 
 ```{r, eval = FALSE}
 setOldClass("data.frame")
@@ -571,7 +570,7 @@ setOldClass(c("ordered", "factor"))
 setOldClass(c("glm", "lm"))
 ```
 
-However, it's generally better to be more specific and provide a full S4 definition with `slots` and a `prototype`:
+Sin embargo, generalmente es mejor ser más específico y proporcionar una definición completa de S4 con `slots` y un `prototype`:
 
 ```{r, eval = FALSE}
 setClass("factor",
@@ -587,9 +586,9 @@ setClass("factor",
 setOldClass("factor", S4Class = "factor")
 ```
 
-Generally, these definitions should be provided by the creator of the S3 class. If you're trying to build an S4 class on top of an S3 class provided by a package, you should request that the package maintainer add this call to their package, rather than adding it to your own code.
+Por lo general, estas definiciones las debe proporcionar el creador de la clase S3. Si intenta crear una clase S4 sobre una clase S3 proporcionada por un paquete, debe solicitar que el mantenedor del paquete agregue esta llamada a su paquete, en lugar de agregarla a su propio código.
 
-If an S4 object inherits from an S3 class or a base type, it will have a special virtual slot called `.Data`. This contains the underlying base type or S3 object: \indexc{.Data}
+Si un objeto S4 hereda de una clase S3 o un tipo base, tendrá una ranura virtual especial llamada `.Data`. Esto contiene el tipo base subyacente o el objeto S3: \index{.Data}
 
 ```{r}
 RangedNumeric <- setClass(
@@ -603,28 +602,28 @@ rn@min
 rn@.Data
 ```
 
-It is possible to define S3 methods for S4 generics, and S4 methods for S3 generics (provided you've called `setOldClass()`). However, it's more complicated than it might appear at first glance, so make sure you thoroughly read `?Methods_for_S3`.
+Es posible definir métodos de S3 para genéricos de S4 y métodos de S4 para genéricos de S3 (siempre que haya llamado a `setOldClass()`). Sin embargo, es más complicado de lo que parece a primera vista, así que asegúrese de leer detenidamente `?Methods_for_S3`.
 
-### Generics
+### Genéricos
 
-\indexc{setGeneric()}
+\index{setGeneric()}
 
-As well as creating a new generic from scratch, it's also possible to convert an existing S3 generic to an S4 generic:
+Además de crear un nuevo genérico desde cero, también es posible convertir un genérico S3 existente en un genérico S4:
 
 ```{r}
 setGeneric("mean")
 ```
 
-In this case, the existing function becomes the default (`ANY`) method:
+En este caso, la función existente se convierte en el método predeterminado (`ANY`):
 
 ```{r}
 selectMethod("mean", "ANY")
 ```
 
-NB: `setMethod()` will automatically call `setGeneric()` if the first argument isn't already a generic, enabling you to turn any existing function into an S4 generic. It is OK to convert an existing S3 generic to S4, but you should avoid converting regular functions to S4 generics in packages because that requires careful coordination if done by multiple packages.
+NB: `setMethod()` llamará automáticamente a `setGeneric()` si el primer argumento aún no es genérico, lo que le permite convertir cualquier función existente en un genérico S4. Está bien convertir un S3 genérico existente a S4, pero debe evitar convertir funciones regulares a genéricos S4 en paquetes porque eso requiere una coordinación cuidadosa si lo hacen varios paquetes.
 
-### Exercises
+### Ejercicios
 
-1.  What would a full `setOldClass()` definition look like for an ordered factor (i.e. add `slots` and `prototype` the definition above)?
+1.  ¿Cómo sería una definición completa de `setOldClass()` para un factor ordenado (es decir, agregar `slots` y `prototype` de la definición anterior)?
 
-2.  Define a `length` method for the `Person` class.
+2.  Defina un método `length` para la clase `Person`.
