@@ -1,32 +1,32 @@
-# Trade-offs {#sec-oo-tradeoffs}
+# Compensaciones {#sec-oo-tradeoffs}
 
 ```{r setup, include = FALSE}
 source("common.R")
 ```
 
-## Introduction
+## Introducción
 
-You now know about the three most important OOP toolkits available in R. Now that you understand their basic operation and the principles that underlie them, we can start to compare and contrast the systems in order to understand their strengths and weaknesses. This will help you pick the system that is most likely to solve new problems.
+Ahora conoce los tres conjuntos de herramientas OOP más importantes disponibles en R. Ahora que comprende su funcionamiento básico y los principios que los sustentan, podemos comenzar a comparar y contrastar los sistemas para comprender sus fortalezas y debilidades. Esto le ayudará a elegir el sistema que tiene más probabilidades de resolver nuevos problemas.
 
-Overall, when picking an OO system, I recommend that you default to S3. S3 is simple, and widely used throughout base R and CRAN. While it's far from perfect, its idiosyncrasies are well understood and there are known approaches to overcome most shortcomings. If you have an existing background in programming you are likely to lean towards R6, because it will feel familiar. I think you should resist this tendency for two reasons. Firstly, if you use R6 it's very easy to create a non-idiomatic API that will feel very odd to native R users, and will have surprising pain points because of the reference semantics. Secondly, if you stick to R6, you'll lose out on learning a new way of thinking about OOP that gives you a new set of tools for solving problems.
+En general, al elegir un sistema OO, le recomiendo que utilice S3 de forma predeterminada. S3 es simple y se usa ampliamente en base R y CRAN. Si bien está lejos de ser perfecto, sus idiosincrasias se comprenden bien y existen enfoques conocidos para superar la mayoría de las deficiencias. Si tiene experiencia previa en programación, es probable que se incline hacia R6, porque le resultará familiar. Creo que deberías resistirte a esta tendencia por dos razones. En primer lugar, si usa R6, es muy fácil crear una API no idiomática que se sentirá muy extraña para los usuarios nativos de R y tendrá puntos débiles sorprendentes debido a la semántica de referencia. En segundo lugar, si se apega a R6, perderá el aprendizaje de una nueva forma de pensar sobre OOP que le brinda un nuevo conjunto de herramientas para resolver problemas.
 
-### Outline {.unnumbered}
+### Estructura {.unnumbered}
 
--   Section \@ref(s3-s4) compares S3 and S4. In brief, S4 is more formal and tends to require more upfront planning. That makes it more suitable for big projects developed by teams, not individuals.
+-   La @sec-s3-s4 compara S3 y S4. En resumen, S4 es más formal y tiende a requerir una planificación más anticipada. Eso lo hace más adecuado para grandes proyectos desarrollados por equipos, no individualmente.
 
--   Section \@ref(s3-r6) compares S3 and R6. This section is quite long because these two systems are fundamentally different and there are a number of tradeoffs that you need to consider.
+-   La @sec-s3-r6 compara S3 y R6. Esta sección es bastante larga porque estos dos sistemas son fundamentalmente diferentes y hay una serie de compensaciones que debe tener en cuenta.
 
-### Prerequisites {.unnumbered}
+### Requisitos previos {.unnumbered}
 
-You need to be familiar with S3, S4, and R6, as discussed in the previous three chapters.
+Debe estar familiarizado con S3, S4 y R6, como se explicó en los tres capítulos anteriores.
 
-## S4 versus S3 {#s3-s4}
+## S4 contra S3 {#sec-s3-s4}
 
 \index{S4!versus S3} \index{S3!versus S4}
 
-Once you've mastered S3, S4 is not too difficult to pick up: the underlying ideas are the same, S4 is just more formal, more strict, and more verbose. The strictness and formality of S4 make it well suited for large teams. Since more structure is provided by the system itself, there is less need for convention, and new contributors don't need as much training. S4 tends to require more upfront design than S3, and this investment is more likely to pay off on larger projects where greater resources are available.
+Una vez que haya dominado S3, S4 no es demasiado difícil de entender: las ideas subyacentes son las mismas, S4 es simplemente más formal, más estricto y más detallado. El rigor y la formalidad de S4 lo hacen ideal para equipos grandes. Dado que el propio sistema proporciona más estructura, hay menos necesidad de convenciones y los nuevos contribuyentes no necesitan tanta formación. S4 tiende a requerir un diseño más inicial que S3, y es más probable que esta inversión rinda frutos en proyectos más grandes donde hay más recursos disponibles.
 
-One large team effort where S4 is used to good effect is Bioconductor. Bioconductor is similar to CRAN: it's a way of sharing packages amongst a wider audience. Bioconductor is smaller than CRAN (\~1,300 versus \~10,000 packages, July 2017) and the packages tend to be more tightly integrated because of the shared domain and because Bioconductor has a stricter review process. Bioconductor packages are not required to use S4, but most will because the key data structures (e.g. SummarizedExperiment, IRanges, DNAStringSet) are built using S4.
+Un gran esfuerzo de equipo donde S4 se usa con buenos resultados es Bioconductor. Bioconductor es similar a CRAN: es una forma de compartir paquetes entre una audiencia más amplia. Bioconductor es más pequeño que CRAN (\~1,300 versus \~10,000 paquetes, julio de 2017) y los paquetes tienden a estar más estrechamente integrados debido al dominio compartido y porque Bioconductor tiene un proceso de revisión más estricto. No se requieren paquetes de bioconductores para usar S4, pero la mayoría lo hará porque las estructuras de datos clave (por ejemplo, SummarizedExperiment, IRanges, DNAStringSet) se construyen usando S4.
 
 ```{r, include = FALSE}
 library(Matrix)
@@ -44,40 +44,41 @@ methods <- lapply(gs@.Data, findMethods)
 n_methods <- length(unlist(methods, recursive = FALSE))
 ```
 
-S4 is also a good fit for complex systems of interrelated objects, and it's possible to minimise code duplication through careful implementation of methods. The best example of such a system is the Matrix package [@Matrix]. It is designed to efficiently store and compute with many different types of sparse and dense matrices. As of version `r ver`, it defines `r n_classes` classes, `r n_generics` generic functions, and `r n_methods` methods, and to give you some idea of the complexity, a small subset of the class graph is shown in Figure \@ref(fig:matrix-classes).
+S4 también es una buena opción para sistemas complejos de objetos interrelacionados, y es posible minimizar la duplicación de código mediante la implementación cuidadosa de métodos. El mejor ejemplo de tal sistema es el paquete Matrix [@Matrix]. Está diseñado para almacenar y calcular de manera eficiente con muchos tipos diferentes de matrices densas y dispersas. A partir de la versión `r ver`, define clases `r n_classes`, funciones genéricas `r n_generics` y métodos `r n_methods`, y para darle una idea de la complejidad, se muestra un pequeño subconjunto del gráfico de clase en @fig-matrix-classes.
 
-```{r matrix-classes, echo = FALSE, out.width = "80%", fig.cap= "A small subset of the Matrix class graph showing the inheritance of sparse matrices. Each concrete class inherits from two virtual parents: one that describes how the data is stored (C = column oriented, R = row oriented, T = tagged) and one that describes any restriction on the matrix (s = symmetric, t = triangle, g = general)."}
+```{r, label = fig-matrix-classes, echo=FALSE, out.width="80%", fig.cap="Un pequeño subconjunto del gráfico de la clase Matrix que muestra la herencia de matrices dispersas. Cada clase concreta hereda de dos padres virtuales: uno que describe cómo se almacenan los datos (C = orientado a columnas, R = orientado a filas, T = etiquetado) y otro que describe cualquier restricción en la matriz (s = simétrico, t = triángulo, g = generales)."}
+
 knitr::include_graphics("diagrams/s4/Matrix.png")
 ```
 
-This domain is a good fit for S4 because there are often computational shortcuts for specific combinations of sparse matrices. S4 makes it easy to provide a general method that works for all inputs, and then provide more specialised methods where the inputs allow a more efficient implementation. This requires careful planning to avoid method dispatch ambiguity, but the planning pays off with higher performance.
+Este dominio es una buena opción para S4 porque a menudo hay atajos computacionales para combinaciones específicas de matrices dispersas. S4 facilita proporcionar un método general que funcione para todas las entradas y luego proporcionar métodos más especializados donde las entradas permiten una implementación más eficiente. Esto requiere una planificación cuidadosa para evitar la ambigüedad en el envío de métodos, pero la planificación compensa con un mayor rendimiento.
 
-The biggest challenge to using S4 is the combination of increased complexity and absence of a single source of documentation. S4 is a complex system and it can be challenging to use effectively in practice. This wouldn't be such a problem if S4 documentation wasn't scattered through R documentation, books, and websites. S4 needs a book length treatment, but that book does not (yet) exist. (The documentation for S3 is no better, but the lack is less painful because S3 is much simpler.)
+El mayor desafío para usar S4 es la combinación de una mayor complejidad y la ausencia de una única fuente de documentación. S4 es un sistema complejo y su uso eficaz en la práctica puede resultar complicado. Esto no sería un gran problema si la documentación de S4 no estuviera dispersa en la documentación, los libros y los sitios web de R. S4 necesita un tratamiento de longitud de libro, pero ese libro (todavía) no existe. (La documentación para S3 no es mejor, pero la falta es menos dolorosa porque S3 es mucho más simple).
 
-## R6 versus S3 {#s3-r6}
+## R6 contra S3 {#sec-s3-r6}
 
 \index{S3!versus R6} \index{R6!versus S3}
 
-R6 is a profoundly different OO system from S3 and S4 because it is built on encapsulated objects, rather than generic functions. Additionally R6 objects have reference semantics, which means that they can be modified in place. These two big differences have a number of non-obvious consequences which we'll explore here:
+R6 es un sistema OO profundamente diferente de S3 y S4 porque se basa en objetos encapsulados, en lugar de funciones genéricas. Además, los objetos R6 tienen semántica de referencia, lo que significa que se pueden modificar en su lugar. Estas dos grandes diferencias tienen una serie de consecuencias no obvias que exploraremos aquí:
 
--   A generic is a regular function so it lives in the global namespace. An R6 method belongs to an object so it lives in a local namespace. This influences how we think about naming.
+-   Un genérico es una función regular, por lo que vive en el espacio de nombres global. Un método R6 pertenece a un objeto, por lo que vive en un espacio de nombres local. Esto influye en cómo pensamos acerca de nombrar.
 
--   R6's reference semantics allow methods to simultaneously return a value and modify an object. This solves a painful problem called "threading state".
+-   La semántica de referencia de R6 permite que los métodos devuelvan un valor y modifiquen un objeto simultáneamente. Esto resuelve un doloroso problema llamado "estado de subprocesamiento".
 
--   You invoke an R6 method using `$`, which is an infix operator. If you set up your methods correctly you can use chains of method calls as an alternative to the pipe.
+-   Invocas un método R6 usando `$`, que es un operador infijo. Si configura sus métodos correctamente, puede usar cadenas de llamadas a métodos como una alternativa a la canalización.
 
-These are general trade-offs between functional and encapsulated OOP, so they also serve as a discussion of system design in R versus Python.
+Estas son compensaciones generales entre OOP funcional y encapsulado, por lo que también sirven como una discusión sobre el diseño del sistema en R versus Python.
 
-### Namespacing
+### Espacio de nombres
 
-One non-obvious difference between S3 and R6 is the space in which methods are found:
+Una diferencia no obvia entre S3 y R6 es el espacio en el que se encuentran los métodos:
 
--   Generic functions are global: all packages share the same namespace.
--   Encapsulated methods are local: methods are bound to a single object.
+-   Las funciones genéricas son globales: todos los paquetes comparten el mismo espacio de nombres.
+-   Los métodos encapsulados son locales: los métodos están vinculados a un solo objeto.
 
-The advantage of a global namespace is that multiple packages can use the same verbs for working with different types of objects. Generic functions provide a uniform API that makes it easier to perform typical actions with a new object because there are strong naming conventions. This works well for data analysis because you often want to do the same thing to different types of objects. In particular, this is one reason that R's modelling system is so useful: regardless of where the model has been implemented you always work with it using the same set of tools (`summary()`, `predict()`, ...).
+La ventaja de un espacio de nombres global es que varios paquetes pueden usar los mismos verbos para trabajar con diferentes tipos de objetos. Las funciones genéricas proporcionan una API uniforme que facilita la realización de acciones típicas con un nuevo objeto porque existen fuertes convenciones de nomenclatura. Esto funciona bien para el análisis de datos porque a menudo desea hacer lo mismo con diferentes tipos de objetos. En particular, esta es una de las razones por las que el sistema de modelado de R es tan útil: independientemente de dónde se haya implementado el modelo, siempre se trabaja con él usando el mismo conjunto de herramientas (`summary()`, `predict()`, ... ).
 
-The disadvantage of a global namespace is that it forces you to think more deeply about naming. You want to avoid multiple generics with the same name in different packages because it requires the user to type `::` frequently. This can be hard because function names are usually English verbs, and verbs often have multiple meanings. Take `plot()` for example:
+La desventaja de un espacio de nombres global es que lo obliga a pensar más profundamente sobre la asignación de nombres. Desea evitar múltiples genéricos con el mismo nombre en diferentes paquetes porque requiere que el usuario escriba `::` con frecuencia. Esto puede ser difícil porque los nombres de las funciones suelen ser verbos en inglés y los verbos suelen tener varios significados. Toma `plot()` por ejemplo:
 
 ```{r, eval = FALSE}
 plot(data)       # plot some data
@@ -86,9 +87,9 @@ plot(land)       # create a new plot of land
 plot(movie)      # extract plot of a movie
 ```
 
-Generally, you should avoid methods that are homonyms of the original generic, and instead define a new generic.
+En general, debe evitar los métodos que son homónimos del genérico original y, en su lugar, definir un nuevo genérico.
 
-This problem doesn't occur with R6 methods because they are scoped to the object. The following code is fine, because there is no implication that the plot method of two different R6 objects has the same meaning:
+Este problema no ocurre con los métodos R6 porque están en el ámbito del objeto. El siguiente código está bien, porque no implica que el método de trazado de dos objetos R6 diferentes tenga el mismo significado:
 
 ```{r, eval = FALSE}
 data$plot()
@@ -97,22 +98,22 @@ land$plot()
 movie$plot()
 ```
 
-These considerations also apply to the arguments to the generic. S3 generics must have the same core arguments, which means they generally have non-specific names like `x` or `.data`. S3 generics generally need `...` to pass on additional arguments to methods, but this has the downside that misspelled argument names will not create an error. In comparison, R6 methods can vary more widely and use more specific and evocative argument names.
+Estas consideraciones también se aplican a los argumentos a la genérica. Los genéricos de S3 deben tener los mismos argumentos centrales, lo que significa que generalmente tienen nombres no específicos como `x` o `.data`. Los genéricos de S3 generalmente necesitan `...` para pasar argumentos adicionales a los métodos, pero esto tiene la desventaja de que los nombres de los argumentos mal escritos no generarán un error. En comparación, los métodos R6 pueden variar más ampliamente y usar nombres de argumentos más específicos y sugerentes.
 
-A secondary advantage of local namespacing is that creating an R6 method is very cheap. Most encapsulated OO languages encourage you to create many small methods, each doing one thing well with an evocative name. Creating a new S3 method is more expensive, because you may also have to create a generic, and think about the naming issues described above. That means that the advice to create many small methods does not apply to S3. It's still a good idea to break your code down into small, easily understood chunks, but they should generally just be regular functions, not methods.
+Una ventaja secundaria del espacio de nombres local es que crear un método R6 es muy económico. La mayoría de los lenguajes OO encapsulados lo alientan a crear muchos métodos pequeños, cada uno de los cuales hace una cosa bien con un nombre evocador. Crear un nuevo método S3 es más costoso, porque es posible que también deba crear uno genérico y pensar en los problemas de nombres descritos anteriormente. Eso significa que el consejo de crear muchos métodos pequeños no se aplica a S3. Todavía es una buena idea dividir el código en fragmentos pequeños y fáciles de entender, pero por lo general deberían ser solo funciones regulares, no métodos.
 
-### Threading state
+### Estado de enhebrado {#sec-threading-state}
 
 \index{threading state} \index{accumulator programming}
 
-One challenge of programming with S3 is when you want to both return a value and modify the object. This violates our guideline that a function should either be called for its return value or for its side effects, but is necessary in a handful of cases.
+Un desafío de programar con S3 es cuando desea devolver un valor y modificar el objeto. Esto viola nuestra pauta de que se debe llamar a una función por su valor de retorno o por sus efectos secundarios, pero es necesario en algunos casos.
 
-For example, imagine you want to create a **stack** of objects. A stack has two main methods:
+Por ejemplo, imagina que quieres crear una **pila** de objetos. Una pila tiene dos métodos principales:
 
--   `push()` adds a new object to the top of the stack.
--   `pop()` returns the top most value, and removes it from the stack.
+-   `push()` agrega un nuevo objeto a la parte superior de la pila.
+-   `pop()` devuelve el valor superior y lo elimina de la pila.
 
-The implementation of the constructor and the `push()` method is straightforward. A stack contains a list of items, and pushing an object to the stack simply appends to this list.
+La implementación del constructor y el método `push()` es sencilla. Una pila contiene una lista de elementos, y empujar un objeto a la pila simplemente se agrega a esta lista.
 
 ```{r}
 new_stack <- function(items = list()) {
@@ -125,9 +126,9 @@ push <- function(x, y) {
 }
 ```
 
-(I haven't created a real method for `push()` because making it generic would just make this example more complicated for no real benefit.)
+(No he creado un método real para `push()` porque hacerlo genérico solo haría que este ejemplo fuera más complicado sin ningún beneficio real).
 
-Implementing `pop()` is more challenging because it has to both return a value (the object at the top of the stack), and have a side-effect (remove that object from that top). Since we can't modify the input object in S3 we need to return two things: the value, and the updated object.
+Implementar `pop()` es más desafiante porque tiene que devolver un valor (el objeto en la parte superior de la pila) y tener un efecto secundario (eliminar ese objeto de esa parte superior). Como no podemos modificar el objeto de entrada en S3, debemos devolver dos cosas: el valor y el objeto actualizado.
 
 ```{r}
 pop <- function(x) {
@@ -140,7 +141,7 @@ pop <- function(x) {
 }
 ```
 
-This leads to rather awkward usage:
+Esto conduce a un uso bastante incómodo:
 
 ```{r}
 s <- new_stack()
@@ -153,9 +154,9 @@ s <- out$x
 s
 ```
 
-This problem is known as **threading state** or **accumulator programming**, because no matter how deeply the `pop()` is called, you have to thread the modified stack object all the way back to where it lives.
+Este problema se conoce como **estado de subprocesamiento** o **programación del acumulador**, porque no importa qué tan profundamente se llame a `pop()`, debe enhebrar el objeto de pila modificado hasta donde vive.
 
-\index{multi-assign} \indexc{\%<-\%} One way that other FP languages deal with this challenge is to provide a **multiple assign** (or destructuring bind) operator that allows you to assign multiple values in a single step. The zeallot package [@zeallot] provides multi-assign for R with `%<-%`. This makes the code more elegant, but doesn't solve the key problem:
+\index{multi-assign} \index{\%<-\%} Una forma en que otros lenguajes de FP enfrentan este desafío es proporcionar un operador de **asignación múltiple** (o enlace de desestructuración) que le permite asignar múltiples valores en un solo paso. El paquete zeallot [@zeallot] proporciona asignaciones múltiples para R con `%<-%`. Esto hace que el código sea más elegante, pero no resuelve el problema clave:
 
 ```{r}
 library(zeallot)
@@ -164,7 +165,7 @@ c(value, s) %<-% pop(s)
 value
 ```
 
-An R6 implementation of a stack is simpler because `$pop()` can modify the object in place, and return only the top-most value:
+Una implementación R6 de una pila es más simple porque `$pop()` puede modificar el objeto en su lugar y devolver solo el valor más alto:
 
 ```{r}
 Stack <- R6::R6Class("Stack", list(
@@ -184,7 +185,7 @@ Stack <- R6::R6Class("Stack", list(
 ))
 ```
 
-This leads to more natural code:
+Esto conduce a un código más natural:
 
 ```{r}
 s <- Stack$new()
@@ -193,13 +194,13 @@ s$push(20)
 s$pop()
 ```
 
-I encountered a real-life example of threading state in ggplot2 scales. Scales are complex because they need to combine data across every facet and every layer. I originally used S3 classes, but it required passing scale data to and from many functions. Switching to R6 made the code substantially simpler. However, it also introduced some problems because I forgot to call to `$clone()` when modifying a plot. This allowed independent plots to share the same scale data, creating a subtle bug that was hard to track down.
+Encontré un ejemplo de la vida real del estado de subprocesamiento en las escalas ggplot2. Las escalas son complejas porque necesitan combinar datos en cada faceta y cada capa. Originalmente usé clases S3, pero requería pasar datos de escala hacia y desde muchas funciones. Cambiar a R6 simplificó sustancialmente el código. Sin embargo, también introdujo algunos problemas porque olvidé llamar a `$clone()` al modificar un gráfico. Esto permitió que las parcelas independientes compartieran los mismos datos de escala, creando un error sutil que era difícil de rastrear.
 
-### Method chaining {#tradeoffs-pipe}
+### Encadenamiento de métodos {#sec-tradeoffs-pipe}
 
-\index{method chaining} \indexc{\%>\%}
+\index{method chaining} \index{\%>\%}
 
-The pipe, `%>%`, is useful because it provides an infix operator that makes it easy to compose functions from left-to-right. Interestingly, the pipe is not so important for R6 objects because they already use an infix operator: `$`. This allows the user to chain together multiple method calls in a single expression, a technique known as **method chaining**:
+La canalización, `|>`, es útil porque proporciona un operador infijo que facilita la composición de funciones de izquierda a derecha. Curiosamente, la tubería no es tan importante para los objetos R6 porque ya usan un operador infijo: `$`. Esto permite al usuario encadenar varias llamadas a métodos en una sola expresión, una técnica conocida como **encadenamiento de métodos**:
 
 ```{r}
 s <- Stack$new()
@@ -209,6 +210,6 @@ s$
   pop()
 ```
 
-This technique is commonly used in other programming languages, like Python and JavaScript, and is made possible with one convention: any R6 method that is primarily called for its side-effects (usually modifying the object) should return `invisible(self)`.
+Esta técnica se usa comúnmente en otros lenguajes de programación, como Python y JavaScript, y es posible con una convención: cualquier método R6 que se llame principalmente por sus efectos secundarios (generalmente modificando el objeto) debe devolver `invisible (self)`.
 
-The primary advantage of method chaining is that you can get useful autocomplete; the primary disadvantage is that only the creator of the class can add new methods (and there's no way to use multiple dispatch).
+La principal ventaja del encadenamiento de métodos es que puede obtener un autocompletado útil; la desventaja principal es que solo el creador de la clase puede agregar nuevos métodos (y no hay forma de usar el envío múltiple).
