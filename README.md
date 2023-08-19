@@ -18,6 +18,9 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
 -   Fundamentos
 -   Programación funcional
 -   Programación orientada a objetos
+-   Metaprogramación
+    -   Introducción
+    -   Panorama general
 
 # Más información acerca del repositorio
 
@@ -91,6 +94,9 @@ The translation was done using Google Translate and some grammar and coherence e
 -   Foundations
 -   Functional Programming
 -   Object-oriented programming
+-   Meta-programming
+    -   Introduction
+    -   Big picture
 
 # More info about the repository
 

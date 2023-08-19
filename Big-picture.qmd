@@ -1,56 +1,56 @@
-# Big picture {#sec-meta-big-picture}
+# Panorama general {#sec-meta-big-picture}
 
 ```{r, include = FALSE}
 source("common.R")
 ```
 
-## Introduction
+## Introducción
 
-Metaprogramming is the hardest topic in this book because it brings together many formerly unrelated topics and forces you grapple with issues that you probably haven't thought about before. You'll also need to learn a lot of new vocabulary, and at first it will seem like every new term is defined by three other terms that you haven't heard of. Even if you're an experienced programmer in another language, your existing skills are unlikely to be much help as few modern popular languages expose the level of metaprogramming that R provides. So don't be surprised if you're frustrated or confused at first; this is a natural part of the process that happens to everyone!
+La metaprogramación es el tema más difícil de este libro porque reúne muchos temas que antes no estaban relacionados y lo obliga a lidiar con problemas en los que probablemente no había pensado antes. También necesitarás aprender mucho vocabulario nuevo, y al principio parecerá que cada término nuevo está definido por otros tres términos de los que no has oído hablar. Incluso si es un programador experimentado en otro idioma, es poco probable que sus habilidades existentes sean de mucha ayuda, ya que pocos lenguajes populares modernos exponen el nivel de metaprogramación que proporciona R. Así que no se sorprenda si se siente frustrado o confundido al principio; ¡Esta es una parte natural del proceso que le sucede a todos!
 
-But I think it's easier to learn metaprogramming now than ever before. Over the last few years, the theory and practice have matured substantially, providing a strong foundation paired with tools that allow you to solve common problems. In this chapter, you'll get the big picture of all the main pieces and how they fit together.
+Pero creo que ahora es más fácil aprender metaprogramación que nunca. En los últimos años, la teoría y la práctica han madurado sustancialmente, brindando una base sólida junto con herramientas que le permiten resolver problemas comunes. En este capítulo, obtendrá una visión general de todas las piezas principales y cómo encajan entre sí.
 
-### Outline {.unnumbered}
+### Estructura {.unnumbered}
 
-Each section in this chapter introduces one big new idea:
+Cada sección de este capítulo presenta una gran idea nueva:
 
--   Section \@ref(code-data) shows that code is data and teaches you how to create and modify expressions by capturing code.
+-   La @sec-code-data muestra que el código son datos y le enseña cómo crear y modificar expresiones mediante la captura de código.
 
--   Section \@ref(code-tree) describes the tree-like structure of code, called an abstract syntax tree.
+-   La @sec-code-tree describe la estructura del código en forma de árbol, llamada árbol de sintaxis abstracta.
 
--   Section \@ref(coding-code) shows how to create new expressions programmatically.
+-   La @sec-coding-code muestra cómo crear nuevas expresiones programáticamente.
 
--   Section \@ref(eval-intro) shows how to execute expressions by evaluating them in an environment.
+-   La @sec-eval-intro) muestra cómo ejecutar expresiones evaluándolas en un entorno.
 
--   Section \@ref(eval-funs) illustrates how to customise evaluation by supplying custom functions in a new environment.
+-   La @sec-eval-funs ilustra cómo personalizar la evaluación proporcionando funciones personalizadas en un nuevo entorno.
 
--   Section \@ref(eval-data) extends that customisation to data masks, which blur the line between environments and data frames.
+-   La @sec-eval-data extiende esa personalización a las máscaras de datos, que desdibujan la línea entre los entornos y los data frames.
 
--   Section \@ref(quosure-intro) introduces a new data structure called the quosure that makes all this simpler and more correct.
+-   La @sec-quosure-intro introduce una nueva estructura de datos llamada quosure que hace que todo esto sea más simple y correcto.
 
-### Prerequisites {.unnumbered}
+### Requisitos previos {.unnumbered}
 
-This chapter introduces the big ideas using rlang; you'll learn the base equivalents in later chapters. We'll also use the lobstr package to explore the tree structure of code.
+Este capítulo presenta las grandes ideas usando rlang; aprenderá los equivalentes básicos en capítulos posteriores. También usaremos el paquete lobstr para explorar la estructura de árbol del código.
 
 ```{r setup}
 library(rlang)
 library(lobstr)
 ```
 
-Make sure that you're also familiar with the environment (Section \@ref(env-basics)) and data frame (Section \@ref(tibble)) data structures.
+Asegúrese de que también está familiarizado con las estructuras de datos del entorno (@sec-env-basics) y del data frame (@sec-tibble).
 
-## Code is data {#code-data}
+## El código es datos {#sec-code-data}
 
-The first big idea is that code is data: you can capture code and compute on it as you can with any other type of data. The first way you can capture code is with `rlang::expr()`. You can think of `expr()` as returning exactly what you pass in:
+La primera gran idea es que el código es información: puede capturar código y calcularlo como puede hacerlo con cualquier otro tipo de información. La primera forma de capturar código es con `rlang::expr()`. Puedes pensar en `expr()` como si devolviera exactamente lo que pasas:
 
 ```{r}
 expr(mean(x, na.rm = TRUE))
 expr(10 + 100 + 1000)
 ```
 
-More formally, captured code is called an **expression**. An expression isn't a single type of object, but is a collective term for any of four types (call, symbol, constant, or pairlist), which you'll learn more about in Chapter \@ref(expressions).
+Más formalmente, el código capturado se llama **expresión**. Una expresión no es un único tipo de objeto, sino un término colectivo para cualquiera de los cuatro tipos (llamada, símbolo, constante o lista de pares), sobre los que aprenderá más en el @sec-expressions.
 
-`expr()` lets you capture code that you've typed. You need a different tool to capture code passed to a function because `expr()` doesn't work:
+`expr()` le permite capturar el código que ha escrito. Necesita una herramienta diferente para capturar el código pasado a una función porque `expr()` no funciona:
 
 ```{r}
 capture_it <- function(x) {
@@ -59,7 +59,7 @@ capture_it <- function(x) {
 capture_it(a + b + c)
 ```
 
-Here you need to use a function specifically designed to capture user input in a function argument: `enexpr()`. Think of the "en" in the context of "enrich": `enexpr()` takes a lazily evaluated argument and turns it into an expression:
+Aquí debe usar una función diseñada específicamente para capturar la entrada del usuario en un argumento de función: `enexpr()`. Piensa en "en" en el contexto de "enriquecer": `enexpr()` toma un argumento mal evaluado y lo convierte en una expresión:
 
 ```{r}
 capture_it <- function(x) {
@@ -68,62 +68,62 @@ capture_it <- function(x) {
 capture_it(a + b + c)
 ```
 
-Because `capture_it()` uses `enexpr()` we say that it automatically quotes its first argument. You'll learn more about this term in Section \@ref(vocabulary).
+Como `capture_it()` usa `enexpr()`, decimos que cita automáticamente su primer argumento. Aprenderá más sobre este término en la @sec-vocabulary.
 
-Once you have captured an expression, you can inspect and modify it. Complex expressions behave much like lists. That means you can modify them using `[[` and `$`:
+Una vez que haya capturado una expresión, puede inspeccionarla y modificarla. Las expresiones complejas se comportan como listas. Eso significa que puedes modificarlos usando `[[` y `$`:
 
 ```{r}
 f <- expr(f(x = 1, y = 2))
 
-# Add a new argument
+# Agregar un nuevo argumento
 f$z <- 3
 f
 
-# Or remove an argument:
+# Or eliminar un argumento
 f[[2]] <- NULL
 f
 ```
 
-The first element of the call is the function to be called, which means the first argument is in the second position. You'll learn the full details in Section \@ref(expression-details).
+El primer elemento de la llamada es la función a llamar, lo que significa que el primer argumento está en la segunda posición. Conocerá los detalles completos en la @sec-expression-details.
 
-## Code is a tree {#code-tree}
+## El código es un árbol {#sec-code-tree}
 
-To do more complex manipulation with expressions, you need to fully understand their structure. Behind the scenes, almost every programming language represents code as a tree, often called the **abstract syntax tree**, or AST for short. R is unusual in that you can actually inspect and manipulate this tree.
+Para realizar manipulaciones más complejas con expresiones, debe comprender completamente su estructura. Detrás de escena, casi todos los lenguajes de programación representan el código como un árbol, a menudo llamado **árbol de sintaxis abstracta**, o AST para abreviar. R es inusual en el sentido de que realmente puede inspeccionar y manipular este árbol.
 
-A very convenient tool for understanding the tree-like structure is `lobstr::ast()`. Given some code, this function displays the underlying tree structure. Function calls form the branches of the tree, and are shown by rectangles. The leaves of the tree are symbols (like `a`) and constants (like `"b"`).
+Una herramienta muy conveniente para comprender la estructura en forma de árbol es `lobstr::ast()`. Dado algo de código, esta función muestra la estructura de árbol subyacente. Las llamadas a funciones forman las ramas del árbol y se muestran mediante rectángulos. Las hojas del árbol son símbolos (como `a`) y constantes (como `"b"`).
 
 ```{r}
 lobstr::ast(f(a, "b"))
 ```
 
-Nested function calls create more deeply branching trees:
+Las llamadas a funciones anidadas crean árboles con ramificaciones más profundas:
 
 ```{r}
 lobstr::ast(f1(f2(a, b), f3(1, f4(2))))
 ```
 
-Because all function forms can be written in prefix form (Section \@ref(prefix-form)), every R expression can be displayed in this way:
+Debido a que todas las formas de función se pueden escribir en forma de prefijo (@sec-prefix-form), cada expresión R se puede mostrar de esta manera:
 
 ```{r}
 lobstr::ast(1 + 2 * 3)
 ```
 
-Displaying the AST in this way is a useful tool for exploring R's grammar, the topic of Section \@ref(grammar).
+Mostrar el AST de esta manera es una herramienta útil para explorar la gramática de R, el tema de la @sec-grammar.
 
-## Code can generate code {#coding-code}
+## El código puede generar código {#sec-coding-code}
 
-As well as seeing the tree from code typed by a human, you can also use code to create new trees. There are two main tools: `call2()` and unquoting.
+Además de ver el árbol a partir del código escrito por un humano, también puede usar el código para crear nuevos árboles. Hay dos herramientas principales: `call2()` y eliminación de comillas.
 
-`rlang::call2()` constructs a function call from its components: the function to call, and the arguments to call it with.
+`rlang::call2()` construye una llamada de función a partir de sus componentes: la función a llamar y los argumentos para llamarla.
 
 ```{r}
 call2("f", 1, 2, 3)
 call2("+", 1, call2("*", 2, 3))
 ```
 
-`call2()` is often convenient to program with, but is a bit clunky for interactive use. An alternative technique is to build complex code trees by combining simpler code trees with a template. `expr()` and `enexpr()` have built-in support for this idea via `!!` (pronounced bang-bang), the **unquote operator**.
+`call2()` a menudo es conveniente para programar, pero es un poco torpe para el uso interactivo. Una técnica alternativa es construir árboles de código complejos combinando árboles de código más simples con una plantilla. `expr()` y `enexpr()` tienen soporte incorporado para esta idea a través de `!!` (pronunciado bang-bang), el **operador sin comillas**.
 
-The precise details are the topic of Section \@ref(unquoting), but basically `!!x` inserts the code tree stored in `x` into the expression. This makes it easy to build complex trees from simple fragments:
+Los detalles precisos son el tema de la Sección \@ref(unquoting), pero básicamente `!!x` inserta el árbol de código almacenado en `x` en la expresión. Esto facilita la construcción de árboles complejos a partir de fragmentos simples:
 
 ```{r}
 xx <- expr(x + x)
@@ -132,9 +132,9 @@ yy <- expr(y + y)
 expr(!!xx / !!yy)
 ```
 
-Notice that the output preserves the operator precedence so we get `(x + x) / (y + y)` not `x + x / y + y` (i.e. `x + (x / y) + y`). This is important, particularly if you've been wondering if it wouldn't be easier to just paste strings together.
+Tenga en cuenta que la salida conserva la precedencia del operador, por lo que obtenemos `(x + x) / (y + y)` y no `x + x / y + y` (es decir, `x + (x / y) + y`). Esto es importante, especialmente si te has estado preguntando si no sería más fácil simplemente pegar cadenas.
 
-Unquoting gets even more useful when you wrap it up into a function, first using `enexpr()` to capture the user's expression, then `expr()` and `!!` to create a new expression using a template. The example below shows how you can generate an expression that computes the coefficient of variation:
+Quitar las comillas se vuelve aún más útil cuando lo envuelves en una función, primero usando `enexpr()` para capturar la expresión del usuario, luego `expr()` y `!!` para crear una nueva expresión usando una plantilla. El siguiente ejemplo muestra cómo puede generar una expresión que calcule el coeficiente de variación:
 
 ```{r}
 cv <- function(var) {
@@ -146,30 +146,30 @@ cv(x)
 cv(x + y)
 ```
 
-(This isn't very useful here, but being able to create this sort of building block is very useful when solving more complex problems.)
+(Esto no es muy útil aquí, pero poder crear este tipo de bloque de construcción es muy útil cuando se resuelven problemas más complejos.)
 
-Importantly, this works even when given weird variable names:
+Es importante destacar que esto funciona incluso cuando se le dan nombres de variables extraños:
 
 ```{r}
 cv(`)`)
 ```
 
-Dealing with weird names[^big-picture-1] is another good reason to avoid `paste()` when generating R code. You might think this is an esoteric concern, but not worrying about it when generating SQL code in web applications led to SQL injection attacks that have collectively cost billions of dollars.
+Tratar con nombres raros[^big-picture-1] es otra buena razón para evitar `paste()` al generar código R. Puede pensar que se trata de una preocupación esotérica, pero no preocuparse por ello cuando la generación de código SQL en aplicaciones web condujo a ataques de inyección de SQL que, en conjunto, han costado miles de millones de dólares.
 
-[^big-picture-1]: More technically, these are called non-syntactic names and are the topic of Section \@ref(non-syntactic).
+[^big-picture-1]: Más técnicamente, estos se denominan nombres no sintácticos y son el tema de la @sec-non-syntactic.
 
-## Evaluation runs code {#eval-intro}
+## Código de ejecución de evaluación {#sec-eval-intro}
 
-Inspecting and modifying code gives you one set of powerful tools. You get another set of powerful tools when you **evaluate**, i.e. execute or run, an expression. Evaluating an expression requires an environment, which tells R what the symbols in the expression mean. You'll learn the details of evaluation in Chapter \@ref(evaluation).
+Inspeccionar y modificar el código le brinda un conjunto de herramientas poderosas. Obtiene otro conjunto de herramientas poderosas cuando **evalúa**, es decir, ejecuta o ejecuta, una expresión. Evaluar una expresión requiere un entorno, que le dice a R qué significan los símbolos en la expresión. Aprenderá los detalles de la evaluación en el @sec-evaluation.
 
-The primary tool for evaluating expressions is `base::eval()`, which takes an expression and an environment:
+La herramienta principal para evaluar expresiones es `base::eval()`, que toma una expresión y un entorno:
 
 ```{r}
 eval(expr(x + y), env(x = 1, y = 10))
 eval(expr(x + y), env(x = 2, y = 100))
 ```
 
-If you omit the environment, `eval` uses the current environment:
+Si omite el entorno, `eval` usa el entorno actual:
 
 ```{r}
 x <- 10
@@ -177,14 +177,14 @@ y <- 100
 eval(expr(x + y))
 ```
 
-One of the big advantages of evaluating code manually is that you can tweak the environment. There are two main reasons to do this:
+Una de las grandes ventajas de evaluar el código manualmente es que puede modificar el entorno. Hay dos razones principales para hacer esto:
 
--   To temporarily override functions to implement a domain specific language.
--   To add a data mask so you can refer to variables in a data frame as if they are variables in an environment.
+-   Para anular temporalmente las funciones para implementar un lenguaje específico de dominio.
+-   Para agregar una máscara de datos para que pueda hacer referencia a las variables en un data frame como si fueran variables en un entorno.
 
-## Customising evaluation with functions {#eval-funs}
+## Personalización de la evaluación con funciones {#sec-eval-funs}
 
-The above example used an environment that bound `x` and `y` to vectors. It's less obvious that you also bind names to functions, allowing you to override the behaviour of existing functions. This is a big idea that we'll come back to in Chapter \@ref(translation) where I explore generating HTML and LaTeX from R. The example below gives you a taste of the power. Here I evaluate code in a special environment where `*` and `+` have been overridden to work with strings instead of numbers:
+El ejemplo anterior usó un entorno que vinculaba `x` e `y` a vectores. Es menos obvio que también vincula nombres a funciones, lo que le permite anular el comportamiento de las funciones existentes. Esta es una gran idea a la que volveremos en el @sec-translation donde exploro la generación de HTML y LaTeX desde R. El siguiente ejemplo le da una idea del poder. Aquí evalúo el código en un entorno especial donde `*` y `+` han sido anulados para trabajar con cadenas en lugar de números:
 
 ```{r}
 string_math <- function(x) {
@@ -202,7 +202,7 @@ string_math("Hello " + name)
 string_math(("x" * 2 + "-y") * 3)
 ```
 
-dplyr takes this idea to the extreme, running code in an environment that generates SQL for execution in a remote database:
+dplyr lleva esta idea al extremo, ejecutando código en un entorno que genera SQL para su ejecución en una base de datos remota:
 
 ```{r, messasge = FALSE}
 library(dplyr)
@@ -219,20 +219,20 @@ mtcars_db %>%
 DBI::dbDisconnect(con)
 ```
 
-## Customising evaluation with data {#eval-data}
+## Personalización de la evaluación con datos {#sec-eval-data}
 
-Rebinding functions is an extremely powerful technique, but it tends to require a lot of investment. A more immediately practical application is modifying evaluation to look for variables in a data frame instead of an environment. This idea powers the base `subset()` and `transform()` functions, as well as many tidyverse functions like `ggplot2::aes()` and `dplyr::mutate()`. It's possible to use `eval()` for this, but there are a few potential pitfalls (Section \@ref(base-evaluation)), so we'll switch to `rlang::eval_tidy()` instead.
+Reenlazar funciones es una técnica extremadamente poderosa, pero tiende a requerir una gran inversión. Una aplicación práctica más inmediata es modificar la evaluación para buscar variables en un data frame en lugar de un entorno. Esta idea impulsa las funciones base `subset()` y `transform()`, así como muchas funciones tidyverse como `ggplot2::aes()` y `dplyr::mutate()`. Es posible usar `eval()` para esto, pero hay algunas trampas potenciales (@sec-base-evaluation), así que cambiaremos a `rlang::eval_tidy()` en su lugar.
 
-As well as expression and environment, `eval_tidy()` also takes a **data mask**, which is typically a data frame:
+Además de la expresión y el entorno, `eval_tidy()` también toma una **máscara de datos**, que suele ser un data frame:
 
 ```{r}
 df <- data.frame(x = 1:5, y = sample(5))
 eval_tidy(expr(x + y), df)
 ```
 
-Evaluating with a data mask is a useful technique for interactive analysis because it allows you to write `x + y` rather than `df$x + df$y`. However, that convenience comes at a cost: ambiguity. In Section \@ref(data-masks) you'll learn how to deal with ambiguity using special `.data` and `.env` pronouns.
+Evaluar con una máscara de datos es una técnica útil para el análisis interactivo porque le permite escribir `x + y` en lugar de `df$x + df$y`. Sin embargo, esa conveniencia tiene un costo: la ambigüedad. En la @sec-data-masks aprenderá cómo lidiar con la ambigüedad usando los pronombres especiales `.data` y `.env`.
 
-We can wrap this pattern up into a function by using `enexpr()`. This gives us a function very similar to `base::with()`:
+Podemos envolver este patrón en una función usando `enexpr()`. Esto nos da una función muy similar a `base::with()`:
 
 ```{r}
 with2 <- function(df, expr) {
@@ -242,11 +242,11 @@ with2 <- function(df, expr) {
 with2(df, x + y)
 ```
 
-Unfortunately, this function has a subtle bug and we need a new data structure to help deal with it.
+Desafortunadamente, esta función tiene un error sutil y necesitamos una nueva estructura de datos para ayudar a solucionarlo.
 
-## Quosures {#quosure-intro}
+## Quosures {#sec-quosure-intro}
 
-To make the problem more obvious, I'm going to modify `with2()`. The basic problem still occurs without this modification but it's much harder to see.
+Para hacer el problema más obvio, voy a modificar `with2()`. El problema básico aún ocurre sin esta modificación, pero es mucho más difícil de ver.
 
 ```{r}
 with2 <- function(df, expr) {
@@ -255,7 +255,7 @@ with2 <- function(df, expr) {
 }
 ```
 
-We can see the problem when we use `with2()` to refer to a variable called `a`. We want the value of `a` to come from the binding we can see (10), not the binding internal to the function (1000):
+Podemos ver el problema cuando usamos `with2()` para referirnos a una variable llamada `a`. Queremos que el valor de `a` provenga del enlace que podemos ver (10), no del enlace interno de la función (1000):
 
 ```{r}
 df <- data.frame(x = 1:3)
@@ -263,9 +263,9 @@ a <- 10
 with2(df, x + a)
 ```
 
-The problem arises because we need to evaluate the captured expression in the environment where it was written (where `a` is 10), not the environment inside of `with2()` (where `a` is 1000).
+El problema surge porque necesitamos evaluar la expresión capturada en el entorno donde fue escrita (donde `a` es 10), no el entorno dentro de `with2()` (donde `a` es 1000).
 
-Fortunately we can solve this problem by using a new data structure: the **quosure** which bundles an expression with an environment. `eval_tidy()` knows how to work with quosures so all we need to do is switch out `enexpr()` for `enquo()`:
+Afortunadamente podemos resolver este problema usando una nueva estructura de datos: el **quosure** que agrupa una expresión con un entorno. `eval_tidy()` sabe cómo trabajar con quosures, así que todo lo que tenemos que hacer es cambiar `enexpr()` por `enquo()`:
 
 ```{r}
 with2 <- function(df, expr) {
@@ -276,4 +276,4 @@ with2 <- function(df, expr) {
 with2(df, x + a)
 ```
 
-Whenever you use a data mask, you must always use `enquo()` instead of `enexpr()`. This is the topic of Chapter \@ref(evaluation).
+Siempre que utilice una máscara de datos, siempre debe utilizar `enquo()` en lugar de `enexpr()`. Este es el tema del @sec-evaluation.
