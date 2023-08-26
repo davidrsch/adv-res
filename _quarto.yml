@@ -1,9 +1,19 @@
 project:
   type: book
+  output-dir: _book
 
 book:
-  cover-image: cover.png
   title: "R Avanzado"
+  reader-mode: true
+
+  page-footer:
+    left: |
+      R Avanzado fue escrito por Hadley Wickham.
+    right: |
+      Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.
+  cover-image: cover.png
+  favicon: cover.png
+
   author:
     - name: Hadley Wickham
   search: true
