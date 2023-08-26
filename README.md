@@ -21,6 +21,7 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
 -   Metaprogramación
     -   Introducción
     -   Panorama general
+    -   Expresiones
 
 # Más información acerca del repositorio
 
@@ -97,6 +98,7 @@ The translation was done using Google Translate and some grammar and coherence e
 -   Meta-programming
     -   Introduction
     -   Big picture
+    -   Expressions
 
 # More info about the repository
 
