@@ -23,6 +23,7 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
     -   Panorama general
     -   Expresiones
     -   Cuasicita
+    -   Evaluación
 
 # Más información acerca del repositorio
 
@@ -101,6 +102,7 @@ The translation was done using Google Translate and some grammar and coherence e
     -   Big picture
     -   Expressions
     -   Quasiquotation
+    -   Evaluation
 
 # More info about the repository
 
