@@ -24,6 +24,7 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
     -   Expresiones
     -   Cuasicita
     -   Evaluación
+    -   Traducción
 
 # Más información acerca del repositorio
 
@@ -103,6 +104,7 @@ The translation was done using Google Translate and some grammar and coherence e
     -   Expressions
     -   Quasiquotation
     -   Evaluation
+    -   Translation
 
 # More info about the repository
 
