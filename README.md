@@ -19,12 +19,7 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
 -   Programación funcional
 -   Programación orientada a objetos
 -   Metaprogramación
-    -   Introducción
-    -   Panorama general
-    -   Expresiones
-    -   Cuasicita
-    -   Evaluación
-    -   Traducción
+-   Tecnicas
 
 # Más información acerca del repositorio
 
@@ -99,12 +94,7 @@ The translation was done using Google Translate and some grammar and coherence e
 -   Functional Programming
 -   Object-oriented programming
 -   Meta-programming
-    -   Introduction
-    -   Big picture
-    -   Expressions
-    -   Quasiquotation
-    -   Evaluation
-    -   Translation
+-   Techniques
 
 # More info about the repository
 

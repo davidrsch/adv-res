@@ -1,9 +1,9 @@
-# Introduction {#techniques .unnumbered}
+# Introducción {#sec-techniques .unnumbered}
 
-The final four chapters cover two general programming techniques: finding and fixing bugs, and finding and fixing performance issues. Tools to measure and improve performance are particularly important because R is not a fast language. This is not an accident: R was purposely designed to make interactive data analysis easier for humans, not to make computers as fast as possible. While R is slow compared to other programming languages, for most purposes, it's fast enough. These chapters help you handle the cases where R is no longer fast enough, either by improving the performance of your R code, or by switching to a language, C++, that is designed for performance.
+Los últimos cuatro capítulos cubren dos técnicas generales de programación: encontrar y corregir errores, y encontrar y corregir problemas de rendimiento. Las herramientas para medir y mejorar el rendimiento son particularmente importantes porque R no es un lenguaje rápido. Esto no es un accidente: R fue diseñado a propósito para hacer que el análisis de datos interactivo sea más fácil para los humanos, no para hacer que las computadoras sean lo más rápidas posible. Si bien R es lento en comparación con otros lenguajes de programación, para la mayoría de los propósitos, es lo suficientemente rápido. Estos capítulos lo ayudan a manejar los casos en los que R ya no es lo suficientemente rápido, ya sea mejorando el rendimiento de su código R o cambiando a un lenguaje, C++, que está diseñado para el rendimiento.
 
-1.  Chapter \@ref(debugging) talks about debugging, because finding the root cause of error can be extremely frustrating. Fortunately R has some great tools for debugging, and when they're coupled with a solid strategy, you should be able to find the root cause for most problems rapidly and relatively painlessly.
+-   @sec-debugging habla de depuración, porque encontrar la causa raíz del error puede ser extremadamente frustrante. Afortunadamente, R tiene algunas herramientas excelentes para la depuración y, cuando se combinan con una estrategia sólida, debería poder encontrar la causa raíz de la mayoría de los problemas de forma rápida y relativamente sencilla.
 
-2.  Chapter \@ref(perf-measure) focuses on measuring performance.
+-   @sec-perf-measure se enfoca en medir el desempeño.
 
-3.  Chapter \@ref(perf-improve) then shows how to improve performance.
+-   @sec-perf-improve luego muestra cómo mejorar el rendimiento.
