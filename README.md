@@ -20,6 +20,8 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
 -   Programación orientada a objetos
 -   Metaprogramación
 -   Tecnicas
+    -   Introducción
+    -   Depuración
 
 # Más información acerca del repositorio
 
@@ -95,6 +97,8 @@ The translation was done using Google Translate and some grammar and coherence e
 -   Object-oriented programming
 -   Meta-programming
 -   Techniques
+    -   Introduction
+    -   Debugging
 
 # More info about the repository
 
