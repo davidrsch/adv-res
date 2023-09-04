@@ -22,6 +22,7 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
 -   Tecnicas
     -   Introducción
     -   Depuración
+    -   Medición de desempeño
 
 # Más información acerca del repositorio
 
@@ -99,6 +100,7 @@ The translation was done using Google Translate and some grammar and coherence e
 -   Techniques
     -   Introduction
     -   Debugging
+    -   Measuring performance
 
 # More info about the repository
 
