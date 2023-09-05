@@ -23,6 +23,7 @@ La traducción fue realizada usando Google Translate y fueron corregidos algunos
     -   Introducción
     -   Depuración
     -   Medición de desempeño
+    -   Mejorando el desempeño
 
 # Más información acerca del repositorio
 
@@ -101,6 +102,7 @@ The translation was done using Google Translate and some grammar and coherence e
     -   Introduction
     -   Debugging
     -   Measuring performance
+    -   Improving performance
 
 # More info about the repository
 
