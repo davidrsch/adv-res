@@ -10,21 +10,6 @@ Señalar que esta es una traducción textual del libro por lo que cuando el auto
 
 La traducción fue realizada usando Google Translate y fueron corregidos algunos errores gramaticales y de coherencia. Si detecta algún error relacionado con contenido de la traducción, siéntase libre de abrir un issue o un pull request en este [repositorio](https://github.com/davidrsch/adv-res).
 
-## Traducido hasta ahora
-
--   Bienvenida
--   Prefacio
--   Introducción
--   Fundamentos
--   Programación funcional
--   Programación orientada a objetos
--   Metaprogramación
--   Tecnicas
-    -   Introducción
-    -   Depuración
-    -   Medición de desempeño
-    -   Mejorando el desempeño
-
 # Más información acerca del repositorio
 
 ## Diagramas
@@ -88,21 +73,6 @@ This translation of "Advanced R" is a personal project by David Díaz Rodríguez
 Note that this is a verbatim translation of the book so when the author refer to himself in the first person, it will be Hadley Wickham and not the translator.
 
 The translation was done using Google Translate and some grammar and coherence errors were corrected. If you spot any issue related to the translation content, feel free to open an issue or pull request on this [repository](https://github.com/davidrsch/adv-res).
-
-## Translated so far
-
--   Welcome
--   Preface
--   Introduction
--   Foundations
--   Functional Programming
--   Object-oriented programming
--   Meta-programming
--   Techniques
-    -   Introduction
-    -   Debugging
-    -   Measuring performance
-    -   Improving performance
 
 # More info about the repository
 
