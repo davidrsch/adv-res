@@ -8,7 +8,7 @@ book:
 
   page-footer:
     left: |
-      R Avanzado fue escrito por Hadley Wickham.
+      <b>"R Avanzado"</b> fue escrito por Hadley Wickham.
     right: |
       Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.
   cover-image: cover.png
