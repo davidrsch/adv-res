@@ -1,83 +1,76 @@
-.book .book-header h1 {
-  opacity: 1;
-  text-align: left;
+
+.nav-footer{
+  background-color: #544154;
+  color: white;
 }
 
-#header .title {
-  margin-bottom: 0em;
-}
-#header h4.author {
-  margin: 0;
-  color: #666;
-}
-#header h4.author em {
-  font-style: normal;
+.nav-footer a {
+    color: white;
 }
 
-/* Sidebar formating --------------------------------------------*/
-
-.sidebarinplace {
-  border: 1px solid #ccc;
-  border-left-width: 5px;
-  border-radius: 5px;
-  padding: 1em;
-  margin: 1em 0;
-  position: static;
+.nav-page-previous,
+.nav-page-next {
+  padding: .5rem;
+  border: 1px solid #eee;
+  border-radius: .2rem;
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
 }
 
-div.sidebar, div.base {
-  border: 1px solid #ccc;
-  border-left-width: 5px;
-  border-radius: 5px;
-  padding: 1em;
-  margin: 1em 0;
+.footer {
+  margin-top: 10px;
 }
 
-/* .book .book-body .page-wrapper .page-inner section.normal is needed
-   to override the styles produced by gitbook, which are ridiculously
-   overspecified. Goal of the selectors is to ensure internal "margins"
-   controlled only by padding of container */
-
-.book .book-body .page-wrapper .page-inner section.normal div.sidebar > :first-child,
-.book .book-body .page-wrapper .page-inner section.normal div.base > :first-child {
-  margin-top: 0;
+.nav-page a {
+    color: #544154;
 }
 
-.book .book-body .page-wrapper .page-inner section.normal div.sidebar > :last-child,
-.book .book-body .page-wrapper .page-inner section.normal div.base > :last-child {
-  margin-bottom: 0;
+.nav-page a:hover {
+    color: #544154;
 }
 
-div.base::before {
-  display: block;
-  content: "En R base";
+#quarto-sidebar{
+  top: 0px;
+  max-height: calc(0px + 100vh);
+  padding-left: 0;
 }
 
-div.base::before,
-.book .book-body .page-wrapper .page-inner section.normal .sidebar h3 {
-  font-size: 1.1em;
-  font-weight: 700;
-  margin-bottom: 0.25em;
-  color: #333;
+.sidebar-navigation li a {
+  color: #544154;
 }
 
-.todo {
-  display: block;
-  border: 1px solid red;
-  border-left-width: 5px;
-  border-radius: 5px;
-  padding: 0.5em 1em;
-  margin: 1em 0;
+.sidebar-navigation li a:hover {
+  color: #544154;
 }
 
-.todo::before {
-  content: "TO DO: ";
-  font-weight: bold;
-  color: red;
+.sidebar-item .chapter-number {
+    color: #544154;
 }
 
-/* Other gitbook tweaks -------------------------------------------------- */
+.sidebar-title {
+  color: #544154;
+}
 
-.book .book-body .page-wrapper .page-inner section.normal code {
-  padding: 2px 0;
+.sidebar nav[role=doc-toc]>ul li a {
+    line-height: 1.1rem;
+    padding-bottom: .2rem;
+    padding-top: .2rem;
+    color: #544154;
+}
+
+.action-links p {
+    margin-top: 0;
+    margin-bottom: 0.2rem;
+    font-size: 0.9rem;
+}
+
+.action-links p a {
+    color: #544154;
+}
+
+.action-links p a:hover {
+    color: #544154;
+}
+
+.toc-actions div i {
+  color: #544154;
 }
