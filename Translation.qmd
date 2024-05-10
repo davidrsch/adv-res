@@ -11,10 +11,13 @@ La combinación de entornos de primera clase, alcance léxico y metaprogramació
 
 ```{r}
 library(dbplyr)
-translate_sql(x ^ 2)
-translate_sql(x < 5 & !is.na(x))
-translate_sql(!first %in% c("John", "Roger", "Robert"))
-translate_sql(select == 7)
+
+con <- simulate_dbi()
+
+translate_sql(x ^ 2, con = con)
+translate_sql(x < 5 & !is.na(x), con = con)
+translate_sql(!first %in% c("John", "Roger", "Robert"), con = con)
+translate_sql(select == 7, con = con)
 ```
 
 Traducir R a SQL es complejo debido a las muchas idiosincrasias de los dialectos de SQL, por lo que aquí desarrollaré dos lenguajes específicos de dominio (DSL) simples pero útiles: uno para generar HTML y el otro para generar ecuaciones matemáticas en LaTeX.
