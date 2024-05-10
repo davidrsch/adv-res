@@ -45,7 +45,7 @@ Los objetos R6 tienen semántica de referencia, lo que significa que se modifica
 
 R6 solo necesita una única llamada de función para crear tanto la clase como sus métodos: `R6::R6Class()`. ¡Esta es la única función del paquete que usará![^r6-1]
 
-[^r6-1]: Eso significa que si está creando R6 en un paquete, solo necesita asegurarse de que esté listado en el campo `Importaciones` de `DESCRIPCIÓN`. No hay necesidad de importar el paquete a `NAMESPACE`.
+[^r6-1]: Eso significa que si está creando R6 en un paquete, solo necesita asegurarse de que esté listado en el campo `Imports` de `DESCRIPCIÓN`. No hay necesidad de importar el paquete a `NAMESPACE`.
 
 El siguiente ejemplo muestra los dos argumentos más importantes para `R6Class()`:
 
@@ -321,7 +321,7 @@ La distinción entre campos públicos y privados es importante cuando crea redes
 
 Los campos activos le permiten definir componentes que parecen campos desde el exterior, pero se definen con funciones, como métodos. Los campos activos se implementan mediante **enlaces activos** (@sec-advanced-bindings). Cada enlace activo es una función que toma un único argumento: `value`. Si el argumento es `missing()`, se está recuperando el valor; de lo contrario, se está modificando.
 
-Por ejemplo, podría crear un campo activo `aleatorio` que devuelva un valor diferente cada vez que acceda a él:
+Por ejemplo, podría crear un campo activo `random` que devuelva un valor diferente cada vez que acceda a él:
 
 ```{r}
 Rando <- R6::R6Class("Rando", active = list(
@@ -438,7 +438,7 @@ z <- f(x, y)
 
 Para la gran mayoría de las funciones, sabes que la línea final solo modifica `z`.
 
-Tome un ejemplo similar que usa una clase de referencia `Lista` imaginaria:
+Tome un ejemplo similar que usa una clase de referencia `List` imaginaria:
 
 ```{r, eval = FALSE}
 x <- List$new(a = 1)
@@ -546,7 +546,7 @@ R6 es muy similar a un sistema OO incorporado llamado **clases de referencia**, 
 
 -   R6 tiene un mecanismo más simple para la subclasificación de paquetes cruzados, que simplemente funciona sin que tengas que pensar en ello. Para RC, lea los detalles en la sección "Métodos externos; Superclases entre paquetes" de `?setRefClass`.
 
--   RC mezcla variables y campos en la misma pila de entornos para que obtenga (`field`) y establezca (`field <<-value`) campos como valores regulares. R6 coloca los campos en un entorno separado para que obtenga (`self$field`) y establezca (`self$field <- value`) con un prefijo. El enfoque R6 es más detallado, pero me gusta porque es más explícito.
+-   RC mezcla variables y campos en la misma pila de entornos para que obtenga (`field`) y establezca (`field <<- value`) campos como valores regulares. R6 coloca los campos en un entorno separado para que obtenga (`self$field`) y establezca (`self$field <- value`) con un prefijo. El enfoque R6 es más detallado, pero me gusta porque es más explícito.
 
 -   R6 es mucho más rápido que RC. En general, la velocidad de envío del método no es importante fuera de los micropuntos de referencia. Sin embargo, RC es bastante lento y cambiar de RC a R6 condujo a una mejora sustancial del rendimiento en el paquete brillante. Para obtener más detalles, consulte `vignette("Rendimiento", "R6")`.
 

@@ -1068,6 +1068,6 @@ str(optimise(sin, c(0, pi), maximum = TRUE))
 
 1.  ¿Cómo organiza `apply()` la salida? Lea la documentación y realice algunos experimentos.
 
-2.  ¿Qué hacen `eapply()` y `rapply()`? ¿El purrr tiene equivalentes?
+2.  ¿Qué hacen `eapply()` y `rapply()`? ¿En purrr tiene equivalentes?
 
 3.  Desafío: lea sobre el [algoritmo de punto fijo](https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book-Z-H-12.html#%25_idx_1096). Completa los ejercicios usando R.

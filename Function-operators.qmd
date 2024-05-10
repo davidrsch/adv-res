@@ -331,4 +331,4 @@ La canalización funciona bien aquí porque elegí cuidadosamente los nombres de
 
 4.  Escriba un operador de función que registre una marca de tiempo y un mensaje en un archivo cada vez que se ejecute una función.
 
-5.  Modifique `delay_by()` para que, en lugar de retrasar una cantidad de tiempo fija, asegure que haya transcurrido una cierta cantidad de tiempo desde la última vez que se llamó a la función. Es decir, si llamó a `g <- delay_by(1, f); gramo(); Sys.dormir(2); g()` no debería haber un retraso adicional.
+5.  Modifique `delay_by()` para que, en lugar de retrasar una cantidad de tiempo fija, asegure que haya transcurrido una cierta cantidad de tiempo desde la última vez que se llamó a la función. Es decir, si llamó a `g <- delay_by(1, f); g(); Sys.sleep(2); g()` no debería haber un retraso adicional.
