@@ -41,7 +41,7 @@ A medida que avanza hacia un uso más avanzado, deberá reunir la información n
 
 -   La comunidad de bioconductores es un usuario de S4 desde hace mucho tiempo y ha producido gran parte del mejor material sobre su uso efectivo. Comience con [Clases y métodos de S4](https://bioconductor.org/help/course-materials/2017/Zurich/S4-classes-and-methods.html) impartido por Martin Morgan y Hervé Pagès, o busque uno más nuevo versión en \[Materiales del curso de bioconductores\] (https://bioconductor.org/help/course-materials/).
 
-    Martin Morgan es un ex miembro de R-core y líder del proyecto de Bioconductor. Es un experto mundial en el uso práctico de S4 y recomiendo leer todo lo que ha escrito al respecto, comenzando con las preguntas que ha respondido en [stackoverflow](http://stackoverflow.com/search?tab=votes&q=user%%203a547331%20%5bs4%5d%20is%3arespuesta).
+    Martin Morgan es un ex miembro de R-core y líder del proyecto de Bioconductor. Es un experto mundial en el uso práctico de S4 y recomiendo leer todo lo que ha escrito al respecto, comenzando con las preguntas que ha respondido en [stackoverflow](https://stackoverflow.com/users/547331/martin-morgan?tab=answers).
 
 -   John Chambers es el autor del sistema S4 y proporciona una descripción general de su motivación y contexto histórico en *Programación orientada a objetos, programación funcional y R* [@chambers-2014]. Para una exploración más completa de S4, consulte su libro *Software for Data Analysis* [@s4da].
 
