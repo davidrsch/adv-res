@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>R Avanzado - 7&nbsp; Entornos</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./Conditions.html" rel="next">
+<link href="./Functions.html" rel="prev">
+<link href="./cover.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="adv-r.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Foundations.html">Fundamentos</a></li><li class="breadcrumb-item"><a href="./Environments.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Entornos</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Avanzado</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/adv-r">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/adv-res">
+            Traducción
+            </a>
+          </li>
+      </ul>
+    </div>
+    <a href="./R-Avanzado.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Fundamentos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Names-values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Nombres y valores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Vectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Vectores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Subsetting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Subconjunto</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Control-flow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Flujo de control</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Environments.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Entornos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Conditions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Condiciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Programación funcional</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./FP.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functionals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Funcionales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-factories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Fábricas de funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-operators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Operadores de funciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Programación orientada a objetos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introdución</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./base-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Tipos básicos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">S3</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./R6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">R6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">S4</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Compensaciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Metaprogramación</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Meta.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Big-picture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Panorama general</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Expresiones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Quotation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Cuasicita</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Evaluation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Evaluación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Translation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Traducir código R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Tecnicas</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Techniques.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Depuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Medición de desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-improve.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Mejorando el desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Rcpp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Reescribiendo código de R en C++</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./References.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">7.1</span> Introduction</a>
+  <ul class="collapse">
+  <li><a href="#prueba" id="toc-prueba" class="nav-link" data-scroll-target="#prueba">Prueba</a></li>
+  <li><a href="#estructura" id="toc-estructura" class="nav-link" data-scroll-target="#estructura">Estructura</a></li>
+  <li><a href="#requisitos-previos" id="toc-requisitos-previos" class="nav-link" data-scroll-target="#requisitos-previos">Requisitos previos</a></li>
+  </ul></li>
+  <li><a href="#sec-env-basics" id="toc-sec-env-basics" class="nav-link" data-scroll-target="#sec-env-basics"><span class="header-section-number">7.2</span> Conceptos básicos de entornos</a>
+  <ul class="collapse">
+  <li><a href="#lo-esencial" id="toc-lo-esencial" class="nav-link" data-scroll-target="#lo-esencial"><span class="header-section-number">7.2.1</span> Lo esencial</a></li>
+  <li><a href="#entornos-importantes" id="toc-entornos-importantes" class="nav-link" data-scroll-target="#entornos-importantes"><span class="header-section-number">7.2.2</span> Entornos importantes</a></li>
+  <li><a href="#padres" id="toc-padres" class="nav-link" data-scroll-target="#padres"><span class="header-section-number">7.2.3</span> Padres</a></li>
+  <li><a href="#asignación-superior--" id="toc-asignación-superior--" class="nav-link" data-scroll-target="#asignación-superior--"><span class="header-section-number">7.2.4</span> Asignación superior, <code>&lt;&lt;-</code></a></li>
+  <li><a href="#conseguir-y-configurar" id="toc-conseguir-y-configurar" class="nav-link" data-scroll-target="#conseguir-y-configurar"><span class="header-section-number">7.2.5</span> Conseguir y configurar</a></li>
+  <li><a href="#sec-advanced-bindings" id="toc-sec-advanced-bindings" class="nav-link" data-scroll-target="#sec-advanced-bindings"><span class="header-section-number">7.2.6</span> Enlaces avanzados</a></li>
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios"><span class="header-section-number">7.2.7</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-env-recursion" id="toc-sec-env-recursion" class="nav-link" data-scroll-target="#sec-env-recursion"><span class="header-section-number">7.3</span> Recursing sobre entornos</a>
+  <ul class="collapse">
+  <li><a href="#iteración-versus-recursividad" id="toc-iteración-versus-recursividad" class="nav-link" data-scroll-target="#iteración-versus-recursividad">Iteración versus recursividad</a></li>
+  <li><a href="#ejercicios-1" id="toc-ejercicios-1" class="nav-link" data-scroll-target="#ejercicios-1"><span class="header-section-number">7.3.1</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-special-environments" id="toc-sec-special-environments" class="nav-link" data-scroll-target="#sec-special-environments"><span class="header-section-number">7.4</span> Entornos especiales</a>
+  <ul class="collapse">
+  <li><a href="#sec-search-path" id="toc-sec-search-path" class="nav-link" data-scroll-target="#sec-search-path"><span class="header-section-number">7.4.1</span> Entornos de paquetes y la ruta de búsqueda</a></li>
+  <li><a href="#sec-function-environments" id="toc-sec-function-environments" class="nav-link" data-scroll-target="#sec-function-environments"><span class="header-section-number">7.4.2</span> El entorno funcional</a></li>
+  <li><a href="#espacios-de-nombres" id="toc-espacios-de-nombres" class="nav-link" data-scroll-target="#espacios-de-nombres"><span class="header-section-number">7.4.3</span> Espacios de nombres</a></li>
+  <li><a href="#sec-execution-environments" id="toc-sec-execution-environments" class="nav-link" data-scroll-target="#sec-execution-environments"><span class="header-section-number">7.4.4</span> Entornos de ejecución</a></li>
+  <li><a href="#ejercicios-2" id="toc-ejercicios-2" class="nav-link" data-scroll-target="#ejercicios-2"><span class="header-section-number">7.4.5</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-call-stack" id="toc-sec-call-stack" class="nav-link" data-scroll-target="#sec-call-stack"><span class="header-section-number">7.5</span> Pilas de llamadas</a>
+  <ul class="collapse">
+  <li><a href="#sec-simple-stack" id="toc-sec-simple-stack" class="nav-link" data-scroll-target="#sec-simple-stack"><span class="header-section-number">7.5.1</span> Pilas de llamadas simples</a></li>
+  <li><a href="#sec-lazy-call-stack" id="toc-sec-lazy-call-stack" class="nav-link" data-scroll-target="#sec-lazy-call-stack"><span class="header-section-number">7.5.2</span> Evaluación perezosa</a></li>
+  <li><a href="#marcos" id="toc-marcos" class="nav-link" data-scroll-target="#marcos"><span class="header-section-number">7.5.3</span> Marcos</a></li>
+  <li><a href="#alcance-dinámico" id="toc-alcance-dinámico" class="nav-link" data-scroll-target="#alcance-dinámico"><span class="header-section-number">7.5.4</span> Alcance dinámico</a></li>
+  <li><a href="#ejercicios-3" id="toc-ejercicios-3" class="nav-link" data-scroll-target="#ejercicios-3"><span class="header-section-number">7.5.5</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-explicit-envs" id="toc-sec-explicit-envs" class="nav-link" data-scroll-target="#sec-explicit-envs"><span class="header-section-number">7.6</span> Como estructuras de datos</a></li>
+  <li><a href="#sec-env-answers" id="toc-sec-env-answers" class="nav-link" data-scroll-target="#sec-env-answers"><span class="header-section-number">7.7</span> Respuestas de la prueba</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Foundations.html">Fundamentos</a></li><li class="breadcrumb-item"><a href="./Environments.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Entornos</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-environments" class="quarto-section-identifier"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Entornos</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p></p>
+<section id="introduction" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">7.1</span> Introduction</h2>
+<p>El entorno es la estructura de datos que impulsa el alcance. Este capítulo profundiza en los entornos, describe su estructura en profundidad y los usa para mejorar su comprensión de las cuatro reglas de scoping descritas en la <a href="Functions.html#sec-lexical-scoping" class="quarto-xref"><span>Sección 6.4</span></a>. Comprender los entornos no es necesario para el uso diario de R. Pero es importante comprenderlos porque impulsan muchas funciones importantes de R, como el scoping léxico, los espacios de nombres y las clases R6, e interactúan con la evaluación para brindarle herramientas poderosas para crear dominios. lenguajes específicos, como dplyr y ggplot2.</p>
+<section id="prueba" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="prueba">Prueba</h3>
+<p>Si puede responder correctamente las siguientes preguntas, ya conoce los temas más importantes de este capítulo. Puede encontrar las respuestas al final del capítulo en la <a href="#sec-env-answers" class="quarto-xref"><span>Sección 7.7</span></a>.</p>
+<ol type="1">
+<li><p>Enumere al menos tres formas en que un entorno difiere de una lista.</p></li>
+<li><p>¿Cuál es el padre del medio ambiente global? ¿Cuál es el único entorno que no tiene un padre?</p></li>
+<li><p>¿Qué es el entorno envolvente de una función? ¿Por qué es importante?</p></li>
+<li><p>¿Cómo determina el entorno desde el que se llamó a una función?</p></li>
+<li><p>¿En qué se diferencian <code>&lt;-</code> y <code>&lt;&lt;-</code>?</p></li>
+</ol>
+</section>
+<section id="estructura" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="estructura">Estructura</h3>
+<ul>
+<li><p>La <a href="#sec-env-basics" class="quarto-xref"><span>Sección 7.2</span></a> le presenta las propiedades básicas de un entorno y le muestra cómo crear el suyo propio.</p></li>
+<li><p>La <a href="#sec-env-recursion" class="quarto-xref"><span>Sección 7.3</span></a> proporciona una plantilla de funciones para computar con entornos, ilustrando la idea con una función útil.</p></li>
+<li><p>La <a href="#sec-special-environments" class="quarto-xref"><span>Sección 7.4</span></a> describe entornos utilizados para fines especiales: para paquetes, dentro de funciones, para espacios de nombres y para la ejecución de funciones.</p></li>
+<li><p>La <a href="#sec-call-stack" class="quarto-xref"><span>Sección 7.5</span></a> explica el último entorno importante: el entorno de la persona que llama. Esto requiere que aprenda sobre la pila de llamadas, que describe cómo se llamó a una función. Habrás visto la pila de llamadas si alguna vez llamaste a <code>traceback()</code> para ayudar en la depuración.</p></li>
+<li><p>La <a href="#sec-explicit-envs" class="quarto-xref"><span>Sección 7.6</span></a> analiza brevemente tres lugares donde los entornos son estructuras de datos útiles para resolver otros problemas.</p></li>
+</ul>
+</section>
+<section id="requisitos-previos" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="requisitos-previos">Requisitos previos</h3>
+<p>Este capítulo utilizará las funciones <a href="https://rlang.r-lib.org">rlang</a> para trabajar con entornos, ya que nos permite centrarnos en la esencia de los entornos, en lugar de los detalles secundarios.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rlang)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Las funciones <code>env_</code> en rlang están diseñadas para trabajar con la canalización: todas toman un entorno como primer argumento, y muchas también devuelven un entorno. No usaré la canalización en este capítulo con el fin de mantener el código lo más simple posible, pero debería considerarlo para su propio código.</p>
+</section>
+</section>
+<section id="sec-env-basics" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="sec-env-basics"><span class="header-section-number">7.2</span> Conceptos básicos de entornos</h2>
+<p>En general, un entorno es similar a una lista con nombre, con cuatro excepciones importantes:</p>
+<ul>
+<li><p>Cada nombre debe ser único.</p></li>
+<li><p>Los nombres de un entorno no están ordenados.</p></li>
+<li><p>Un entorno tiene un padre.</p></li>
+<li><p>Los entornos no se copian cuando se modifican.</p></li>
+</ul>
+<p>Exploremos estas ideas con código e imágenes.</p>
+<section id="lo-esencial" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="lo-esencial"><span class="header-section-number">7.2.1</span> Lo esencial</h3>
+<p> </p>
+<p>Para crear un entorno, utilice <code>rlang::env()</code>. Funciona como <code>list()</code>, tomando un conjunto de pares nombre-valor:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>e1 <span class="ot">&lt;-</span> <span class="fu">env</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">a =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">b =</span> <span class="st">"a"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fl">2.3</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">d =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="base">
+<p>Utilice <code>new.env()</code> para crear un nuevo entorno. Ignora los parámetros <code>hash</code> y <code>size</code>; no son necesarios. No puede crear y definir valores simultáneamente; use <code>$&lt;-</code>, como se muestra a continuación.</p>
+</div>
+<p>El trabajo de un entorno es asociar, o <strong>vincular</strong>, un conjunto de nombres a un conjunto de valores. Puede pensar en un entorno como una bolsa de nombres, sin orden implícito (es decir, no tiene sentido preguntar cuál es el primer elemento en un entorno). Por esa razón, dibujaremos el entorno así:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/bindings.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="293"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Como se discutió en la <a href="Names-values.html#sec-env-modify" class="quarto-xref"><span>Sección 2.5.2</span></a>, los entornos tienen una semántica de referencia: a diferencia de la mayoría de los objetos R, cuando los modifica, los modifica en su lugar y no crea una copia. Una implicación importante es que los entornos pueden contenerse a sí mismos.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>e1<span class="sc">$</span>d <span class="ot">&lt;-</span> e1</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/loop.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="293"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Imprimir un entorno solo muestra su dirección de memoria, lo que no es muy útil:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>e1</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: 0x5600b63e79a0&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En su lugar, usaremos <code>env_print()</code> que nos brinda un poco más de información:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env_print</span>(e1)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: 0x5600b63e79a0&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parent: &lt;environment: global&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bindings:</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; • a: &lt;lgl&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; • b: &lt;chr&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; • c: &lt;dbl&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; • d: &lt;env&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Puede usar <code>env_names()</code> para obtener un vector de caracteres que proporcione los enlaces actuales</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env_names</span>(e1)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "a" "b" "c" "d"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="base">
+<p>En R 3.2.0 y versiones posteriores, use <code>names()</code> para enumerar los enlaces en un entorno. Si su código necesita funcionar con R 3.1.0 o anterior, use <code>ls()</code>, pero tenga en cuenta que deberá configurar <code>all.names = TRUE</code> para mostrar todos los enlaces.</p>
+</div>
+</section>
+<section id="entornos-importantes" class="level3" data-number="7.2.2">
+<h3 data-number="7.2.2" class="anchored" data-anchor-id="entornos-importantes"><span class="header-section-number">7.2.2</span> Entornos importantes</h3>
+<p> </p>
+<p>Hablaremos en detalle sobre entornos especiales en <a href="#sec-special-environments" class="quarto-xref"><span>Sección 7.4</span></a>, pero por ahora necesitamos mencionar dos. El entorno actual, o <code>current_env()</code> es el entorno en el que el código se está ejecutando actualmente. Cuando estás experimentando de forma interactiva, ese suele ser el entorno global, o <code>global_env()</code>. El entorno global a veces se llama su “área de trabajo”, ya que es donde se lleva a cabo todo el cálculo interactivo (es decir, fuera de una función).</p>
+<p>Para comparar entornos, debe usar <code>identical()</code> y no <code>==</code>. Esto se debe a que <code>==</code> es un operador vectorizado y los entornos no son vectores.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(<span class="fu">global_env</span>(), <span class="fu">current_env</span>())</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">global_env</span>() <span class="sc">==</span> <span class="fu">current_env</span>()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in global_env() == current_env(): comparison (==) is possible only for atomic and list types</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="base">
+<p>Accede al entorno global con <code>globalenv()</code> y al entorno actual con <code>environment()</code>. El entorno global se imprime como <code>R_GlobalEnv</code> y <code>.GlobalEnv</code>.</p>
+</div>
+</section>
+<section id="padres" class="level3" data-number="7.2.3">
+<h3 data-number="7.2.3" class="anchored" data-anchor-id="padres"><span class="header-section-number">7.2.3</span> Padres</h3>
+<p> </p>
+<p>Cada entorno tiene un <strong>padre</strong>, otro entorno. En los diagramas, el padre se muestra como un pequeño círculo azul pálido y una flecha que apunta a otro entorno. El padre es lo que se usa para implementar el scoping léxico: si un nombre no se encuentra en un entorno, entonces R buscará en su padre (y así sucesivamente). Puede configurar el entorno principal proporcionando un argumento sin nombre a <code>env()</code>. Si no lo proporciona, el valor predeterminado es el entorno actual. En el siguiente código, <code>e2a</code> es el padre de <code>e2b</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>e2a <span class="ot">&lt;-</span> <span class="fu">env</span>(<span class="at">d =</span> <span class="dv">4</span>, <span class="at">e =</span> <span class="dv">5</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>e2b <span class="ot">&lt;-</span> <span class="fu">env</span>(e2a, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/parents.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="359"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Para ahorrar espacio, normalmente no dibujaré a todos los antepasados; solo recuerda que cada vez que veas un círculo azul pálido, hay un entorno principal en alguna parte.</p>
+<p>Puedes encontrar el padre de un entorno con <code>env_parent()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env_parent</span>(e2b)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: 0x5600b7868fd0&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">env_parent</span>(e2a)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Solo un entorno no tiene un padre: el entorno <strong>vacío</strong>. Dibujo el entorno vacío con un entorno principal vacío y, cuando el espacio lo permita, lo etiquetaré con <code>R_EmptyEnv</code>, el nombre que usa R.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>e2c <span class="ot">&lt;-</span> <span class="fu">env</span>(<span class="fu">empty_env</span>(), <span class="at">d =</span> <span class="dv">4</span>, <span class="at">e =</span> <span class="dv">5</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>e2d <span class="ot">&lt;-</span> <span class="fu">env</span>(e2c, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">3</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/parents-empty.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="359"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Los ancestros de cada ambiente eventualmente terminan con el ambiente vacío. Puedes ver todos los ancestros con <code>env_parents()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env_parents</span>(e2b)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]   &lt;env: 0x5600b7868fd0&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]] $ &lt;env: global&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">env_parents</span>(e2d)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]   &lt;env: 0x5600b4fc68c0&gt;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]] $ &lt;env: empty&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Por defecto, <code>env_parents()</code> se detiene cuando llega al entorno global. Esto es útil porque los ancestros del entorno global incluyen todos los paquetes adjuntos, que puede ver si anula el comportamiento predeterminado como se muestra a continuación. Volveremos a estos entornos en la <a href="#sec-search-path" class="quarto-xref"><span>Sección 7.4.1</span></a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env_parents</span>(e2b, <span class="at">last =</span> <span class="fu">empty_env</span>())</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[1]]   &lt;env: 0x5600b7868fd0&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[2]] $ &lt;env: global&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[3]] $ &lt;env: package:rlang&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[4]] $ &lt;env: package:stats&gt;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[5]] $ &lt;env: package:graphics&gt;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[6]] $ &lt;env: package:grDevices&gt;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[7]] $ &lt;env: package:datasets&gt;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[8]] $ &lt;env: renv:shims&gt;</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[9]] $ &lt;env: package:utils&gt;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[10]] $ &lt;env: package:methods&gt;</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[11]] $ &lt;env: Autoloads&gt;</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[12]] $ &lt;env: package:base&gt;</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[13]] $ &lt;env: empty&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="base">
+<p>Use <code>parent.env()</code> para encontrar el padre de un entorno. Ninguna función base devuelve todos los ancestros.</p>
+</div>
+</section>
+<section id="asignación-superior--" class="level3" data-number="7.2.4">
+<h3 data-number="7.2.4" class="anchored" data-anchor-id="asignación-superior--"><span class="header-section-number">7.2.4</span> Asignación superior, <code>&lt;&lt;-</code></h3>
+<p></p>
+<p> </p>
+<p>Los ancestros de un entorno tienen una relación importante con <code>&lt;&lt;-</code>. La asignación regular, <code>&lt;-</code>, siempre crea una variable en el entorno actual. La súper asignación, <code>&lt;&lt;-</code>, nunca crea una variable en el entorno actual, sino que modifica una variable existente que se encuentra en un entorno principal.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;&lt;-</span> <span class="dv">1</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>()</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>x</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si <code>&lt;&lt;-</code> no encuentra una variable existente, creará una en el entorno global. Esto generalmente no es deseable, porque las variables globales introducen dependencias no obvias entre funciones. <code>&lt;&lt;-</code> se usa más a menudo junto con una fábrica de funciones, como se describe en la <a href="Function-factories.html#sec-stateful-funs" class="quarto-xref"><span>Sección 10.2.4</span></a>.</p>
+</section>
+<section id="conseguir-y-configurar" class="level3" data-number="7.2.5">
+<h3 data-number="7.2.5" class="anchored" data-anchor-id="conseguir-y-configurar"><span class="header-section-number">7.2.5</span> Conseguir y configurar</h3>
+<p> </p>
+<p>Puede obtener y establecer elementos de un entorno con <code>$</code> y <code>[[</code> de la misma manera que una lista:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>e3 <span class="ot">&lt;-</span> <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>e3<span class="sc">$</span>x</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>e3<span class="sc">$</span>z <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>e3[[<span class="st">"z"</span>]]</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Pero no puedes usar <code>[[</code> con índices numéricos, y no puedes usar <code>[</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>e3[[<span class="dv">1</span>]]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in e3[[1]]: wrong arguments for subsetting an environment</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>e3[<span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>)]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in e3[c("x", "y")]: object of type 'environment' is not subsettable</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>$</code> y <code>[[</code> devolverán <code>NULL</code> si el enlace no existe. Usa <code>env_get()</code> si quieres un error:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>e3<span class="sc">$</span>xyz</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; NULL</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">env_get</span>(e3, <span class="st">"xyz"</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in `env_get()`:</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ! Can't find `xyz` in environment.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si desea usar un valor predeterminado si el enlace no existe, puede usar el argumento <code>default</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env_get</span>(e3, <span class="st">"xyz"</span>, <span class="at">default =</span> <span class="cn">NA</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Hay otras dos formas de agregar enlaces a un entorno:</p>
+<ul>
+<li><p><code>env_poke()</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> toma un nombre (como cadena) y un valor:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env_poke</span>(e3, <span class="st">"a"</span>, <span class="dv">100</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>e3<span class="sc">$</span>a</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 100</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p><code>env_bind()</code> le permite vincular múltiples valores:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env_bind</span>(e3, <span class="at">a =</span> <span class="dv">10</span>, <span class="at">b =</span> <span class="dv">20</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">env_names</span>(e3)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "x" "y" "z" "a" "b"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+</ul>
+<p>Puede determinar si un entorno tiene un enlace con <code>env_has()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env_has</span>(e3, <span class="st">"a"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    a </span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; TRUE</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A diferencia de las listas, establecer un elemento en <code>NULL</code> no lo elimina, porque a veces desea un nombre que se refiera a <code>NULL</code>. En su lugar, usa <code>env_unbind()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>e3<span class="sc">$</span>a <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">env_has</span>(e3, <span class="st">"a"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    a </span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; TRUE</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">env_unbind</span>(e3, <span class="st">"a"</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">env_has</span>(e3, <span class="st">"a"</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     a </span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; FALSE</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Desvincular un nombre no elimina el objeto. Ese es el trabajo del recolector de basura, que elimina automáticamente los objetos sin nombres vinculados a ellos. Este proceso se describe con más detalle en la <a href="Names-values.html#sec-gc" class="quarto-xref"><span>Sección 2.6</span></a>.</p>
+<div class="base">
+<p> Consulte <code>get()</code>, <code>assign()</code>, <code>exists()</code> y <code>rm()</code>. Estos están diseñados de forma interactiva para su uso con el entorno actual, por lo que trabajar con otros entornos es un poco complicado. También tenga cuidado con el argumento <code>inherits</code>: por defecto es <code>TRUE</code>, lo que significa que los equivalentes base inspeccionarán el entorno suministrado y todos sus ancestros.</p>
+</div>
+</section>
+<section id="sec-advanced-bindings" class="level3" data-number="7.2.6">
+<h3 data-number="7.2.6" class="anchored" data-anchor-id="sec-advanced-bindings"><span class="header-section-number">7.2.6</span> Enlaces avanzados</h3>
+<p> </p>
+<p>Hay dos variantes más exóticas de <code>env_bind()</code>:</p>
+<ul>
+<li><p><code>env_bind_lazy()</code> crea <strong>enlaces retrasados</strong>, que se evalúan la primera vez que se accede a ellos. Detrás de escena, los enlaces retrasados crean promesas, por lo que se comportan de la misma manera que los argumentos de función.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env_bind_lazy</span>(<span class="fu">current_env</span>(), <span class="at">b =</span> {<span class="fu">Sys.sleep</span>(<span class="dv">1</span>); <span class="dv">1</span>})</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="fu">print</span>(b))</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.001   0.000   1.001</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="fu">print</span>(b))</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       0       0       0</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>El uso principal de los enlaces retrasados es <code>autoload()</code>, que permite que los paquetes de R proporcionen conjuntos de datos que se comportan como si estuvieran cargados en la memoria, aunque solo se cargan desde el disco cuando es necesario.</p></li>
+<li><p><code>env_bind_active()</code> crea <strong>enlaces activos</strong> que se vuelven a calcular cada vez que se accede a ellos:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">env_bind_active</span>(<span class="fu">current_env</span>(), <span class="at">z1 =</span> <span class="cf">function</span>(val) <span class="fu">runif</span>(<span class="dv">1</span>))</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>z1</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.0808</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>z1</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.834</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Los enlaces activos se utilizan para implementar los campos activos de R6, sobre los que aprenderá en la <a href="R6.html#sec-active-fields" class="quarto-xref"><span>Sección 14.3.2</span></a>.</p></li>
+</ul>
+<div class="base">
+<p>Consulte <code>?delayedAssign()</code> y <code>?makeActiveBinding()</code>.</p>
+</div>
+</section>
+<section id="ejercicios" class="level3" data-number="7.2.7">
+<h3 data-number="7.2.7" class="anchored" data-anchor-id="ejercicios"><span class="header-section-number">7.2.7</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Enumera tres formas en las que un entorno difiere de una lista.</p></li>
+<li><p>Cree un entorno como el que se ilustra en esta imagen.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/recursive-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="142"></p>
+</figure>
+</div>
+</div>
+</div></li>
+<li><p>Cree un par de ambientes como se ilustra en esta imagen.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/recursive-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="246"></p>
+</figure>
+</div>
+</div>
+</div></li>
+<li><p>Explique por qué <code>e[[1]]</code> y <code>e[c("a", "b")]</code> no tienen sentido cuando <code>e</code> es un entorno.</p></li>
+<li><p>Cree una versión de <code>env_poke()</code> que solo vinculará nombres nuevos, nunca volverá a vincular nombres antiguos. Algunos lenguajes de programación solo hacen esto y se conocen como [lenguajes de asignación única] (http://en.wikipedia.org/wiki/Assignment_(computer_science)#Single_assignment).</p></li>
+<li><p>¿Qué hace esta función? ¿En qué se diferencia de <code>&lt;&lt;-</code> y por qué podría preferirlo?</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>rebind <span class="ot">&lt;-</span> <span class="cf">function</span>(name, value, <span class="at">env =</span> <span class="fu">caller_env</span>()) {</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">identical</span>(env, <span class="fu">empty_env</span>())) {</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Can't find `"</span>, name, <span class="st">"`"</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">env_has</span>(env, name)) {</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">env_poke</span>(env, name, value)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rebind</span>(name, value, <span class="fu">env_parent</span>(env))</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="fu">rebind</span>(<span class="st">"a"</span>, <span class="dv">10</span>)</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error: Can't find `a`</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="fu">rebind</span>(<span class="st">"a"</span>, <span class="dv">10</span>)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>a</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+</ol>
+</section>
+</section>
+<section id="sec-env-recursion" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="sec-env-recursion"><span class="header-section-number">7.3</span> Recursing sobre entornos</h2>
+<p></p>
+<p>Si desea operar en todos los ancestros de un entorno, a menudo es conveniente escribir una función recursiva. Esta sección le muestra cómo, aplicando su nuevo conocimiento de entornos para escribir una función que, dado un nombre, encuentra el entorno <code>where()</code> está definido ese nombre, utilizando las reglas de alcance habituales de R.</p>
+<p>La definición de <code>where()</code> es sencilla. Tiene dos argumentos: el nombre a buscar (como una cadena) y el entorno en el que iniciar la búsqueda. (Aprenderemos por qué <code>caller_env()</code> es un buen valor predeterminado en la <a href="#sec-call-stack" class="quarto-xref"><span>Sección 7.5</span></a>.)</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>where <span class="ot">&lt;-</span> <span class="cf">function</span>(name, <span class="at">env =</span> <span class="fu">caller_env</span>()) {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">identical</span>(env, <span class="fu">empty_env</span>())) {</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># caso base</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Can't find "</span>, name, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">env_has</span>(env, name)) {</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># caso de exitoso</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    env</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># caso recursivo</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">where</span>(name, <span class="fu">env_parent</span>(env))</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Hay tres casos:</p>
+<ul>
+<li><p>El caso base: hemos llegado al entorno vacío y no hemos encontrado el enlace. No podemos ir más lejos, por lo que lanzamos un error.</p></li>
+<li><p>El caso exitoso: el nombre existe en este entorno, por lo que devolvemos el entorno.</p></li>
+<li><p>El caso recursivo: el nombre no se encontró en este entorno, así que pruebe con el padre.</p></li>
+</ul>
+<p>Estos tres casos se ilustran con estos tres ejemplos:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">where</span>(<span class="st">"yyy"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error: Can't find yyy</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">where</span>(<span class="st">"x"</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="fu">where</span>(<span class="st">"mean"</span>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: base&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podría ayudar ver una imagen. Imagine que tiene dos entornos, como en el siguiente código y diagrama:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>e4a <span class="ot">&lt;-</span> <span class="fu">env</span>(<span class="fu">empty_env</span>(), <span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>e4b <span class="ot">&lt;-</span> <span class="fu">env</span>(e4a, <span class="at">x =</span> <span class="dv">10</span>, <span class="at">a =</span> <span class="dv">11</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/where-ex.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="354"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><p><code>where("a", e4b)</code> encontrará <code>a</code> en <code>e4b</code>.</p></li>
+<li><p><code>where("b", e4b)</code> no encuentra <code>b</code> en <code>e4b</code>, así que busca en su padre, <code>e4a</code>, y lo encuentra ahí.</p></li>
+<li><p><code>where("c", e4b)</code> busca en <code>e4b</code>, entonces <code>e4a</code>, luego llega al entorno vacío y arroja un error.</p></li>
+</ul>
+<p>Es natural trabajar con entornos recursivamente, por lo que <code>where()</code> proporciona una plantilla útil. Eliminar los detalles de <code>where()</code> muestra la estructura más claramente:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(..., <span class="at">env =</span> <span class="fu">caller_env</span>()) {</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">identical</span>(env, <span class="fu">empty_env</span>())) {</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># caso base</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (success) {</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># caso exitoso</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># caso recursivo</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f</span>(..., <span class="at">env =</span> <span class="fu">env_parent</span>(env))</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="iteración-versus-recursividad" class="level3 unnumbered sidebarinplace">
+<h3 class="unnumbered anchored" data-anchor-id="iteración-versus-recursividad">Iteración versus recursividad</h3>
+<p>Es posible usar un bucle en lugar de recursividad. Creo que es más difícil de entender que la versión recursiva, pero la incluyo porque puede resultarle más fácil ver lo que sucede si no ha escrito muchas funciones recursivas.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>f2 <span class="ot">&lt;-</span> <span class="cf">function</span>(..., <span class="at">env =</span> <span class="fu">caller_env</span>()) {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> (<span class="sc">!</span><span class="fu">identical</span>(env, <span class="fu">empty_env</span>())) {</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (success) {</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>      <span class="co"># caso exitoso</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>()</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># inspeccionar padre</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    env <span class="ot">&lt;-</span> <span class="fu">env_parent</span>(env)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># caso base</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ejercicios-1" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="ejercicios-1"><span class="header-section-number">7.3.1</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Modifique <code>where()</code> para devolver <em>todos</em> los entornos que contienen un enlace para <code>name</code>. Piensa detenidamente qué tipo de objeto necesitará devolver la función.</p></li>
+<li><p>Escribe una función llamada <code>fget()</code> que encuentre solo objetos de función. Debe tener dos argumentos, <code>name</code> y <code>env</code>, y debe obedecer las reglas regulares de alcance de las funciones: si hay un objeto con un nombre coincidente que no es una función, busque en el padre. Para un desafío adicional, agregue también un argumento <code>inherits</code> que controle si la función recurre a los padres o solo busca en un entorno.</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-special-environments" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="sec-special-environments"><span class="header-section-number">7.4</span> Entornos especiales</h2>
+<p>La mayoría de los entornos no los crea usted (por ejemplo, con <code>env()</code>), sino que los crea R. En esta sección, aprenderá sobre los entornos más importantes, comenzando con los entornos de paquete. Luego, aprenderá sobre el entorno de la función vinculado a la función cuando se crea y el entorno de ejecución (generalmente) efímero que se crea cada vez que se llama a la función. Finalmente, verá cómo los entornos de funciones y paquetes interactúan para admitir espacios de nombres, lo que garantiza que un paquete siempre se comporte de la misma manera, independientemente de qué otros paquetes haya cargado el usuario.</p>
+<section id="sec-search-path" class="level3" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="sec-search-path"><span class="header-section-number">7.4.1</span> Entornos de paquetes y la ruta de búsqueda</h3>
+<p></p>
+<p> </p>
+<p>Cada paquete adjunto por <code>library()</code> o <code>require()</code> se convierte en uno de los padres del entorno global. El padre inmediato del entorno global es el último paquete que adjuntó <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, el padre de ese paquete es el penúltimo paquete que adjuntó, …</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/search-path.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="520"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Si sigue a todos los padres hacia atrás, verá el orden en que se adjuntó cada paquete. Esto se conoce como <strong>ruta de búsqueda</strong> porque todos los objetos en estos entornos se pueden encontrar desde el espacio de trabajo interactivo de nivel superior. Puede ver los nombres de estos entornos con <code>base::search()</code>, o los propios entornos con <code>rlang::search_envs()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">search</span>()</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] ".GlobalEnv"        "package:rlang"     "package:stats"    </span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [4] "package:graphics"  "package:grDevices" "package:datasets" </span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [7] "renv:shims"        "package:utils"     "package:methods"  </span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [10] "Autoloads"         "package:base"</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="fu">search_envs</span>()</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[1]] $ &lt;env: global&gt;</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[2]] $ &lt;env: package:rlang&gt;</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[3]] $ &lt;env: package:stats&gt;</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[4]] $ &lt;env: package:graphics&gt;</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[5]] $ &lt;env: package:grDevices&gt;</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[6]] $ &lt;env: package:datasets&gt;</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[7]] $ &lt;env: renv:shims&gt;</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[8]] $ &lt;env: package:utils&gt;</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [[9]] $ &lt;env: package:methods&gt;</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[10]] $ &lt;env: Autoloads&gt;</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[11]] $ &lt;env: package:base&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Los dos últimos entornos en la ruta de búsqueda son siempre los mismos:</p>
+<ul>
+<li><p>El entorno <code>Autoloads</code> utiliza enlaces retrasados para ahorrar memoria al cargar solo objetos del paquete (como grandes conjuntos de datos) cuando es necesario.</p></li>
+<li><p>El entorno base, <code>package: base</code> o, a veces, simplemente <code>base</code>, es el entorno del paquete base. Es especial porque debe poder iniciar la carga de todos los demás paquetes. Puedes acceder a él directamente con <code>base_env()</code>.</p></li>
+</ul>
+<p>Tenga en cuenta que cuando adjunta otro paquete con <code>library()</code>, el entorno principal del entorno global cambia:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/search-path-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="520"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-function-environments" class="level3" data-number="7.4.2">
+<h3 data-number="7.4.2" class="anchored" data-anchor-id="sec-function-environments"><span class="header-section-number">7.4.2</span> El entorno funcional</h3>
+<p> </p>
+<p>Una función vincula el entorno actual cuando se crea. Esto se denomina <strong>entorno de función</strong> y se utiliza para el scoping léxico. En todos los lenguajes informáticos, las funciones que capturan (o encierran) sus entornos se denominan <strong>cierres</strong>, razón por la cual este término a menudo se usa indistintamente con <em>función</em> en la documentación de R.</p>
+<p>Puede obtener el entorno de la función con <code>fn_env()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="sc">+</span> y</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fn_env</span>(f)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="base">
+<p>Utilice <code>environment(f)</code> para acceder al entorno de la función <code>f</code>.</p>
+</div>
+<p>En los diagramas, dibujaré una función como un rectángulo con un extremo redondeado que une un entorno.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/binding.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="222"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En este caso, <code>f()</code> vincula el entorno que vincula el nombre <code>f</code> a la función. Pero ese no es siempre el caso: en el siguiente ejemplo, <code>g</code> está enlazado en un nuevo entorno <code>e</code>, pero <code>g()</code> enlaza el entorno global. La distinción entre atar y ser atado por es sutil pero importante; la diferencia es cómo encontramos <code>g</code> versus cómo <code>g</code> encuentra sus variables.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>e <span class="ot">&lt;-</span> <span class="fu">env</span>()</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>e<span class="sc">$</span>g <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="dv">1</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/binding-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="208"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="espacios-de-nombres" class="level3" data-number="7.4.3">
+<h3 data-number="7.4.3" class="anchored" data-anchor-id="espacios-de-nombres"><span class="header-section-number">7.4.3</span> Espacios de nombres</h3>
+<p></p>
+<p>En el diagrama anterior, vio que el entorno principal de un paquete varía según los otros paquetes que se hayan cargado. Esto parece preocupante: ¿no significa eso que el paquete encontrará diferentes funciones si los paquetes se cargan en un orden diferente? El objetivo de los <strong>espacios de nombres</strong> es asegurarse de que esto no suceda y de que todos los paquetes funcionen de la misma manera, independientemente de los paquetes que adjunte el usuario.</p>
+<p>Por ejemplo, tome <code>sd()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>sd</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function (x, na.rm = FALSE) </span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sqrt(var(if (is.vector(x) || is.factor(x)) x else as.double(x), </span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     na.rm = na.rm))</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;bytecode: 0x5600b68e40f0&gt;</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: namespace:stats&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>sd()</code> se define en términos de <code>var()</code>, por lo que podría preocuparse de que el resultado de <code>sd()</code> se vea afectado por cualquier función llamada <code>var()</code> ya sea en el entorno global o en uno de los otros paquetes adjuntos . R evita este problema aprovechando el entorno de función versus enlace descrito anteriormente. Cada función en un paquete está asociada con un par de entornos: el entorno del paquete, del que aprendió anteriormente, y el entorno del <strong>espacio de nombres</strong>.</p>
+<ul>
+<li><p>El entorno del paquete es la interfaz externa del paquete. Así es como usted, el usuario de R, encuentra una función en un paquete adjunto o con <code>::</code>. Su padre está determinado por la ruta de búsqueda, es decir, el orden en que se han adjuntado los paquetes.</p></li>
+<li><p>El entorno del espacio de nombres es la interfaz interna del paquete. El entorno del paquete controla cómo encontramos la función; el espacio de nombres controla cómo la función encuentra sus variables.</p></li>
+</ul>
+<p>Cada enlace en el entorno del paquete también se encuentra en el entorno del espacio de nombres; esto asegura que cada función pueda usar cualquier otra función en el paquete. Pero algunos enlaces solo ocurren en el entorno del espacio de nombres. Estos se conocen como objetos internos o no exportados, que permiten ocultar al usuario detalles de implementación internos.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/namespace-bind.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="250"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Cada entorno de espacio de nombres tiene el mismo conjunto de ancestros:</p>
+<ul>
+<li><p>Cada espacio de nombres tiene un entorno de <strong>importaciones</strong> que contiene enlaces a todas las funciones utilizadas por el paquete. El entorno de importación está controlado por el desarrollador del paquete con el archivo <code>NAMESPACE</code>.</p></li>
+<li><p>La importación explícita de cada función base sería tediosa, por lo que el padre del entorno de importación es el <strong>espacio de nombres</strong> base. El espacio de nombres base contiene los mismos enlaces que el entorno base, pero tiene un padre diferente.</p></li>
+<li><p>El padre del espacio de nombres base es el entorno global. Esto significa que si un enlace no está definido en el entorno de importación, el paquete lo buscará de la forma habitual. Esto suele ser una mala idea (porque hace que el código dependa de otros paquetes cargados), por lo que <code>R CMD check</code> advierte automáticamente sobre dicho código. Es necesario principalmente por razones históricas, particularmente debido a cómo funciona el envío del método S3.</p></li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/namespace-env.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="496"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Juntando todos estos diagramas obtenemos:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/namespace.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="496"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Entonces, cuando <code>sd()</code> busca el valor de <code>var</code>, siempre lo encuentra en una secuencia de entornos determinada por el desarrollador del paquete, pero no por el usuario del paquete. Esto garantiza que el código del paquete siempre funcione de la misma manera, independientemente de los paquetes que haya adjuntado el usuario.</p>
+<p>No existe un vínculo directo entre el paquete y los entornos de espacio de nombres; el enlace está definido por los entornos de función.</p>
+</section>
+<section id="sec-execution-environments" class="level3" data-number="7.4.4">
+<h3 data-number="7.4.4" class="anchored" data-anchor-id="sec-execution-environments"><span class="header-section-number">7.4.4</span> Entornos de ejecución</h3>
+<p> </p>
+<p>El último tema importante que debemos cubrir es el entorno de <strong>ejecución</strong>. ¿Qué devolverá la siguiente función la primera vez que se ejecute? ¿Qué pasa con el segundo?</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">env_has</span>(<span class="fu">current_env</span>(), <span class="st">"a"</span>)) {</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">message</span>(<span class="st">"Defining a"</span>)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    a <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    a <span class="ot">&lt;-</span> a <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  a</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Piénsalo un momento antes de seguir leyendo.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">g</span>(<span class="dv">10</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Defining a</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">g</span>(<span class="dv">10</span>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Defining a</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esta función devuelve el mismo valor cada vez debido al principio de nuevo comienzo, descrito en la <a href="Functions.html#sec-fresh-start" class="quarto-xref"><span>Sección 6.4.3</span></a>. Cada vez que se llama a una función, se crea un nuevo entorno para albergar la ejecución. Esto se denomina entorno de ejecución y su padre es el entorno de funciones. Ilustremos ese proceso con una función más simple. La figura <a href="#fig-execution-env" class="quarto-xref">Figura&nbsp;<span>7.1</span></a> ilustra las convenciones gráficas: dibujo entornos de ejecución con un padre indirecto; el entorno principal se encuentra a través del entorno de función.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1.</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="co"># 2.</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  x <span class="sc">+</span> a</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">h</span>(<span class="dv">1</span>) <span class="co"># 3.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-execution-env" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-execution-env-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/environments/execution.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="316">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-execution-env-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;7.1: The execution environment of a simple function call. Note that the parent of the execution environment is the function environment.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Un entorno de ejecución suele ser efímero; una vez que la función se haya completado, el entorno se recolectará como basura. Hay varias maneras de hacer que se quede por más tiempo. El primero es devolverlo explícitamente:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>h2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> x <span class="sc">*</span> <span class="dv">2</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">current_env</span>()</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>e <span class="ot">&lt;-</span> <span class="fu">h2</span>(<span class="at">x =</span> <span class="dv">10</span>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="fu">env_print</span>(e)</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: 0x5600b95a68a8&gt;</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parent: &lt;environment: global&gt;</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Bindings:</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; • a: &lt;dbl&gt;</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; • x: &lt;dbl&gt;</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="fu">fn_env</span>(h2)</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Otra forma de capturarlo es devolver un objeto con un enlace a ese entorno, como una función. El siguiente ejemplo ilustra esa idea con una fábrica de funciones, <code>plus()</code>. Usamos esa fábrica para crear una función llamada <code>plus_one()</code>.</p>
+<p>Están sucediendo muchas cosas en el diagrama porque el entorno envolvente de <code>plus_one()</code> es el entorno de ejecución de <code>plus()</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>plus <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(y) x <span class="sc">+</span> y</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>plus_one <span class="ot">&lt;-</span> <span class="fu">plus</span>(<span class="dv">1</span>)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>plus_one</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function(y) x + y</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: 0x5600b9e1ad70&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/closure.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="203"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>¿Qué sucede cuando llamamos <code>plus_one()</code>? Su entorno de ejecución tendrá el entorno de ejecución capturado de <code>plus()</code> como padre:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plus_one</span>(<span class="dv">2</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/environments/closure-call.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="203"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Aprenderá más sobre las fábricas de funciones en la <a href="Function-factories.html#sec-factory-fundamentals" class="quarto-xref"><span>Sección 10.2</span></a>.</p>
+</section>
+<section id="ejercicios-2" class="level3" data-number="7.4.5">
+<h3 data-number="7.4.5" class="anchored" data-anchor-id="ejercicios-2"><span class="header-section-number">7.4.5</span> Ejercicios</h3>
+<ol type="1">
+<li><p>¿En qué se diferencia <code>search_envs()</code> de <code>env_parents(global_env())</code>?</p></li>
+<li><p>Dibuje un diagrama que muestre los entornos circundantes de esta función:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>f1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x1) {</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  f2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x2) {</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    f3 <span class="ot">&lt;-</span> <span class="cf">function</span>(x3) {</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>      x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f3</span>(<span class="dv">3</span>)</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">f2</span>(<span class="dv">2</span>)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="fu">f1</span>(<span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p>Escriba una versión mejorada de <code>str()</code> que proporcione más información sobre las funciones. Muestre dónde se encontró la función y en qué entorno se definió.</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-call-stack" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="sec-call-stack"><span class="header-section-number">7.5</span> Pilas de llamadas</h2>
+<p> </p>
+<p>Hay un último entorno que debemos explicar, el entorno <strong>caller</strong>, al que se accede con <code>rlang::caller_env()</code>. Esto proporciona el entorno desde el que se llamó a la función y, por lo tanto, varía en función de cómo se llame a la función, no de cómo se creó. Como vimos anteriormente, este es un valor predeterminado útil cada vez que escribe una función que toma un entorno como argumento.</p>
+<div class="base">
+<p><code>parent.frame()</code> es equivalente a <code>caller_env()</code>; solo tenga en cuenta que devuelve un entorno, no un marco.</p>
+</div>
+<p>Para comprender completamente el entorno de la persona que llama, debemos analizar dos conceptos relacionados: la <strong>pila de llamadas</strong>, que se compone de <strong>marcos</strong>. La ejecución de una función crea dos tipos de contexto. Ya aprendió sobre uno: el entorno de ejecución es un elemento secundario del entorno de función, que está determinado por el lugar donde se creó la función. Hay otro tipo de contexto creado por donde se llamó a la función: esto se llama la pila de llamadas.</p>
+<!-- HW: mencionar que esto es en realidad un árbol! -->
+<section id="sec-simple-stack" class="level3" data-number="7.5.1">
+<h3 data-number="7.5.1" class="anchored" data-anchor-id="sec-simple-stack"><span class="header-section-number">7.5.1</span> Pilas de llamadas simples</h3>
+<p>Ilustremos esto con una secuencia simple de llamadas: <code>f()</code> llama a <code>g()</code> llama a <code>h()</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">g</span>(<span class="at">x =</span> <span class="dv">2</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">h</span>(<span class="at">x =</span> <span class="dv">3</span>)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>()</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La forma más común de ver una pila de llamadas en R es mirando el <code>traceback()</code> después de que haya ocurrido un error:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>(<span class="at">x =</span> <span class="dv">1</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error:</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">traceback</span>()</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4: stop()</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3: h(x = 3) </span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2: g(x = 2)</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1: f(x = 1)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En lugar de <code>stop()</code> + <code>traceback()</code> para entender la pila de llamadas, vamos a usar <code>lobstr::cst()</code> para imprimir el árbol de pilas de llamadas (<strong>c</strong>all <strong>s</strong>tack <em>t</em>ree, en inglés):</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  lobstr<span class="sc">::</span><span class="fu">cst</span>()</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>(<span class="at">x =</span> <span class="dv">1</span>)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; █</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; └─f(x = 1)</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   └─g(x = 2)</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     └─h(x = 3)</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       └─lobstr::cst()</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esto nos muestra que <code>cst()</code> fue llamado desde <code>h()</code>, que fue llamado desde <code>g()</code>, que fue llamado desde <code>f()</code>. Tenga en cuenta que el orden es el opuesto de <code>traceback()</code>. A medida que las pilas de llamadas se vuelven más complicadas, creo que es más fácil entender la secuencia de llamadas si comienza desde el principio, en lugar del final (es decir, <code>f()</code> llama a <code>g()</code>; en lugar de <code>g()</code> fue llamado por <code>f()</code>).</p>
+</section>
+<section id="sec-lazy-call-stack" class="level3" data-number="7.5.2">
+<h3 data-number="7.5.2" class="anchored" data-anchor-id="sec-lazy-call-stack"><span class="header-section-number">7.5.2</span> Evaluación perezosa</h3>
+<p></p>
+<p>La pila de llamadas anterior es simple: mientras obtiene una pista de que hay una estructura similar a un árbol involucrada, todo sucede en una sola rama. Esto es típico de una pila de llamadas cuando todos los argumentos se evalúan con entusiasmo.</p>
+<p>Vamos a crear un ejemplo más complicado que implique una evaluación perezosa. Crearemos una secuencia de funciones, <code>a()</code>, <code>b()</code>, <code>c()</code>, que pasan un argumento <code>x</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">b</span>(x)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">c</span>(x)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="fu">a</span>(<span class="fu">f</span>())</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; █</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─a(f())</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; │ └─b(x)</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; │   └─c(x)</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; └─f()</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   └─g(x = 2)</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     └─h(x = 3)</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       └─lobstr::cst()</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>x</code> se evalúa perezosamente, por lo que este árbol tiene dos ramas. En la primera rama <code>a()</code> llama a <code>b()</code>, luego <code>b()</code> llama a <code>c()</code>. La segunda rama comienza cuando <code>c()</code> evalúa su argumento <code>x</code>. Este argumento se evalúa en una nueva rama porque el entorno en el que se evalúa es el entorno global, no el entorno de <code>c()</code>.</p>
+</section>
+<section id="marcos" class="level3" data-number="7.5.3">
+<h3 data-number="7.5.3" class="anchored" data-anchor-id="marcos"><span class="header-section-number">7.5.3</span> Marcos</h3>
+<p> </p>
+<p>Cada elemento de la pila de llamadas es un <strong>marco</strong><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>, también conocido como contexto de evaluación. El marco es una estructura de datos interna extremadamente importante, y el código R solo puede acceder a una pequeña parte de la estructura de datos porque manipularlo romperá R. Un marco tiene tres componentes clave:</p>
+<ul>
+<li><p>Una expresión (etiquetada con <code>expr</code>) que da la llamada a la función. Esto es lo que imprime <code>traceback()</code>.</p></li>
+<li><p>Un entorno (etiquetado con <code>env</code>), que suele ser el entorno de ejecución de una función. Hay dos excepciones principales: el entorno del marco global es el entorno global, y llamar a <code>eval()</code> también genera marcos, donde el entorno puede ser cualquier cosa.</p></li>
+<li><p>Un padre, la llamada anterior en la pila de llamadas (se muestra con una flecha gris).</p></li>
+</ul>
+<p>La figura <a href="#fig-calling" class="quarto-xref">Figura&nbsp;<span>7.2</span></a> ilustra la pila para la llamada a <code>f(x = 1)</code> que se muestra en la <a href="#sec-simple-stack" class="quarto-xref"><span>Sección 7.5.1</span></a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-calling" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-calling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="diagrams/environments/calling.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="430">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-calling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;7.2: The graphical depiction of a simple call stack
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>(Para centrarme en los entornos de llamada, he omitido los enlaces en el entorno global de <code>f</code>, <code>g</code> y <code>h</code> a los objetos de función respectivos.)</p>
+<p>El marco también contiene controladores de salida creados con <code>on.exit()</code>, reinicios y controladores para el sistema de condiciones, y a qué contexto <code>return()</code> cuando se completa una función. Estos son detalles internos importantes a los que no se puede acceder con el código R.</p>
+</section>
+<section id="alcance-dinámico" class="level3" data-number="7.5.4">
+<h3 data-number="7.5.4" class="anchored" data-anchor-id="alcance-dinámico"><span class="header-section-number">7.5.4</span> Alcance dinámico</h3>
+<p></p>
+<p>La búsqueda de variables en la pila de llamadas en lugar de en el entorno adjunto se denomina <strong>ámbito dinámico</strong>. Pocos lenguajes implementan el alcance dinámico (Emacs Lisp es una [excepción notable] (http://www.gnu.org/software/emacs/emacs-paper.html#SEC15).) Esto se debe a que el alcance dinámico hace que sea mucho más difícil razonar sobre cómo opera una función: no solo necesita saber cómo se definió, también necesita saber el contexto en el que se llamó. El alcance dinámico es principalmente útil para desarrollar funciones que ayudan al análisis interactivo de datos y es uno de los temas tratados en el <a href="Evaluation.html" class="quarto-xref"><span>Capítulo 20</span></a>.</p>
+</section>
+<section id="ejercicios-3" class="level3" data-number="7.5.5">
+<h3 data-number="7.5.5" class="anchored" data-anchor-id="ejercicios-3"><span class="header-section-number">7.5.5</span> Ejercicios</h3>
+<ol type="1">
+<li>Escriba una función que enumere todas las variables definidas en el entorno en el que se llamó. Debería devolver los mismos resultados que <code>ls()</code>.</li>
+</ol>
+</section>
+</section>
+<section id="sec-explicit-envs" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="sec-explicit-envs"><span class="header-section-number">7.6</span> Como estructuras de datos</h2>
+<p> </p>
+<p>Además de potenciar el alcance, los entornos también son estructuras de datos útiles por derecho propio porque tienen semántica de referencia. Hay tres problemas comunes que pueden ayudar a resolver:</p>
+<ul>
+<li><p><strong>Evitar copias de datos de gran tamaño</strong>. Dado que los entornos tienen semántica de referencia, nunca creará una copia accidentalmente. Pero es complicado trabajar con entornos desnudos, por lo que en su lugar recomiendo usar objetos R6, que se construyen sobre los entornos. Obtenga más información en el <a href="R6.html" class="quarto-xref"><span>Capítulo 14</span></a>.</p></li>
+<li><p><strong>Administrar el estado dentro de un paquete</strong>. Los entornos explícitos son útiles en los paquetes porque le permiten mantener el estado en las llamadas a funciones. Normalmente, los objetos de un paquete están bloqueados, por lo que no puede modificarlos directamente. En su lugar, puedes hacer algo como esto:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>my_env <span class="ot">&lt;-</span> <span class="fu">new.env</span>(<span class="at">parent =</span> <span class="fu">emptyenv</span>())</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>my_env<span class="sc">$</span>a <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>get_a <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  my_env<span class="sc">$</span>a</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>set_a <span class="ot">&lt;-</span> <span class="cf">function</span>(value) {</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>  old <span class="ot">&lt;-</span> my_env<span class="sc">$</span>a</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>  my_env<span class="sc">$</span>a <span class="ot">&lt;-</span> value</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">invisible</span>(old)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Devolver el valor anterior de las funciones de establecimiento es un buen patrón porque hace que sea más fácil restablecer el valor anterior junto con <code>on.exit()</code> (<a href="Functions.html#sec-on-exit" class="quarto-xref"><span>Sección 6.7.4</span></a>).</p></li>
+<li><p><strong>Como hashmap</strong>. Un hashmap es una estructura de datos que toma tiempo constante, O(1), para encontrar un objeto basado en su nombre. Los entornos proporcionan este comportamiento de forma predeterminada, por lo que se pueden usar para simular un mapa hash. Vea el paquete hash <span class="citation" data-cites="hash">(<a href="References.html#ref-hash" role="doc-biblioref">Brown 2013</a>)</span> para un desarrollo completo de esta idea.</p></li>
+</ul>
+</section>
+<section id="sec-env-answers" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="sec-env-answers"><span class="header-section-number">7.7</span> Respuestas de la prueba</h2>
+<ol type="1">
+<li><p>Hay cuatro formas: cada objeto en un entorno debe tener un nombre; el orden no importa; los ambientes tienen padres; los entornos tienen semántica de referencia.</p></li>
+<li><p>El padre del entorno global es el último paquete que cargó. El único entorno que no tiene un padre es el entorno vacío.</p></li>
+<li><p>El entorno envolvente de una función es el entorno donde se creó. Determina dónde una función busca variables.</p></li>
+<li><p>Use <code>caller_env()</code> o <code>parent.frame()</code>.</p></li>
+<li><p><code>&lt;-</code> siempre crea un enlace en el entorno actual; <code>&lt;&lt;-</code> vuelve a enlazar un nombre existente en un padre del entorno actual.</p></li>
+</ol>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-hash" class="csl-entry" role="listitem">
+Brown, Christopher. 2013. <em>hash: Full feature implementation of hash/associated arrays/dictionaries</em>. <a href="https://CRAN.R-project.org/package=hash">https://CRAN.R-project.org/package=hash</a>.
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Quizás se pregunte por qué rlang tiene <code>env_poke()</code> en lugar de <code>env_set()</code>. Esto es por coherencia: las funciones <code>_set()</code> devuelven una copia modificada; Las funciones <code>_poke()</code> se modifican en su lugar.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Tenga en cuenta la diferencia entre adjunto y cargado. Un paquete se carga automáticamente si accede a una de sus funciones usando <code>::</code>; solo se <strong>adjunta</strong> a la ruta de búsqueda mediante <code>library()</code> o <code>require()</code>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>NB: <code>?environment</code> usa marco en un sentido diferente: “Los entornos consisten en un <em>marco</em>, o una colección de objetos con nombre, y un puntero a un entorno envolvente”. Evitamos este sentido de marco, que proviene de S, porque es muy específico y no se usa mucho en la base R. Por ejemplo, el marco en <code>parent.frame()</code> es un contexto de ejecución, no una colección de objetos con nombre.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+
+<script>
+
+  // Chapter name
+  const currentChapterFile = window.location.pathname.split('/').pop().replace('.html', '');
+
+  //Deffining urls
+  const originalURL = "https://github.com/hadley/adv-r";
+  const translationURL = "https://github.com/davidrsch/adv-res";
+
+  //Deffining texts
+  const edit_text = "Editar esta página";
+  const issue_text = "Informar de un problema"
+
+  //Deffining git_i
+  const git_i = '<div><i class="bi bi-github"></i></div>';
+
+  // Adding TOC if not exist
+  const sidebarmargin = document.getElementById('quarto-margin-sidebar');
+  const buscar_TOC = document.getElementById('TOC');
+
+  if (!buscar_TOC) {
+    const crear_TOC = document.createElement('nav');
+    crear_TOC.id = 'TOC';
+    crear_TOC.role = "doc-toc";
+    crear_TOC.class = "toc-active";
+    sidebarmargin.appendChild(crear_TOC);
+  }
+
+
+  // Adding original github actions
+  const TOC = document.getElementById('TOC');
+  const originalga = document.createElement('h2');
+  originalga.textContent = "Original";
+  originalga.style["border-top"] = "1px solid #ccc";
+  originalga.style["padding-top"] = "0.5rem";
+  const toc_act_O = document.createElement('div');
+  toc_act_O.className = 'toc-actions';
+  toc_act_O.id = 'toc-act-O';
+  const act_link_O = document.createElement('div');
+  act_link_O.className='action-links';
+  act_link_O.id='act-link-O';
+  const edit_issue_O ='<p><a href="'+originalURL+'/edit/master/'+currentChapterFile+'.Rmd" class="toc-action">'+edit_text+'</p><p><a href="'+originalURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(originalga);
+  TOC.appendChild(toc_act_O);
+  toc_act_O.innerHTML += git_i;
+  toc_act_O.appendChild(act_link_O);
+  act_link_O.innerHTML += edit_issue_O;
+
+  // Adding translation github actions
+  const translationga = document.createElement('h2');
+  translationga.textContent = "Traducción";
+  const toc_act_T = document.createElement('div');
+  toc_act_T.className = 'toc-actions';
+  toc_act_T.id = 'toc-act-T';
+  const act_link_T = document.createElement('div');
+  act_link_T.className='action-links';
+  act_link_T.id='act-link-T';
+  const edit_issue_T ='<p><a href="'+translationURL+'/edit/main/'+currentChapterFile+'.qmd" class="toc-action">'+edit_text+'</p><p><a href="'+translationURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(translationga);
+  TOC.appendChild(toc_act_T);
+  toc_act_T.innerHTML += git_i;
+  toc_act_T.appendChild(act_link_T);
+  act_link_T.innerHTML += edit_issue_T;
+
+
+</script>
+
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Functions.html" class="pagination-link" aria-label="Funciones">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Funciones</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./Conditions.html" class="pagination-link" aria-label="Condiciones">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Condiciones</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><b>“R Avanzado”</b> fue escrito por Hadley Wickham.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

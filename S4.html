@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>R Avanzado - 15&nbsp; S4</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./OO-tradeoffs.html" rel="next">
+<link href="./R6.html" rel="prev">
+<link href="./cover.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="adv-r.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./OO.html">Programación orientada a objetos</a></li><li class="breadcrumb-item"><a href="./S4.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">S4</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Avanzado</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/adv-r">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/adv-res">
+            Traducción
+            </a>
+          </li>
+      </ul>
+    </div>
+    <a href="./R-Avanzado.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Fundamentos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Names-values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Nombres y valores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Vectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Vectores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Subsetting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Subconjunto</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Control-flow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Flujo de control</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Environments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Entornos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Conditions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Condiciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Programación funcional</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./FP.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functionals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Funcionales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-factories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Fábricas de funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-operators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Operadores de funciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Programación orientada a objetos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introdución</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./base-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Tipos básicos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">S3</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./R6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">R6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S4.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">S4</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Compensaciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Metaprogramación</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Meta.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Big-picture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Panorama general</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Expresiones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Quotation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Cuasicita</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Evaluation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Evaluación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Translation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Traducir código R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Tecnicas</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Techniques.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Depuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Medición de desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-improve.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Mejorando el desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Rcpp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Reescribiendo código de R en C++</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./References.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción"><span class="header-section-number">15.1</span> Introducción</a>
+  <ul class="collapse">
+  <li><a href="#estructura" id="toc-estructura" class="nav-link" data-scroll-target="#estructura">Estructura</a></li>
+  <li><a href="#aprendiendo-más" id="toc-aprendiendo-más" class="nav-link" data-scroll-target="#aprendiendo-más">Aprendiendo más</a></li>
+  <li><a href="#requisitos-previos" id="toc-requisitos-previos" class="nav-link" data-scroll-target="#requisitos-previos">Requisitos previos</a></li>
+  </ul></li>
+  <li><a href="#sec-s4-basics" id="toc-sec-s4-basics" class="nav-link" data-scroll-target="#sec-s4-basics"><span class="header-section-number">15.2</span> Lo escencial</a>
+  <ul class="collapse">
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios"><span class="header-section-number">15.2.1</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-s4-classes" id="toc-sec-s4-classes" class="nav-link" data-scroll-target="#sec-s4-classes"><span class="header-section-number">15.3</span> Clases</a>
+  <ul class="collapse">
+  <li><a href="#sec-s4-inheritance" id="toc-sec-s4-inheritance" class="nav-link" data-scroll-target="#sec-s4-inheritance"><span class="header-section-number">15.3.1</span> Herencia</a></li>
+  <li><a href="#sec-s4-introspection" id="toc-sec-s4-introspection" class="nav-link" data-scroll-target="#sec-s4-introspection"><span class="header-section-number">15.3.2</span> Introspección</a></li>
+  <li><a href="#redefinición" id="toc-redefinición" class="nav-link" data-scroll-target="#redefinición"><span class="header-section-number">15.3.3</span> Redefinición</a></li>
+  <li><a href="#ayudante" id="toc-ayudante" class="nav-link" data-scroll-target="#ayudante"><span class="header-section-number">15.3.4</span> Ayudante</a></li>
+  <li><a href="#validador" id="toc-validador" class="nav-link" data-scroll-target="#validador"><span class="header-section-number">15.3.5</span> Validador</a></li>
+  <li><a href="#ejercicios-1" id="toc-ejercicios-1" class="nav-link" data-scroll-target="#ejercicios-1"><span class="header-section-number">15.3.6</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-s4-generics" id="toc-sec-s4-generics" class="nav-link" data-scroll-target="#sec-s4-generics"><span class="header-section-number">15.4</span> Genéricos y métodos</a>
+  <ul class="collapse">
+  <li><a href="#firma" id="toc-firma" class="nav-link" data-scroll-target="#firma"><span class="header-section-number">15.4.1</span> Firma</a></li>
+  <li><a href="#métodos" id="toc-métodos" class="nav-link" data-scroll-target="#métodos"><span class="header-section-number">15.4.2</span> Métodos</a></li>
+  <li><a href="#sec-show-method" id="toc-sec-show-method" class="nav-link" data-scroll-target="#sec-show-method"><span class="header-section-number">15.4.3</span> Mostrar método</a></li>
+  <li><a href="#sec-accessors" id="toc-sec-accessors" class="nav-link" data-scroll-target="#sec-accessors"><span class="header-section-number">15.4.4</span> Accesorios</a></li>
+  <li><a href="#ejercicios-2" id="toc-ejercicios-2" class="nav-link" data-scroll-target="#ejercicios-2"><span class="header-section-number">15.4.5</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-s4-dispatch" id="toc-sec-s4-dispatch" class="nav-link" data-scroll-target="#sec-s4-dispatch"><span class="header-section-number">15.5</span> Método de envío</a>
+  <ul class="collapse">
+  <li><a href="#envío-único" id="toc-envío-único" class="nav-link" data-scroll-target="#envío-único"><span class="header-section-number">15.5.1</span> Envío único</a></li>
+  <li><a href="#herencia-múltiple" id="toc-herencia-múltiple" class="nav-link" data-scroll-target="#herencia-múltiple"><span class="header-section-number">15.5.2</span> Herencia múltiple</a></li>
+  <li><a href="#envío-múltiple" id="toc-envío-múltiple" class="nav-link" data-scroll-target="#envío-múltiple"><span class="header-section-number">15.5.3</span> Envío múltiple</a></li>
+  <li><a href="#despacho-múltiple-y-herencia-múltiple" id="toc-despacho-múltiple-y-herencia-múltiple" class="nav-link" data-scroll-target="#despacho-múltiple-y-herencia-múltiple"><span class="header-section-number">15.5.4</span> Despacho múltiple y herencia múltiple</a></li>
+  <li><a href="#ejercicios-3" id="toc-ejercicios-3" class="nav-link" data-scroll-target="#ejercicios-3"><span class="header-section-number">15.5.5</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-s4-s3" id="toc-sec-s4-s3" class="nav-link" data-scroll-target="#sec-s4-s3"><span class="header-section-number">15.6</span> S4 y S3</a>
+  <ul class="collapse">
+  <li><a href="#clases" id="toc-clases" class="nav-link" data-scroll-target="#clases"><span class="header-section-number">15.6.1</span> Clases</a></li>
+  <li><a href="#genéricos" id="toc-genéricos" class="nav-link" data-scroll-target="#genéricos"><span class="header-section-number">15.6.2</span> Genéricos</a></li>
+  <li><a href="#ejercicios-4" id="toc-ejercicios-4" class="nav-link" data-scroll-target="#ejercicios-4"><span class="header-section-number">15.6.3</span> Ejercicios</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./OO.html">Programación orientada a objetos</a></li><li class="breadcrumb-item"><a href="./S4.html"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">S4</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-s4" class="quarto-section-identifier"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">S4</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción" class="level2" data-number="15.1">
+<h2 data-number="15.1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">15.1</span> Introducción</h2>
+<p>S4 proporciona un enfoque formal para la programación orientada a objetos funcional. Las ideas subyacentes son similares a S3 (el tema del <a href="S3.html" class="quarto-xref"><span>Capítulo 13</span></a>), pero la implementación es mucho más estricta y utiliza funciones especializadas para crear clases (<code>setClass()</code>), genéricos (<code>setGeneric()</code>) y métodos (<code>setMethod()</code>). Además, S4 proporciona herencia múltiple (es decir, una clase puede tener varios padres) y envío múltiple (es decir, el envío del método puede usar la clase de varios argumentos).</p>
+<p>Un nuevo componente importante de S4 es la <strong>ranura</strong>, un componente con nombre del objeto al que se accede mediante el operador de subconjunto especializado <code>@</code>. El conjunto de ranuras y sus clases forma una parte importante de la definición de una clase S4.</p>
+<section id="estructura" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="estructura">Estructura</h3>
+<ul>
+<li><p>La <a href="#sec-s4-basics" class="quarto-xref"><span>Sección 15.2</span></a> brinda una descripción general rápida de los componentes principales de S4: clases, genéricos y métodos.</p></li>
+<li><p>La <a href="#sec-s4-classes" class="quarto-xref"><span>Sección 15.3</span></a> se sumerge en los detalles de las clases de S4, incluidos prototipos, constructores, ayudantes y validadores.</p></li>
+<li><p>La <a href="#sec-s4-generics" class="quarto-xref"><span>Sección 15.4</span></a> le muestra cómo crear nuevos genéricos S4 y cómo proporcionar métodos a esos genéricos. También aprenderá acerca de las funciones de acceso que están diseñadas para permitir que los usuarios inspeccionen y modifiquen las ranuras de objetos de manera segura.</p></li>
+<li><p>La <a href="#sec-s4-dispatch" class="quarto-xref"><span>Sección 15.5</span></a> se sumerge en los detalles completos del envío de métodos en S4. La idea básica es simple, pero rápidamente se vuelve más compleja una vez que se combinan la herencia múltiple y el envío múltiple.</p></li>
+<li><p>La <a href="#sec-s4-s3" class="quarto-xref"><span>Sección 15.6</span></a> analiza la interacción entre S4 y S3 y le muestra cómo usarlos juntos.</p></li>
+</ul>
+</section>
+<section id="aprendiendo-más" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="aprendiendo-más">Aprendiendo más</h3>
+<p>Al igual que los otros capítulos de OO, el enfoque aquí será cómo funciona S4, no cómo implementarlo de manera más efectiva. Si desea usarlo en la práctica, hay dos desafíos principales:</p>
+<ul>
+<li><p>No hay una referencia que responda a todas sus preguntas sobre S4.</p></li>
+<li><p>La documentación integrada de R a veces choca con las mejores prácticas de la comunidad.</p></li>
+</ul>
+<p>A medida que avanza hacia un uso más avanzado, deberá reunir la información necesaria leyendo detenidamente la documentación, haciendo preguntas sobre StackOverflow y realizando experimentos. Algunas recomendaciones:</p>
+<ul>
+<li><p>La comunidad de bioconductores es un usuario de S4 desde hace mucho tiempo y ha producido gran parte del mejor material sobre su uso efectivo. Comience con <a href="https://bioconductor.org/help/course-materials/2017/Zurich/S4-classes-and-methods.html">Clases y métodos de S4</a> impartido por Martin Morgan y Hervé Pagès, o busque uno más nuevo versión en [Materiales del curso de bioconductores] (https://bioconductor.org/help/course-materials/).</p>
+<p>Martin Morgan es un ex miembro de R-core y líder del proyecto de Bioconductor. Es un experto mundial en el uso práctico de S4 y recomiendo leer todo lo que ha escrito al respecto, comenzando con las preguntas que ha respondido en <a href="https://stackoverflow.com/users/547331/martin-morgan?tab=answers">stackoverflow</a>.</p></li>
+<li><p>John Chambers es el autor del sistema S4 y proporciona una descripción general de su motivación y contexto histórico en <em>Programación orientada a objetos, programación funcional y R</em> <span class="citation" data-cites="chambers-2014">(<a href="References.html#ref-chambers-2014" role="doc-biblioref">Chambers 2014</a>)</span>. Para una exploración más completa de S4, consulte su libro <em>Software for Data Analysis</em> <span class="citation" data-cites="s4da">(<a href="References.html#ref-s4da" role="doc-biblioref">Chambers 2008</a>)</span>.</p></li>
+</ul>
+</section>
+<section id="requisitos-previos" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="requisitos-previos">Requisitos previos</h3>
+<p>Todas las funciones relacionadas con S4 viven en el paquete de métodos. Este paquete siempre está disponible cuando ejecuta R de forma interactiva, pero es posible que no esté disponible cuando ejecuta R en modo por lotes, es decir, desde <code>Rscript</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Por esta razón, es una buena idea llamar a <code>library(methods)</code> siempre que use S4. Esto también indica al lector que utilizará el sistema de objetos S4.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(methods)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-s4-basics" class="level2" data-number="15.2">
+<h2 data-number="15.2" class="anchored" data-anchor-id="sec-s4-basics"><span class="header-section-number">15.2</span> Lo escencial</h2>
+<p>Comenzaremos con una descripción general rápida de los componentes principales de S4. Una clase de S4 se define llamando a <code>setClass()</code> con el nombre de la clase y una definición de sus ranuras, y los nombres y clases de los datos de la clase:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setClass</span>(<span class="st">"Person"</span>, </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"character"</span>, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">age =</span> <span class="st">"numeric"</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Una vez que se define la clase, puede construir nuevos objetos a partir de ella llamando a <code>new()</code> con el nombre de la clase y un valor para cada ranura:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>john <span class="ot">&lt;-</span> <span class="fu">new</span>(<span class="st">"Person"</span>, <span class="at">name =</span> <span class="st">"John Smith"</span>, <span class="at">age =</span> <span class="cn">NA_real_</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p> </p>
+<p>Dado un objeto S4, puede ver su clase con <code>is()</code> y acceder a las ranuras con <code>@</code> (equivalente a <code>$</code>) y <code>slot()</code> (equivalente a <code>[[</code>):</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is</span>(john)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Person"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>john<span class="sc">@</span>name</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "John Smith"</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">slot</span>(john, <span class="st">"age"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En general, solo debe usar <code>@</code> en sus métodos. Si está trabajando con la clase de otra persona, busque funciones de <strong>accesorio</strong> que le permitan establecer y obtener valores de ranura de forma segura. Como desarrollador de una clase, también debe proporcionar sus propias funciones de acceso. Los accesores suelen ser genéricos de S4 que permiten que varias clases compartan la misma interfaz externa.</p>
+<p>Aquí crearemos un setter y getter para el espacio <code>age</code> creando primero genéricos con <code>setGeneric()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setGeneric</span>(<span class="st">"age"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"age"</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setGeneric</span>(<span class="st">"age&lt;-"</span>, <span class="cf">function</span>(x, value) <span class="fu">standardGeneric</span>(<span class="st">"age&lt;-"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Y luego definiendo métodos con <code>setMethod()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setMethod</span>(<span class="st">"age"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>age)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setMethod</span>(<span class="st">"age&lt;-"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x, value) {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  x<span class="sc">@</span>age <span class="ot">&lt;-</span> value</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  x</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">age</span>(john) <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">age</span>(john)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 50</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si está utilizando una clase S4 definida en un paquete, puede obtener ayuda con <code>class?Person</code>. Para obtener ayuda para un método, coloque <code>?</code> delante de una llamada (por ejemplo, <code>?age(john)</code>) y <code>?</code> usará la clase de los argumentos para averiguar qué archivo de ayuda necesita.</p>
+<p>Finalmente, puede usar las funciones de sloop para identificar los objetos y genéricos de S4 que se encuentran en la naturaleza:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sloop<span class="sc">::</span><span class="fu">otype</span>(john)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "S4"</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>sloop<span class="sc">::</span><span class="fu">ftype</span>(age)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "S4"      "generic"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="ejercicios" class="level3" data-number="15.2.1">
+<h3 data-number="15.2.1" class="anchored" data-anchor-id="ejercicios"><span class="header-section-number">15.2.1</span> Ejercicios</h3>
+<ol type="1">
+<li><p><code>lubridate::period()</code> devuelve una clase S4. ¿Qué ranuras tiene? ¿Qué clase es cada ranura? ¿Qué accesorios proporciona?</p></li>
+<li><p>¿De qué otras formas puede encontrar ayuda para un método? Lea <code>?"?"</code> y resuma los detalles.</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-s4-classes" class="level2" data-number="15.3">
+<h2 data-number="15.3" class="anchored" data-anchor-id="sec-s4-classes"><span class="header-section-number">15.3</span> Clases</h2>
+<p> </p>
+<p>Para definir una clase S4, llama a <code>setClass()</code> con tres argumentos:</p>
+<ul>
+<li><p>La clase <strong>nombre</strong>. Por convención, los nombres de clase de S4 usan <code>UpperCamelCase</code>.</p></li>
+<li><p>Un vector de caracteres con nombre que describe los nombres y las clases de las <strong>ranuras</strong> (campos). Por ejemplo, una persona puede estar representada por un nombre de personaje y una edad numérica: <code>c(name = "personaje", age = "numérico")</code>. La pseudoclase <code>ANY</code> permite que una ranura acepte objetos de cualquier tipo.</p></li>
+<li><p>Un <strong>prototipo</strong>, una lista de valores predeterminados para cada ranura. Técnicamente, el prototipo es opcional<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, pero siempre debes proporcionarlo.</p></li>
+</ul>
+<p>El siguiente código ilustra los tres argumentos mediante la creación de una clase <code>Person</code> con el carácter <code>name</code> y las ranuras numéricas <code>age</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setClass</span>(<span class="st">"Person"</span>, </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"character"</span>, </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">age =</span> <span class="st">"numeric"</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  ), </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">prototype =</span> <span class="fu">list</span>(</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">age =</span> <span class="cn">NA_real_</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>me <span class="ot">&lt;-</span> <span class="fu">new</span>(<span class="st">"Person"</span>, <span class="at">name =</span> <span class="st">"Hadley"</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(me)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Formal class 'Person' [package ".GlobalEnv"] with 2 slots</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..@ name: chr "Hadley"</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..@ age : num NA</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sec-s4-inheritance" class="level3" data-number="15.3.1">
+<h3 data-number="15.3.1" class="anchored" data-anchor-id="sec-s4-inheritance"><span class="header-section-number">15.3.1</span> Herencia</h3>
+<p> </p>
+<p>Hay otro argumento importante para <code>setClass()</code>: <code>contains</code>. Esto especifica una clase (o clases) de las que heredar las ranuras y el comportamiento. Por ejemplo, podemos crear una clase <code>Employee</code> que herede de la clase <code>Person</code>, agregando un espacio adicional que describa su <code>boss</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setClass</span>(<span class="st">"Employee"</span>, </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">contains =</span> <span class="st">"Person"</span>, </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">boss =</span> <span class="st">"Person"</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">prototype =</span> <span class="fu">list</span>(</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">boss =</span> <span class="fu">new</span>(<span class="st">"Person"</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(<span class="fu">new</span>(<span class="st">"Employee"</span>))</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Formal class 'Employee' [package ".GlobalEnv"] with 3 slots</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..@ boss:Formal class 'Person' [package ".GlobalEnv"] with 2 slots</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .. .. ..@ name: chr NA</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   .. .. ..@ age : num NA</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..@ name: chr NA</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..@ age : num NA</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>setClass()</code> tiene otros 9 argumentos pero están en desuso o no se recomiendan.</p>
+</section>
+<section id="sec-s4-introspection" class="level3" data-number="15.3.2">
+<h3 data-number="15.3.2" class="anchored" data-anchor-id="sec-s4-introspection"><span class="header-section-number">15.3.2</span> Introspección</h3>
+<p> </p>
+<p>Para determinar de qué clases hereda un objeto, usa <code>is()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is</span>(<span class="fu">new</span>(<span class="st">"Person"</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Person"</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">is</span>(<span class="fu">new</span>(<span class="st">"Employee"</span>))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Employee" "Person"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para probar si un objeto hereda de una clase específica, usa el segundo argumento de <code>is()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is</span>(john, <span class="st">"Person"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="redefinición" class="level3" data-number="15.3.3">
+<h3 data-number="15.3.3" class="anchored" data-anchor-id="redefinición"><span class="header-section-number">15.3.3</span> Redefinición</h3>
+<p>En la mayoría de los lenguajes de programación, la definición de clase ocurre en tiempo de compilación y la construcción de objetos ocurre más tarde, en tiempo de ejecución. En R, sin embargo, tanto la definición como la construcción ocurren en tiempo de ejecución. Cuando llamas a <code>setClass()</code>, estás registrando una definición de clase en una variable global (oculta). Al igual que con todas las funciones de modificación de estado, debe usar <code>setClass()</code> con cuidado. Es posible crear objetos no válidos si redefine una clase después de haber creado una instancia de un objeto:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setClass</span>(<span class="st">"A"</span>, <span class="at">slots =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="st">"numeric"</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">new</span>(<span class="st">"A"</span>, <span class="at">x =</span> <span class="dv">10</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">setClass</span>(<span class="st">"A"</span>, <span class="at">slots =</span> <span class="fu">c</span>(<span class="at">a_different_slot =</span> <span class="st">"numeric"</span>))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>a</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class "A"</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Slot "a_different_slot":</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in slot(object, what): no slot of name "a_different_slot" for this object of class "A"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esto puede causar confusión durante la creación interactiva de nuevas clases. (Las clases R6 tienen el mismo problema, como se describe en la <a href="R6.html#sec-r6-important-methods" class="quarto-xref"><span>Sección 14.2.2</span></a>.)</p>
+</section>
+<section id="ayudante" class="level3" data-number="15.3.4">
+<h3 data-number="15.3.4" class="anchored" data-anchor-id="ayudante"><span class="header-section-number">15.3.4</span> Ayudante</h3>
+<p> </p>
+<p><code>new()</code> es un constructor de bajo nivel adecuado para que lo use usted, el desarrollador. Las clases orientadas al usuario siempre deben combinarse con un asistente fácil de usar. Un ayudante siempre debe:</p>
+<ul>
+<li><p>Tener el mismo nombre que la clase, p.&nbsp;<code>myclass()</code>.</p></li>
+<li><p>Tenga una interfaz de usuario cuidadosamente diseñada con valores predeterminados cuidadosamente seleccionados y conversiones útiles.</p></li>
+<li><p>Cree mensajes de error cuidadosamente elaborados y adaptados a un usuario final.</p></li>
+<li><p>Termine llamando a <code>methods::new()</code>.</p></li>
+</ul>
+<p>La clase <code>Person</code> es tan simple que un ayudante es casi superfluo, pero podemos usarlo para definir claramente el contrato: <code>age</code> es opcional pero <code>name</code> es obligatorio. También forzaremos la edad a un doble para que el ayudante también funcione cuando se pasa un número entero.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Person <span class="ot">&lt;-</span> <span class="cf">function</span>(name, <span class="at">age =</span> <span class="cn">NA</span>) {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  age <span class="ot">&lt;-</span> <span class="fu">as.double</span>(age)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">new</span>(<span class="st">"Person"</span>, <span class="at">name =</span> name, <span class="at">age =</span> age)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">Person</span>(<span class="st">"Hadley"</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class "Person"</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Slot "name":</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Hadley"</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Slot "age":</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] NA</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="validador" class="level3" data-number="15.3.5">
+<h3 data-number="15.3.5" class="anchored" data-anchor-id="validador"><span class="header-section-number">15.3.5</span> Validador</h3>
+<p> </p>
+<p>El constructor verifica automáticamente que las ranuras tengan las clases correctas:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Person</span>(mtcars)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in validObject(.Object): invalid class "Person" object: invalid object for slot "name" in class "Person": got class "data.frame", should be or extend class "character"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Deberá implementar verificaciones más complicadas (es decir, verificaciones que involucren longitudes o múltiples ranuras) usted mismo. Por ejemplo, es posible que queramos dejar en claro que la clase Person es una clase vectorial y puede almacenar datos sobre varias personas. Eso no está claro actualmente porque <code>@name</code> y <code>@age</code> pueden tener diferentes longitudes:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Person</span>(<span class="st">"Hadley"</span>, <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">37</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; An object of class "Person"</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Slot "name":</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Hadley"</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Slot "age":</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 30 37</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para hacer cumplir estas restricciones adicionales, escribimos un validador con <code>setValidity()</code>. Toma una clase y una función que devuelve <code>TRUE</code> si la entrada es válida y, de lo contrario, devuelve un vector de caracteres que describe los problemas:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setValidity</span>(<span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(object<span class="sc">@</span>name) <span class="sc">!=</span> <span class="fu">length</span>(object<span class="sc">@</span>age)) {</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"@name and @age must be same length"</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora ya no podemos crear un objeto no válido:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Person</span>(<span class="st">"Hadley"</span>, <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">37</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in validObject(.Object): invalid class "Person" object: @name and @age must be same length</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>NB: El método de validez solo es llamado automáticamente por <code>new()</code>, por lo que aún puede crear un objeto no válido modificándolo:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>alex <span class="ot">&lt;-</span> <span class="fu">Person</span>(<span class="st">"Alex"</span>, <span class="at">age =</span> <span class="dv">30</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>alex<span class="sc">@</span>age <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p></p>
+<p>Puedes verificar explícitamente la validez tú mismo llamando a <code>validObject()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">validObject</span>(alex)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in validObject(alex): invalid class "Person" object: @name and @age must be same length</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En la <a href="#sec-accessors" class="quarto-xref"><span>Sección 15.4.4</span></a>, usaremos <code>validObject()</code> para crear accesores que no pueden crear objetos no válidos.</p>
+</section>
+<section id="ejercicios-1" class="level3" data-number="15.3.6">
+<h3 data-number="15.3.6" class="anchored" data-anchor-id="ejercicios-1"><span class="header-section-number">15.3.6</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Extiende la clase Person con campos para que coincidan con <code>utils::person()</code>. Piense en qué ranuras necesitará, qué clase debe tener cada ranura y qué necesitará verificar en su método de validez.</p></li>
+<li><p>¿Qué sucede si define una nueva clase S4 que no tiene ranuras? (Sugerencia: lea acerca de las clases virtuales en <code>?setClass</code>).</p></li>
+<li><p>Imagine que iba a volver a implementar factores, fechas y marcos de datos en S4. Esboce las llamadas <code>setClass()</code> que usaría para definir las clases. Piense en <code>slots</code> y <code>prototypes</code> apropiados.</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-s4-generics" class="level2" data-number="15.4">
+<h2 data-number="15.4" class="anchored" data-anchor-id="sec-s4-generics"><span class="header-section-number">15.4</span> Genéricos y métodos</h2>
+<p> </p>
+<p>El trabajo de un genérico es realizar el envío de métodos, es decir, encontrar la implementación específica para la combinación de clases pasadas al genérico. Aquí aprenderá a definir métodos y genéricos de S4; luego, en la siguiente sección, exploraremos con precisión cómo funciona el envío de métodos de S4.</p>
+<p>Para crear un nuevo S4 genérico, llame a <code>setGeneric()</code> con una función que llame a <code>standardGeneric()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setGeneric</span>(<span class="st">"myGeneric"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"myGeneric"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Por convención, los nuevos genéricos de S4 deben usar <code>lowerCamelCase</code>.</p>
+<p>Es una mala práctica usar <code>{}</code> en el genérico, ya que desencadena un caso especial que es más costoso y, en general, es mejor evitarlo.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Don't do this!</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setGeneric</span>(<span class="st">"myGeneric"</span>, <span class="cf">function</span>(x) {</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">standardGeneric</span>(<span class="st">"myGeneric"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="firma" class="level3" data-number="15.4.1">
+<h3 data-number="15.4.1" class="anchored" data-anchor-id="firma"><span class="header-section-number">15.4.1</span> Firma</h3>
+<p></p>
+<p>Al igual que <code>setClass()</code>, <code>setGeneric()</code> tiene muchos otros argumentos. Solo hay uno que debe conocer: <code>signature</code>. Esto le permite controlar los argumentos que se utilizan para el envío de métodos. Si no se proporciona <code>signature</code>, se utilizan todos los argumentos (excepto <code>...</code>). Ocasionalmente, es útil eliminar argumentos del envío. Esto le permite requerir que los métodos proporcionen argumentos como <code>verbose = TRUE</code> o <code>quiet = FALSE</code>, pero no toman parte en el envío.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setGeneric</span>(<span class="st">"myGeneric"</span>, </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(x, ..., <span class="at">verbose =</span> <span class="cn">TRUE</span>) <span class="fu">standardGeneric</span>(<span class="st">"myGeneric"</span>),</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">signature =</span> <span class="st">"x"</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="métodos" class="level3" data-number="15.4.2">
+<h3 data-number="15.4.2" class="anchored" data-anchor-id="métodos"><span class="header-section-number">15.4.2</span> Métodos</h3>
+<p></p>
+<p> </p>
+<p>Un genérico no es útil sin algunos métodos, y en S4 se definen métodos con <code>setMethod()</code>. Hay tres argumentos importantes: el nombre del genérico, el nombre de la clase y el método en sí.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setMethod</span>(<span class="st">"myGeneric"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># method implementation</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Más formalmente, el segundo argumento de <code>setMethod()</code> se llama <strong>signature</strong>. En S4, a diferencia de S3, la firma puede incluir múltiples argumentos. Esto hace que el envío de métodos en S4 sea sustancialmente más complicado, pero evita tener que implementar el envío doble como un caso especial. Hablaremos más sobre el envío múltiple en la siguiente sección. <code>setMethod()</code> tiene otros argumentos, pero nunca debes usarlos.</p>
+<p>Para listar todos los métodos que pertenecen a un genérico, o que están asociados con una clase, use <code>methods("generic")</code> o <code>methods(class = "class")</code>; para encontrar la implementación de un método específico, use <code>selectMethod("generic", "class")</code>.</p>
+</section>
+<section id="sec-show-method" class="level3" data-number="15.4.3">
+<h3 data-number="15.4.3" class="anchored" data-anchor-id="sec-show-method"><span class="header-section-number">15.4.3</span> Mostrar método</h3>
+<p></p>
+<p></p>
+<p>El método S4 más comúnmente definido que controla la impresión es <code>show()</code>, que controla cómo aparece el objeto cuando se imprime. Para definir un método para un genérico existente, primero debe determinar los argumentos. Puede obtenerlos de la documentación o mirando los <code>args()</code> del genérico:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">args</span>(<span class="fu">getGeneric</span>(<span class="st">"show"</span>))</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function (object) </span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; NULL</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Nuestro método show necesita tener un solo argumento <code>object</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setMethod</span>(<span class="st">"show"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">is</span>(object)[[<span class="dv">1</span>]], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>      <span class="st">"  Name: "</span>, object<span class="sc">@</span>name, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">"  Age:  "</span>, object<span class="sc">@</span>age, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">sep =</span> <span class="st">""</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>john</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Person</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Name: John Smith</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Age:  50</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-accessors" class="level3" data-number="15.4.4">
+<h3 data-number="15.4.4" class="anchored" data-anchor-id="sec-accessors"><span class="header-section-number">15.4.4</span> Accesorios</h3>
+<p></p>
+<p>Las ranuras deben considerarse un detalle de implementación interna: pueden cambiar sin previo aviso y el código de usuario debe evitar acceder a ellas directamente. En su lugar, todas las ranuras accesibles para el usuario deben ir acompañadas de un par de <strong>accesorios</strong>. Si la ranura es única para la clase, esto puede ser solo una función:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>person_name <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x<span class="sc">@</span>name</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Sin embargo, por lo general, definirá un genérico para que varias clases puedan usar la misma interfaz:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setGeneric</span>(<span class="st">"name"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"name"</span>))</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setMethod</span>(<span class="st">"name"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>name)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span>(john)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "John Smith"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si la ranura también se puede escribir, debe proporcionar una función de establecimiento. Siempre debe incluir <code>validObject()</code> en el setter para evitar que el usuario cree objetos no válidos.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setGeneric</span>(<span class="st">"name&lt;-"</span>, <span class="cf">function</span>(x, value) <span class="fu">standardGeneric</span>(<span class="st">"name&lt;-"</span>))</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setMethod</span>(<span class="st">"name&lt;-"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x, value) {</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  x<span class="sc">@</span>name <span class="ot">&lt;-</span> value</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">validObject</span>(x)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  x</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span>(john) <span class="ot">&lt;-</span> <span class="st">"Jon Smythe"</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span>(john)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Jon Smythe"</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span>(john) <span class="ot">&lt;-</span> letters</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in validObject(x): invalid class "Person" object: @name and @age must be same length</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>(Si la notación <code>name&lt;-</code> no le resulta familiar, revise la <a href="Functions.html#sec-function-forms" class="quarto-xref"><span>Sección 6.8</span></a>.)</p>
+</section>
+<section id="ejercicios-2" class="level3" data-number="15.4.5">
+<h3 data-number="15.4.5" class="anchored" data-anchor-id="ejercicios-2"><span class="header-section-number">15.4.5</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Agregue accesores <code>age()</code> para la clase <code>Person</code>.</p></li>
+<li><p>En la definición de genérico, ¿por qué es necesario repetir dos veces el nombre del genérico?</p></li>
+<li><p>¿Por qué el método <code>show()</code> definido en la <a href="#sec-show-method" class="quarto-xref"><span>Sección 15.4.3</span></a> usa <code>is(object)[[1]]</code>? (Sugerencia: intente imprimir la subclase de empleado).</p></li>
+<li><p>¿Qué pasa si defines un método con nombres de argumentos diferentes al genérico?</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-s4-dispatch" class="level2" data-number="15.5">
+<h2 data-number="15.5" class="anchored" data-anchor-id="sec-s4-dispatch"><span class="header-section-number">15.5</span> Método de envío</h2>
+<p> </p>
+<p>El envío de S4 es complicado porque S4 tiene dos características importantes:</p>
+<ul>
+<li>Herencia múltiple, es decir, una clase puede tener múltiples padres,</li>
+<li>Envío múltiple, es decir, un genérico puede usar múltiples argumentos para elegir un método.</li>
+</ul>
+<p>Estas características hacen que S4 sea muy potente, pero también pueden dificultar la comprensión de qué método se seleccionará para una determinada combinación de entradas. En la práctica, mantenga el envío de métodos lo más simple posible evitando la herencia múltiple y reservando el envío múltiple solo cuando sea absolutamente necesario.</p>
+<p>Pero es importante describir los detalles completos, por lo que aquí comenzaremos de manera simple con herencia única y despacho único, y avanzaremos hasta los casos más complicados. Para ilustrar las ideas sin atascarse en los detalles, usaremos un <strong>gráfico de clase</strong> imaginario basado en emoji:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/emoji.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="226"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Emoji nos da nombres de clase muy compactos que evocan las relaciones entre las clases. Debería ser sencillo recordar que 😜 hereda de 😉 que hereda de 😶, y que 😎 hereda tanto de 🕶 como de 🙂.</p>
+<section id="envío-único" class="level3" data-number="15.5.1">
+<h3 data-number="15.5.1" class="anchored" data-anchor-id="envío-único"><span class="header-section-number">15.5.1</span> Envío único</h3>
+<p></p>
+<p>Comencemos con el caso más simple: una función genérica que se distribuye en una sola clase con un solo padre. El método de envío aquí es simple, por lo que es un buen lugar para definir las convenciones gráficas que usaremos para los casos más complejos.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/single.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="189"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Hay dos partes en este diagrama:</p>
+<ul>
+<li><p>La parte superior, <code>f(...)</code>, define el alcance del diagrama. Aquí tenemos un genérico con un argumento, que tiene una jerarquía de clases de tres niveles de profundidad.</p></li>
+<li><p>La parte inferior es el <strong>gráfico de métodos</strong> y muestra todos los métodos posibles que podrían definirse. Los métodos que existen, es decir, que se han definido con <code>setMethod()</code>, tienen un fondo gris.</p></li>
+</ul>
+<p>Para encontrar el método que se llama, comience con la clase más específica de los argumentos reales, luego siga las flechas hasta que encuentre un método que exista. Por ejemplo, si llamaste a la función con un objeto de la clase 😉, seguirías la flecha hacia la derecha para encontrar el método definido para la clase más general 😶. Si no se encuentra ningún método, el envío del método ha fallado y se genera un error. En la práctica, esto significa que siempre debe definir métodos definidos para los nodos terminales, es decir, los del extremo derecho.</p>
+<p> Hay dos <strong>pseudoclases</strong> para las que puede definir métodos. Estas se denominan pseudoclases porque en realidad no existen, pero le permiten definir comportamientos útiles. La primera pseudoclase es <code>ANY</code> que coincide con cualquier clase<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>. Por razones técnicas que veremos más adelante, el enlace al método <code>ANY</code> es más largo que los enlaces entre las otras clases:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/single-any.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="269"></p>
+</figure>
+</div>
+</div>
+</div>
+<p></p>
+<p>La segunda pseudoclase es <code>MISSING</code>. Si define un método para esta pseudoclase, coincidirá siempre que falte el argumento. No es útil para envío único, pero es importante para funciones como <code>+</code> y <code>-</code> que usan envío doble y se comportan de manera diferente dependiendo de si tienen uno o dos argumentos.</p>
+</section>
+<section id="herencia-múltiple" class="level3" data-number="15.5.2">
+<h3 data-number="15.5.2" class="anchored" data-anchor-id="herencia-múltiple"><span class="header-section-number">15.5.2</span> Herencia múltiple</h3>
+<p> </p>
+<p>Las cosas se complican más cuando la clase tiene varios padres.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/multiple.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="179"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El proceso básico sigue siendo el mismo: comienza desde la clase real suministrada al genérico, luego sigue las flechas hasta encontrar un método definido. El problema es que ahora hay varias flechas a seguir, por lo que es posible que encuentre varios métodos. Si eso sucede, elige el método más cercano, es decir, requiere viajar con la menor cantidad de flechas.</p>
+<p>NB: Si bien el gráfico de métodos es una poderosa metáfora para comprender el envío de métodos, implementarlo de esta manera sería bastante ineficiente, por lo que el enfoque real que usa S4 es algo diferente. Puede leer los detalles en <code>?Methods_Details</code>.</p>
+<p>¿Qué sucede si los métodos están a la misma distancia? Por ejemplo, imagina que hemos definido métodos para 🕶 y 🙂, y llamamos al genérico 😎. Tenga en cuenta que no se puede encontrar ningún método para la clase 😶, que resaltaré con un doble contorno rojo.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/multiple-ambig.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="165"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Esto se llama método <strong>ambiguo</strong>, y en los diagramas lo ilustraré con un borde de puntos gruesos. Cuando esto sucede en R, recibirá una advertencia y se elegirá el método para la clase que aparece antes en el alfabeto (esto es efectivamente aleatorio y no se debe confiar en él). Cuando descubra una ambigüedad, siempre debe resolverla proporcionando un método más preciso:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/multiple-ambig-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="165"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El método alternativo <code>ANY</code> aún existe, pero las reglas son un poco más complejas. Como lo indican las líneas punteadas onduladas, el método <code>ANY</code> siempre se considera más lejano que un método para una clase real. Esto significa que nunca contribuirá a la ambigüedad.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/multiple-any.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="241"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Con herencias múltiples, es difícil evitar simultáneamente la ambigüedad, asegurarse de que cada método de terminal tenga una implementación y minimizar la cantidad de métodos definidos (para beneficiarse de OOP). Por ejemplo, de las seis formas de definir solo dos métodos para esta llamada, solo una está libre de problemas. Por esta razón, recomiendo utilizar la herencia múltiple con sumo cuidado: deberá pensar detenidamente en el gráfico del método y planificar en consecuencia.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/multiple-all.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="416"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="envío-múltiple" class="level3" data-number="15.5.3">
+<h3 data-number="15.5.3" class="anchored" data-anchor-id="envío-múltiple"><span class="header-section-number">15.5.3</span> Envío múltiple</h3>
+<p> </p>
+<p>Una vez que comprenda la herencia múltiple, comprender el envío múltiple es sencillo. Sigue varias flechas de la misma manera que antes, pero ahora cada método se especifica mediante dos clases (separadas por una coma).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/single-single.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="316"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>No voy a mostrar ejemplos de despacho en más de dos argumentos, pero puede seguir los principios básicos para generar sus propios gráficos de métodos.</p>
+<p>La principal diferencia entre la herencia múltiple y el envío múltiple es que hay muchas más flechas a seguir. El siguiente diagrama muestra cuatro métodos definidos que producen dos casos ambiguos:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/single-single-ambig.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="316"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El envío múltiple tiende a ser menos complicado para trabajar que la herencia múltiple porque generalmente hay menos combinaciones de clases de terminales. En este ejemplo, solo hay uno. Eso significa que, como mínimo, puede definir un solo método y tener un comportamiento predeterminado para todas las entradas.</p>
+</section>
+<section id="despacho-múltiple-y-herencia-múltiple" class="level3" data-number="15.5.4">
+<h3 data-number="15.5.4" class="anchored" data-anchor-id="despacho-múltiple-y-herencia-múltiple"><span class="header-section-number">15.5.4</span> Despacho múltiple y herencia múltiple</h3>
+<p>Por supuesto, puede combinar envío múltiple con herencia múltiple:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/single-multiple.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="307"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Un caso aún más complicado se despacha en dos clases, las cuales tienen herencia múltiple:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="diagrams/s4/multiple-multiple.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="236"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>A medida que el gráfico del método se vuelve más y más complicado, se vuelve más y más difícil predecir qué método se llamará dada una combinación de entradas, y se vuelve más y más difícil asegurarse de que no se ha introducido ambigüedad. Si tiene que dibujar diagramas para averiguar qué método se llamará realmente, es una fuerte indicación de que debe volver atrás y simplificar su diseño.</p>
+</section>
+<section id="ejercicios-3" class="level3" data-number="15.5.5">
+<h3 data-number="15.5.5" class="anchored" data-anchor-id="ejercicios-3"><span class="header-section-number">15.5.5</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Dibuje el gráfico del método para <code>f(</code>😅, 😽<code>)</code>.</p></li>
+<li><p>Dibuje el gráfico del método para <code>f(</code>😃, 😉, 😙<code>)</code>.</p></li>
+<li><p>Tome el último ejemplo que muestra envío múltiple sobre dos clases que usan herencia múltiple. ¿Qué sucede si define un método para todas las clases de terminal? ¿Por qué el método de envío no nos ahorra mucho trabajo aquí?</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-s4-s3" class="level2" data-number="15.6">
+<h2 data-number="15.6" class="anchored" data-anchor-id="sec-s4-s3"><span class="header-section-number">15.6</span> S4 y S3</h2>
+<p> </p>
+<p>Al escribir código S4, a menudo necesitará interactuar con clases y genéricos existentes de S3. Esta sección describe cómo las clases, los métodos y los genéricos de S4 interactúan con el código existente.</p>
+<section id="clases" class="level3" data-number="15.6.1">
+<h3 data-number="15.6.1" class="anchored" data-anchor-id="clases"><span class="header-section-number">15.6.1</span> Clases</h3>
+<p></p>
+<p>En <code>slots</code> y <code>contains</code> puede usar clases S4, clases S3 o la clase implícita (<a href="S3.html#sec-implicit-class" class="quarto-xref"><span>Sección 13.7.1</span></a>) de un tipo base. Para usar una clase S3, primero debe registrarla con <code>setOldClass()</code>. Llame a esta función una vez para cada clase de S3, dándole el atributo de clase. Por ejemplo, la base R ya proporciona las siguientes definiciones:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setOldClass</span>(<span class="st">"data.frame"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setOldClass</span>(<span class="fu">c</span>(<span class="st">"ordered"</span>, <span class="st">"factor"</span>))</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">setOldClass</span>(<span class="fu">c</span>(<span class="st">"glm"</span>, <span class="st">"lm"</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Sin embargo, generalmente es mejor ser más específico y proporcionar una definición completa de S4 con <code>slots</code> y un <code>prototype</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setClass</span>(<span class="st">"factor"</span>,</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">contains =</span> <span class="st">"integer"</span>,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">levels =</span> <span class="st">"character"</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">prototype =</span> <span class="fu">structure</span>(</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">integer</span>(),</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">levels =</span> <span class="fu">character</span>()</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">setOldClass</span>(<span class="st">"factor"</span>, <span class="at">S4Class =</span> <span class="st">"factor"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Por lo general, estas definiciones las debe proporcionar el creador de la clase S3. Si intenta crear una clase S4 sobre una clase S3 proporcionada por un paquete, debe solicitar que el mantenedor del paquete agregue esta llamada a su paquete, en lugar de agregarla a su propio código.</p>
+<p>Si un objeto S4 hereda de una clase S3 o un tipo base, tendrá una ranura virtual especial llamada <code>.Data</code>. Esto contiene el tipo base subyacente o el objeto S3: </p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>RangedNumeric <span class="ot">&lt;-</span> <span class="fu">setClass</span>(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"RangedNumeric"</span>,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">contains =</span> <span class="st">"numeric"</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">slots =</span> <span class="fu">c</span>(<span class="at">min =</span> <span class="st">"numeric"</span>, <span class="at">max =</span> <span class="st">"numeric"</span>),</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prototype =</span> <span class="fu">structure</span>(<span class="fu">numeric</span>(), <span class="at">min =</span> <span class="cn">NA_real_</span>, <span class="at">max =</span> <span class="cn">NA_real_</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>rn <span class="ot">&lt;-</span> <span class="fu">RangedNumeric</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">min =</span> <span class="dv">1</span>, <span class="at">max =</span> <span class="dv">10</span>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>rn<span class="sc">@</span>min</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>rn<span class="sc">@</span>.Data</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Es posible definir métodos de S3 para genéricos de S4 y métodos de S4 para genéricos de S3 (siempre que haya llamado a <code>setOldClass()</code>). Sin embargo, es más complicado de lo que parece a primera vista, así que asegúrese de leer detenidamente <code>?Methods_for_S3</code>.</p>
+</section>
+<section id="genéricos" class="level3" data-number="15.6.2">
+<h3 data-number="15.6.2" class="anchored" data-anchor-id="genéricos"><span class="header-section-number">15.6.2</span> Genéricos</h3>
+<p></p>
+<p>Además de crear un nuevo genérico desde cero, también es posible convertir un genérico S3 existente en un genérico S4:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setGeneric</span>(<span class="st">"mean"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En este caso, la función existente se convierte en el método predeterminado (<code>ANY</code>):</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">selectMethod</span>(<span class="st">"mean"</span>, <span class="st">"ANY"</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Method Definition (Class "derivedDefaultMethod"):</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function (x, ...) </span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; UseMethod("mean")</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;bytecode: 0x56143cec6d00&gt;</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signatures:</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         x    </span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; target  "ANY"</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; defined "ANY"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>NB: <code>setMethod()</code> llamará automáticamente a <code>setGeneric()</code> si el primer argumento aún no es genérico, lo que le permite convertir cualquier función existente en un genérico S4. Está bien convertir un S3 genérico existente a S4, pero debe evitar convertir funciones regulares a genéricos S4 en paquetes porque eso requiere una coordinación cuidadosa si lo hacen varios paquetes.</p>
+</section>
+<section id="ejercicios-4" class="level3" data-number="15.6.3">
+<h3 data-number="15.6.3" class="anchored" data-anchor-id="ejercicios-4"><span class="header-section-number">15.6.3</span> Ejercicios</h3>
+<ol type="1">
+<li><p>¿Cómo sería una definición completa de <code>setOldClass()</code> para un factor ordenado (es decir, agregar <code>slots</code> y <code>prototype</code> de la definición anterior)?</p></li>
+<li><p>Defina un método <code>length</code> para la clase <code>Person</code>.</p></li>
+</ol>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-s4da" class="csl-entry" role="listitem">
+Chambers, John M. 2008. <em>Software for Data Analysis: Programming with <span>R</span></em>. Springer.
+</div>
+<div id="ref-chambers-2014" class="csl-entry" role="listitem">
+———. 2014. <span>«Object-oriented programming, functional programming and <span>R</span>»</span>. <em>Statistical Science</em> 29 (2): 167-80. <a href="https://projecteuclid.org/download/pdfview_1/euclid.ss/1408368569">https://projecteuclid.org/download/pdfview_1/euclid.ss/1408368569</a>.
+</div>
+</div>
+</section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Esta es una peculiaridad histórica introducida porque el paquete de métodos solía tardar mucho tiempo en cargarse y <code>Rscript</code> está optimizado para una invocación rápida de la línea de comandos.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><code>?setClass</code> recomienda que evite el argumento <code>prototype</code>, pero esto generalmente se considera un mal consejo.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>La pseudoclase <code>ANY</code> de S4 desempeña el mismo papel que la pseudoclase <code>default</code> de S3.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+
+<script>
+
+  // Chapter name
+  const currentChapterFile = window.location.pathname.split('/').pop().replace('.html', '');
+
+  //Deffining urls
+  const originalURL = "https://github.com/hadley/adv-r";
+  const translationURL = "https://github.com/davidrsch/adv-res";
+
+  //Deffining texts
+  const edit_text = "Editar esta página";
+  const issue_text = "Informar de un problema"
+
+  //Deffining git_i
+  const git_i = '<div><i class="bi bi-github"></i></div>';
+
+  // Adding TOC if not exist
+  const sidebarmargin = document.getElementById('quarto-margin-sidebar');
+  const buscar_TOC = document.getElementById('TOC');
+
+  if (!buscar_TOC) {
+    const crear_TOC = document.createElement('nav');
+    crear_TOC.id = 'TOC';
+    crear_TOC.role = "doc-toc";
+    crear_TOC.class = "toc-active";
+    sidebarmargin.appendChild(crear_TOC);
+  }
+
+
+  // Adding original github actions
+  const TOC = document.getElementById('TOC');
+  const originalga = document.createElement('h2');
+  originalga.textContent = "Original";
+  originalga.style["border-top"] = "1px solid #ccc";
+  originalga.style["padding-top"] = "0.5rem";
+  const toc_act_O = document.createElement('div');
+  toc_act_O.className = 'toc-actions';
+  toc_act_O.id = 'toc-act-O';
+  const act_link_O = document.createElement('div');
+  act_link_O.className='action-links';
+  act_link_O.id='act-link-O';
+  const edit_issue_O ='<p><a href="'+originalURL+'/edit/master/'+currentChapterFile+'.Rmd" class="toc-action">'+edit_text+'</p><p><a href="'+originalURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(originalga);
+  TOC.appendChild(toc_act_O);
+  toc_act_O.innerHTML += git_i;
+  toc_act_O.appendChild(act_link_O);
+  act_link_O.innerHTML += edit_issue_O;
+
+  // Adding translation github actions
+  const translationga = document.createElement('h2');
+  translationga.textContent = "Traducción";
+  const toc_act_T = document.createElement('div');
+  toc_act_T.className = 'toc-actions';
+  toc_act_T.id = 'toc-act-T';
+  const act_link_T = document.createElement('div');
+  act_link_T.className='action-links';
+  act_link_T.id='act-link-T';
+  const edit_issue_T ='<p><a href="'+translationURL+'/edit/main/'+currentChapterFile+'.qmd" class="toc-action">'+edit_text+'</p><p><a href="'+translationURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(translationga);
+  TOC.appendChild(toc_act_T);
+  toc_act_T.innerHTML += git_i;
+  toc_act_T.appendChild(act_link_T);
+  act_link_T.innerHTML += edit_issue_T;
+
+
+</script>
+
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./R6.html" class="pagination-link" aria-label="R6">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">R6</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./OO-tradeoffs.html" class="pagination-link" aria-label="Compensaciones">
+        <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Compensaciones</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><b>“R Avanzado”</b> fue escrito por Hadley Wickham.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

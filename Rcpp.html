@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>R Avanzado - 25&nbsp; Reescribiendo código de R en C++</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./References.html" rel="next">
+<link href="./Perf-improve.html" rel="prev">
+<link href="./cover.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="adv-r.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Techniques.html">Tecnicas</a></li><li class="breadcrumb-item"><a href="./Rcpp.html"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Reescribiendo código de R en C++</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Avanzado</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/adv-r">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/adv-res">
+            Traducción
+            </a>
+          </li>
+      </ul>
+    </div>
+    <a href="./R-Avanzado.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Fundamentos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Names-values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Nombres y valores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Vectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Vectores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Subsetting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Subconjunto</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Control-flow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Flujo de control</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Environments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Entornos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Conditions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Condiciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Programación funcional</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./FP.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functionals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Funcionales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-factories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Fábricas de funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-operators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Operadores de funciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Programación orientada a objetos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introdución</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./base-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Tipos básicos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">S3</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./R6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">R6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">S4</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Compensaciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Metaprogramación</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Meta.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Big-picture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Panorama general</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Expresiones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Quotation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Cuasicita</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Evaluation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Evaluación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Translation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Traducir código R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Tecnicas</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Techniques.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Depuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Medición de desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-improve.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Mejorando el desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Rcpp.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Reescribiendo código de R en C++</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./References.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción"><span class="header-section-number">25.1</span> Introducción</a>
+  <ul class="collapse">
+  <li><a href="#estructura" id="toc-estructura" class="nav-link" data-scroll-target="#estructura">Estructura</a></li>
+  <li><a href="#requisitos-previos" id="toc-requisitos-previos" class="nav-link" data-scroll-target="#requisitos-previos">Requisitos previos</a></li>
+  </ul></li>
+  <li><a href="#sec-rcpp-intro" id="toc-sec-rcpp-intro" class="nav-link" data-scroll-target="#sec-rcpp-intro"><span class="header-section-number">25.2</span> Empezar con C++</a>
+  <ul class="collapse">
+  <li><a href="#sin-entradas-salida-escalar" id="toc-sin-entradas-salida-escalar" class="nav-link" data-scroll-target="#sin-entradas-salida-escalar"><span class="header-section-number">25.2.1</span> Sin entradas, salida escalar</a></li>
+  <li><a href="#entrada-escalar-salida-escalar" id="toc-entrada-escalar-salida-escalar" class="nav-link" data-scroll-target="#entrada-escalar-salida-escalar"><span class="header-section-number">25.2.2</span> Entrada escalar, salida escalar</a></li>
+  <li><a href="#entrada-vectorial-salida-escalar" id="toc-entrada-vectorial-salida-escalar" class="nav-link" data-scroll-target="#entrada-vectorial-salida-escalar"><span class="header-section-number">25.2.3</span> Entrada vectorial, salida escalar</a></li>
+  <li><a href="#entrada-vectorial-salida-vectorial" id="toc-entrada-vectorial-salida-vectorial" class="nav-link" data-scroll-target="#entrada-vectorial-salida-vectorial"><span class="header-section-number">25.2.4</span> Entrada vectorial, salida vectorial</a></li>
+  <li><a href="#sec-sourceCpp" id="toc-sec-sourceCpp" class="nav-link" data-scroll-target="#sec-sourceCpp"><span class="header-section-number">25.2.5</span> Usar sourceCpp</a></li>
+  <li><a href="#sec-exercise-started" id="toc-sec-exercise-started" class="nav-link" data-scroll-target="#sec-exercise-started"><span class="header-section-number">25.2.6</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-rcpp-classes" id="toc-sec-rcpp-classes" class="nav-link" data-scroll-target="#sec-rcpp-classes"><span class="header-section-number">25.3</span> Otras clases</a>
+  <ul class="collapse">
+  <li><a href="#listas-y-data-frames" id="toc-listas-y-data-frames" class="nav-link" data-scroll-target="#listas-y-data-frames"><span class="header-section-number">25.3.1</span> Listas y data frames</a></li>
+  <li><a href="#sec-functions-rcpp" id="toc-sec-functions-rcpp" class="nav-link" data-scroll-target="#sec-functions-rcpp"><span class="header-section-number">25.3.2</span> Funciones</a></li>
+  <li><a href="#atributos" id="toc-atributos" class="nav-link" data-scroll-target="#atributos"><span class="header-section-number">25.3.3</span> Atributos</a></li>
+  </ul></li>
+  <li><a href="#sec-rcpp-na" id="toc-sec-rcpp-na" class="nav-link" data-scroll-target="#sec-rcpp-na"><span class="header-section-number">25.4</span> Valores faltantes</a>
+  <ul class="collapse">
+  <li><a href="#escalares" id="toc-escalares" class="nav-link" data-scroll-target="#escalares"><span class="header-section-number">25.4.1</span> Escalares</a></li>
+  <li><a href="#caracteres" id="toc-caracteres" class="nav-link" data-scroll-target="#caracteres"><span class="header-section-number">25.4.2</span> Caracteres</a></li>
+  <li><a href="#booleano" id="toc-booleano" class="nav-link" data-scroll-target="#booleano"><span class="header-section-number">25.4.3</span> Booleano</a></li>
+  <li><a href="#sec-vectors-rcpp" id="toc-sec-vectors-rcpp" class="nav-link" data-scroll-target="#sec-vectors-rcpp"><span class="header-section-number">25.4.4</span> Vectores</a></li>
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios"><span class="header-section-number">25.4.5</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-stl" id="toc-sec-stl" class="nav-link" data-scroll-target="#sec-stl"><span class="header-section-number">25.5</span> Biblioteca de plantillas estándar</a>
+  <ul class="collapse">
+  <li><a href="#usar-iteradores" id="toc-usar-iteradores" class="nav-link" data-scroll-target="#usar-iteradores"><span class="header-section-number">25.5.1</span> Usar iteradores</a></li>
+  <li><a href="#algoritmos" id="toc-algoritmos" class="nav-link" data-scroll-target="#algoritmos"><span class="header-section-number">25.5.2</span> Algoritmos</a></li>
+  <li><a href="#sec-data-structures-rcpp" id="toc-sec-data-structures-rcpp" class="nav-link" data-scroll-target="#sec-data-structures-rcpp"><span class="header-section-number">25.5.3</span> Estructuras de datos</a></li>
+  <li><a href="#sec-vectors-stl" id="toc-sec-vectors-stl" class="nav-link" data-scroll-target="#sec-vectors-stl"><span class="header-section-number">25.5.4</span> Vectores</a></li>
+  <li><a href="#conjuntos" id="toc-conjuntos" class="nav-link" data-scroll-target="#conjuntos"><span class="header-section-number">25.5.5</span> Conjuntos</a></li>
+  <li><a href="#map" id="toc-map" class="nav-link" data-scroll-target="#map"><span class="header-section-number">25.5.6</span> Map</a></li>
+  <li><a href="#ejercicios-1" id="toc-ejercicios-1" class="nav-link" data-scroll-target="#ejercicios-1"><span class="header-section-number">25.5.7</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-rcpp-case-studies" id="toc-sec-rcpp-case-studies" class="nav-link" data-scroll-target="#sec-rcpp-case-studies"><span class="header-section-number">25.6</span> Caso de estudio</a>
+  <ul class="collapse">
+  <li><a href="#muestreador-de-gibbs" id="toc-muestreador-de-gibbs" class="nav-link" data-scroll-target="#muestreador-de-gibbs"><span class="header-section-number">25.6.1</span> Muestreador de Gibbs</a></li>
+  <li><a href="#r-vectorización-frente-a-vectorización-c" id="toc-r-vectorización-frente-a-vectorización-c" class="nav-link" data-scroll-target="#r-vectorización-frente-a-vectorización-c"><span class="header-section-number">25.6.2</span> R vectorización frente a vectorización C++</a></li>
+  </ul></li>
+  <li><a href="#sec-rcpp-package" id="toc-sec-rcpp-package" class="nav-link" data-scroll-target="#sec-rcpp-package"><span class="header-section-number">25.7</span> Using Rcpp in a package</a></li>
+  <li><a href="#sec-rcpp-more" id="toc-sec-rcpp-more" class="nav-link" data-scroll-target="#sec-rcpp-more"><span class="header-section-number">25.8</span> Aprendiendo más</a></li>
+  <li><a href="#reconocimientos" id="toc-reconocimientos" class="nav-link" data-scroll-target="#reconocimientos"><span class="header-section-number">25.9</span> Reconocimientos</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Techniques.html">Tecnicas</a></li><li class="breadcrumb-item"><a href="./Rcpp.html"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Reescribiendo código de R en C++</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-rcpp" class="quarto-section-identifier"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Reescribiendo código de R en C++</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción" class="level2" data-number="25.1">
+<h2 data-number="25.1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">25.1</span> Introducción</h2>
+<p>A veces, el código R simplemente no es lo suficientemente rápido. Ha utilizado la creación de perfiles para descubrir dónde están los cuellos de botella y ha hecho todo lo posible en R, pero su código aún no es lo suficientemente rápido. En este capítulo, aprenderá a mejorar el rendimiento reescribiendo funciones clave en C++. Esta magia viene a través del paquete <a href="http://www.rcpp.org/">Rcpp</a> <span class="citation" data-cites="Rcpp">(<a href="References.html#ref-Rcpp" role="doc-biblioref">Eddelbuettel y François 2011</a>)</span> (con contribuciones clave de Doug Bates, John Chambers y JJ Allaire).</p>
+<p>Rcpp hace que sea muy simple conectar C++ a R. Si bien es <em>posible</em> escribir código C o Fortran para usar en R, será doloroso en comparación. Rcpp proporciona una API limpia y accesible que le permite escribir código de alto rendimiento, aislado de la compleja API C de R. </p>
+<p>Los cuellos de botella típicos que C++ puede abordar incluyen:</p>
+<ul>
+<li><p>Bucles que no se pueden vectorizar fácilmente porque las iteraciones posteriores dependen de las anteriores.</p></li>
+<li><p>Funciones recursivas, o problemas que implican llamar funciones millones de veces. La sobrecarga de llamar a una función en C++ es mucho menor que en R.</p></li>
+<li><p>Problemas que requieren estructuras de datos y algoritmos avanzados que R no proporciona. A través de la biblioteca de plantillas estándar (STL), C++ tiene implementaciones eficientes de muchas estructuras de datos importantes, desde mapas ordenados hasta colas de dos extremos.</p></li>
+</ul>
+<p>El objetivo de este capítulo es discutir solo aquellos aspectos de C++ y Rcpp que son absolutamente necesarios para ayudarlo a eliminar los cuellos de botella en su código. No dedicaremos mucho tiempo a funciones avanzadas como la programación orientada a objetos o las plantillas porque el enfoque está en escribir funciones pequeñas e independientes, no grandes programas. Un conocimiento práctico de C++ es útil, pero no esencial. Muchos buenos tutoriales y referencias están disponibles gratuitamente, incluidos <a href="http://www.learncpp.com/" class="uri">http://www.learncpp.com/</a> y <a href="https://en.cppreference.com/w/cpp" class="uri">https://en.cppreference.com/w/cpp</a>. Para temas más avanzados, la serie <em>Effective C++</em> de Scott Meyers es una opción popular.</p>
+<section id="estructura" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="estructura">Estructura</h3>
+<ul>
+<li><p>La <a href="#sec-rcpp-intro" class="quarto-xref"><span>Sección 25.2</span></a> teaches you how to write C++ by converting simple R functions to their C++ equivalents. You’ll learn how C++ differs from R, and what the key scalar, vector, and matrix classes are called.</p></li>
+<li><p>La <a href="#sec-sourceCpp" class="quarto-xref"><span>Sección 25.2.5</span></a> le muestra cómo usar <code>sourceCpp()</code> para cargar un archivo C++ desde el disco de la misma manera que usa <code>source()</code> para cargar un archivo de código R.</p></li>
+<li><p>La <a href="#sec-rcpp-classes" class="quarto-xref"><span>Sección 25.3</span></a> analiza cómo modificar los atributos de Rcpp y menciona algunas de las otras clases importantes.</p></li>
+<li><p>La <a href="#sec-rcpp-na" class="quarto-xref"><span>Sección 25.4</span></a> le enseña cómo trabajar con los valores faltantes de R en C++.</p></li>
+<li><p>La <a href="#sec-stl" class="quarto-xref"><span>Sección 25.5</span></a> le muestra cómo usar algunas de las estructuras de datos y algoritmos más importantes de la biblioteca de plantillas estándar, o STL, integrada en C++.</p></li>
+<li><p>La <a href="#sec-rcpp-case-studies" class="quarto-xref"><span>Sección 25.6</span></a> muestra dos estudios de casos reales en los que se utilizó Rcpp para obtener mejoras de rendimiento considerables.</p></li>
+<li><p>La <a href="#sec-rcpp-package" class="quarto-xref"><span>Sección 25.7</span></a> le enseña cómo agregar código C++ a un paquete.</p></li>
+<li><p>La <a href="#sec-rcpp-more" class="quarto-xref"><span>Sección 25.8</span></a> concluye el capítulo con una lista de más recursos para ayudarlo a aprender Rcpp y C++.</p></li>
+</ul>
+</section>
+<section id="requisitos-previos" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="requisitos-previos">Requisitos previos</h3>
+<p>Usaremos <a href="http://www.rcpp.org/">Rcpp</a> para llamar a C++ desde R:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Rcpp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>También necesitará un compilador de C++ que funcione. Para conseguirlo:</p>
+<ul>
+<li>En Windows, instale <a href="http://cran.r-project.org/bin/windows/Rtools/">Rtools</a>.</li>
+<li>En Mac, instala Xcode desde la tienda de aplicaciones.</li>
+<li>En Linux, <code>sudo apt-get install r-base-dev</code> o similar.</li>
+</ul>
+</section>
+</section>
+<section id="sec-rcpp-intro" class="level2" data-number="25.2">
+<h2 data-number="25.2" class="anchored" data-anchor-id="sec-rcpp-intro"><span class="header-section-number">25.2</span> Empezar con C++</h2>
+<p><code>cppFunction()</code> le permite escribir funciones de C++ en R: </p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cppFunction</span>(<span class="st">'int add(int x, int y, int z) {</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">  int sum = x + y + z;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">  return sum;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># add funciona como una función R normal</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>add</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function (x, y, z) </span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; .Call(&lt;pointer: 0x7f477a8f84d0&gt;, x, y, z)</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">add</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 6</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Cuando ejecute este código, Rcpp compilará el código C++ y construirá una función R que se conecta a la función C++ compilada. Suceden muchas cosas debajo del capó, pero Rcpp se encarga de todos los detalles para que no tengas que preocuparte por ellos.</p>
+<p>Las siguientes secciones le enseñarán los conceptos básicos mediante la traducción de funciones simples de R a sus equivalentes de C++. Comenzaremos de manera simple con una función que no tiene entradas y una salida escalar, y luego la complicaremos progresivamente:</p>
+<ul>
+<li>Entrada escalar y salida escalar</li>
+<li>Entrada vectorial y salida escalar</li>
+<li>Entrada vectorial y salida vectorial</li>
+<li>Entrada matricial y salida vectorial</li>
+</ul>
+<section id="sin-entradas-salida-escalar" class="level3" data-number="25.2.1">
+<h3 data-number="25.2.1" class="anchored" data-anchor-id="sin-entradas-salida-escalar"><span class="header-section-number">25.2.1</span> Sin entradas, salida escalar</h3>
+<p>Comencemos con una función muy simple. No tiene argumentos y siempre devuelve el entero 1:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>one <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="dv">1</span>L</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The equivalent C++ function is:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> one<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>La podemos compilar y usar desde R con <code>cppFunction()</code></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cppFunction</span>(<span class="st">'int one() {</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="st">  return 1;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esta pequeña función ilustra una serie de diferencias importantes entre R y C++:</p>
+<ul>
+<li><p>La sintaxis para crear una función se parece a la sintaxis para llamar a una función; no usa la asignación para crear funciones como lo hace en R.</p></li>
+<li><p>Debe declarar el tipo de salida que devuelve la función. Esta función devuelve un <code>int</code> (un entero escalar). Las clases para los tipos más comunes de vectores R son: <code>NumericVector</code>, <code>IntegerVector</code>, <code>CharacterVector</code> y <code>LogicalVector</code>.</p></li>
+<li><p>Los escalares y los vectores son diferentes. Los equivalentes escalares de vectores numéricos, enteros, de caracteres y lógicos son: <code>doble</code>, <code>int</code>, <code>String</code> y <code>bool</code>.</p></li>
+<li><p>Debe usar una declaración <code>return</code> explícita para devolver un valor de una función.</p></li>
+<li><p>Cada instrucción termina con un <code>;</code>.</p></li>
+</ul>
+</section>
+<section id="entrada-escalar-salida-escalar" class="level3" data-number="25.2.2">
+<h3 data-number="25.2.2" class="anchored" data-anchor-id="entrada-escalar-salida-escalar"><span class="header-section-number">25.2.2</span> Entrada escalar, salida escalar</h3>
+<p>La siguiente función de ejemplo implementa una versión escalar de la función <code>sign()</code> que devuelve 1 si la entrada es positiva y -1 si es negativa:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>signR <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (x <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (x <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cppFunction</span>(<span class="st">'int signC(int x) {</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="st">  if (x &gt; 0) {</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">    return 1;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="st">  } else if (x == 0) {</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="st">    return 0;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="st">  } else {</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="st">    return -1;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En la versión C++:</p>
+<ul>
+<li><p>Declaramos el tipo de cada entrada de la misma forma que declaramos el tipo de la salida. Si bien esto hace que el código sea un poco más detallado, también aclara el tipo de entrada que necesita la función.</p></li>
+<li><p>La sintaxis <code>if</code> es idéntica — si bien existen grandes diferencias entre R y C++, ¡también hay muchas similitudes! C++ también tiene una instrucción <code>while</code> que funciona de la misma manera que la de R. Como en R, puede usar <code>break</code> para salir del ciclo, pero para omitir una iteración necesita usar <code>continue</code> en lugar de <code>next</code>.</p></li>
+</ul>
+</section>
+<section id="entrada-vectorial-salida-escalar" class="level3" data-number="25.2.3">
+<h3 data-number="25.2.3" class="anchored" data-anchor-id="entrada-vectorial-salida-escalar"><span class="header-section-number">25.2.3</span> Entrada vectorial, salida escalar</h3>
+<p>Una gran diferencia entre R y C++ es que el costo de los bucles es mucho menor en C++. Por ejemplo, podríamos implementar la función <code>sum</code> en R usando un bucle. Si ha estado programando en R por un tiempo, ¡probablemente tendrá una reacción visceral a esta función!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sumR <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  total <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(x)) {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    total <span class="ot">&lt;-</span> total <span class="sc">+</span> x[i]</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  total</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En C++, los bucles tienen muy poca sobrecarga, por lo que está bien usarlos. En la <a href="#sec-stl" class="quarto-xref"><span>Sección 25.5</span></a>, verá alternativas a los bucles <code>for</code> que expresan más claramente su intención; no son más rápidos, pero pueden hacer que su código sea más fácil de entender.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cppFunction</span>(<span class="st">'double sumC(NumericVector x) {</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="st">  int n = x.size();</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">  double total = 0;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">  for(int i = 0; i &lt; n; ++i) {</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="st">    total += x[i];</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">  return total;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La versión C++ es similar, pero:</p>
+<ul>
+<li><p>Para encontrar la longitud del vector, usamos el método <code>.size()</code>, que devuelve un número entero. Los métodos de C++ se llaman con <code>.</code> (es decir, un punto).</p></li>
+<li><p>La sentencia <code>for</code> tiene una sintaxis diferente: <code>for(init; check; increment)</code>. Este bucle se inicializa creando una nueva variable llamada <code>i</code> con valor 0. Antes de cada iteración comprobamos que <code>i &lt; n</code>, y terminamos el bucle si no es así. Después de cada iteración, incrementamos el valor de <code>i</code> en uno, utilizando el operador de prefijo especial <code>++</code> que aumenta el valor de <code>i</code> en 1.</p></li>
+<li><p>En C++, los índices vectoriales comienzan en 0, lo que significa que el último elemento está en la posición <code>n - 1</code>. Repetiré esto porque es muy importante: <strong>¡EN C++, LOS ÍNDICES VECTORIALES EMPIEZAN EN 0</strong>! Esta es una fuente muy común de errores al convertir funciones de R a C++.</p></li>
+<li><p>Utilice <code>=</code> para la asignación, no <code>&lt;-</code>.</p></li>
+<li><p>C++ proporciona operadores que modifican en el lugar: <code>total += x[i]</code> es equivalente a <code>total = total + x[i]</code>. Operadores in situ similares son <code>-=</code>, <code>*=</code> y <code>/=</code>.</p></li>
+</ul>
+<p>Este es un buen ejemplo de dónde C++ es mucho más eficiente que R. Como se muestra en el siguiente micropunto de referencia, <code>sumC()</code> es competitivo con el integrado (y altamente optimizado) <code>sum()</code>, mientras que <code>sumR()</code> es varios órdenes de magnitud más lento.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e3</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(x),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sumC</span>(x),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sumR</span>(x)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 6</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 sum(x)       2.05µs   2.08µs   471466.        0B     0   </span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 sumC(x)      1.68µs   1.76µs   537120.        0B     0   </span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 sumR(x)     20.06µs  20.54µs    48222.      22KB     4.82</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="entrada-vectorial-salida-vectorial" class="level3" data-number="25.2.4">
+<h3 data-number="25.2.4" class="anchored" data-anchor-id="entrada-vectorial-salida-vectorial"><span class="header-section-number">25.2.4</span> Entrada vectorial, salida vectorial</h3>
+<!-- FIXME: Proponer un mejor ejemplo. También arreglar en otros dos lugares se produce -->
+<p>A continuación, crearemos una función que calcule la distancia euclidiana entre un valor y un vector de valores:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pdistR <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ys) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sqrt</span>((x <span class="sc">-</span> ys) <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En R, no es obvio que queremos que <code>x</code> sea un escalar de la definición de la función, y debemos dejarlo claro en la documentación. Eso no es un problema en la versión de C++ porque tenemos que ser explícitos con los tipos:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cppFunction</span>(<span class="st">'NumericVector pdistC(double x, NumericVector ys) {</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">  int n = ys.size();</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">  NumericVector out(n);</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">  for(int i = 0; i &lt; n; ++i) {</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="st">    out[i] = sqrt(pow(ys[i] - x, 2.0));</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">  return out;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esta función introduce solo algunos conceptos nuevos:</p>
+<ul>
+<li><p>Creamos un nuevo vector numérico de longitud <code>n</code> con un constructor: <code>NumericVector out(n)</code>. Otra forma útil de hacer un vector es copiar uno existente: <code>NumericVector zs = clone(ys)</code>.</p></li>
+<li><p>C++ usa <code>pow()</code>, no <code>^</code>, para la exponenciación.</p></li>
+</ul>
+<p>Tenga en cuenta que debido a que la versión R está completamente vectorizada, ya será rápida.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e6</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pdistR</span>(<span class="fl">0.5</span>, y),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pdistC</span>(<span class="fl">0.5</span>, y)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 6</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression          min   median `itr/sec` mem_alloc `gc/sec`</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;     &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 pdistR(0.5, y)   4.78ms   5.01ms      199.    7.63MB     103.</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 pdistC(0.5, y)   3.98ms   4.04ms      247.    7.63MB     123.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En mi computadora, toma alrededor de 5 ms con un vector <code>y</code> de 1 millón de elementos. La función de C++ es unas 2,5 veces más rápida, ~2 ms, pero suponiendo que le haya llevado 10 minutos escribir la función de C++, necesitará ejecutarla ~200.000 veces para que valga la pena reescribirla. La razón por la que la función de C++ es más rápida es sutil y se relaciona con la administración de la memoria. La versión R necesita crear un vector intermedio de la misma longitud que y (<code>x - ys</code>), y asignar memoria es una operación costosa. La función de C++ evita esta sobrecarga porque usa un escalar intermedio.</p>
+</section>
+<section id="sec-sourceCpp" class="level3" data-number="25.2.5">
+<h3 data-number="25.2.5" class="anchored" data-anchor-id="sec-sourceCpp"><span class="header-section-number">25.2.5</span> Usar sourceCpp</h3>
+<p>Hasta ahora, hemos usado C++ en línea con <code>cppFunction()</code>. Esto hace que la presentación sea más simple, pero para problemas reales, generalmente es más fácil usar archivos independientes de C++ y luego enviarlos a R usando <code>sourceCpp()</code>. Esto le permite aprovechar la compatibilidad con el editor de texto para archivos C++ (p.&nbsp;ej., resaltado de sintaxis), además de facilitar la identificación de los números de línea en los errores de compilación. </p>
+<p>Su archivo independiente de C++ debe tener la extensión <code>.cpp</code> y debe comenzar con:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Y para cada función que desee que esté disponible dentro de R, debe prefijarla con:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sidebar">
+<p>Si está familiarizado con roxygen2, puede preguntarse cómo se relaciona esto con <code>@export</code>. <code>Rcpp::export</code> controla si una función se exporta de C++ a R; <code>@export</code> controla si una función se exporta desde un paquete y se pone a disposición del usuario.</p>
+</div>
+<p>Puede incrustar código R en bloques de comentarios especiales de C++. Esto es realmente conveniente si desea ejecutar algún código de prueba:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">/*** R</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is R code</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">*/</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>El código R se ejecuta con <code>source(echo = TRUE)</code>, por lo que no es necesario que imprima la salida explícitamente.</p>
+<p>Para compilar el código C++, usa <code>sourceCpp("ruta/al/archivo.cpp")</code>. Esto creará las funciones R coincidentes y las agregará a su sesión actual. Tenga en cuenta que estas funciones no se pueden guardar en un archivo <code>.Rdata</code> y volver a cargar en una sesión posterior; deben volver a crearse cada vez que reinicie R.</p>
+<p>Por ejemplo, ejecutar <code>sourceCpp()</code> en el siguiente archivo implementa mean en C++ y luego lo compara con <code>mean()</code> integrado:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> meanC<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n <span class="op">=</span> x<span class="op">.</span>size<span class="op">();</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> total <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    total <span class="op">+=</span> x<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> total <span class="op">/</span> n<span class="op">;</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">/*** R</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co">x &lt;- runif(1e5)</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co">bench::mark(</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">  mean(x),</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">  meanC(x)</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">)</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">*/</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>NB: Si ejecuta este código, notará que <code>meanC()</code> es mucho más rápido que el <code>mean()</code> integrado. Esto se debe a que cambia la precisión numérica por la velocidad.</p>
+<p>En el resto de este capítulo, el código C++ se presentará de forma independiente en lugar de envuelto en una llamada a <code>cppFunction</code>. Si desea intentar compilar y/o modificar los ejemplos, debe pegarlos en un archivo fuente de C++ que incluya los elementos descritos anteriormente. Esto es fácil de hacer en RMarkdown: todo lo que necesita hacer es especificar <code>engine = "Rcpp"</code>.</p>
+</section>
+<section id="sec-exercise-started" class="level3" data-number="25.2.6">
+<h3 data-number="25.2.6" class="anchored" data-anchor-id="sec-exercise-started"><span class="header-section-number">25.2.6</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Con los conceptos básicos de C++ en la mano, ahora es un buen momento para practicar leyendo y escribiendo algunas funciones simples de C++. Para cada una de las siguientes funciones, lea el código y averigüe cuál es la función base R correspondiente. Es posible que aún no comprenda cada parte del código, pero debería poder descubrir los conceptos básicos de lo que hace la función.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> f1<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n <span class="op">=</span> x<span class="op">.</span>size<span class="op">();</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> y <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    y <span class="op">+=</span> x<span class="op">[</span>i<span class="op">]</span> <span class="op">/</span> n<span class="op">;</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> y<span class="op">;</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>NumericVector f2<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n <span class="op">=</span> x<span class="op">.</span>size<span class="op">();</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  NumericVector out<span class="op">(</span>n<span class="op">);</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  out<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> x<span class="op">[</span><span class="dv">0</span><span class="op">];</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    out<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> out<span class="op">[</span>i <span class="op">-</span> <span class="dv">1</span><span class="op">]</span> <span class="op">+</span> x<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> out<span class="op">;</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> f3<span class="op">(</span>LogicalVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n <span class="op">=</span> x<span class="op">.</span>size<span class="op">();</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>x<span class="op">[</span>i<span class="op">])</span> <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> f4<span class="op">(</span>Function pred<span class="op">,</span> List x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n <span class="op">=</span> x<span class="op">.</span>size<span class="op">();</span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>    LogicalVector res <span class="op">=</span> pred<span class="op">(</span>x<span class="op">[</span>i<span class="op">]);</span></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>res<span class="op">[</span><span class="dv">0</span><span class="op">])</span> <span class="cf">return</span> i <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>NumericVector f5<span class="op">(</span>NumericVector x<span class="op">,</span> NumericVector y<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n <span class="op">=</span> <span class="bu">std::</span>max<span class="op">(</span>x<span class="op">.</span>size<span class="op">(),</span> y<span class="op">.</span>size<span class="op">());</span></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>  NumericVector x1 <span class="op">=</span> rep_len<span class="op">(</span>x<span class="op">,</span> n<span class="op">);</span></span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>  NumericVector y1 <span class="op">=</span> rep_len<span class="op">(</span>y<span class="op">,</span> n<span class="op">);</span></span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>  NumericVector out<span class="op">(</span>n<span class="op">);</span></span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a>    out<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="bu">std::</span>min<span class="op">(</span>x1<span class="op">[</span>i<span class="op">],</span> y1<span class="op">[</span>i<span class="op">]);</span></span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> out<span class="op">;</span></span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Para practicar sus habilidades de escritura de funciones, convierta las siguientes funciones a C++. Por ahora, suponga que las entradas no tienen valores faltantes.</p>
+<ol type="1">
+<li><p><code>all()</code>.</p></li>
+<li><p><code>cumprod()</code>, <code>cummin()</code>, <code>cummax()</code>.</p></li>
+<li><p><code>diff()</code>. Start by assuming lag 1, and then generalise for lag <code>n</code>.</p></li>
+<li><p><code>range()</code>.</p></li>
+<li><p><code>var()</code>. Lea acerca de los enfoques que puede adoptar en <a href="http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance">Wikipedia</a>. Siempre que se implemente un algoritmo numérico, siempre es bueno verificar lo que ya se sabe sobre el problema.</p></li>
+</ol></li>
+</ol>
+</section>
+</section>
+<section id="sec-rcpp-classes" class="level2" data-number="25.3">
+<h2 data-number="25.3" class="anchored" data-anchor-id="sec-rcpp-classes"><span class="header-section-number">25.3</span> Otras clases</h2>
+<p>Ya has visto las clases vectoriales básicas (<code>IntegerVector</code>, <code>NumericVector</code>, <code>LogicalVector</code>, <code>CharacterVector</code>) y sus equivalentes escalares (<code>int</code>, <code>double</code>, <code>bool</code>, <code>String</code>). Rcpp también proporciona contenedores para todos los demás tipos de datos básicos. Los más importantes son para listas y marcos de datos, funciones y atributos, como se describe a continuación. Rcpp también proporciona clases para más tipos como <code>Environment</code>, <code>DottedPair</code>, <code>Language</code>, <code>Symbol</code>, etc., pero estos están más allá del alcance de este capítulo.</p>
+<section id="listas-y-data-frames" class="level3" data-number="25.3.1">
+<h3 data-number="25.3.1" class="anchored" data-anchor-id="listas-y-data-frames"><span class="header-section-number">25.3.1</span> Listas y data frames</h3>
+<p>Rcpp también proporciona las clases <code>List</code> y <code>DataFrame</code>, pero son más útiles para la salida que para la entrada. Esto se debe a que las listas y los marcos de datos pueden contener clases arbitrarias, pero C++ necesita conocer sus clases de antemano. Si la lista tiene una estructura conocida (p.&nbsp;ej., es un objeto de S3), puede extraer los componentes y convertirlos manualmente a sus equivalentes de C++ con <code>as()</code>. Por ejemplo, el objeto creado por <code>lm()</code>, la función que ajusta un modelo lineal, es una lista cuyos componentes son siempre del mismo tipo. El siguiente código ilustra cómo puede extraer el error porcentual medio (<code>mpe()</code>) de un modelo lineal. Este no es un buen ejemplo de cuándo usar C++, porque se implementa muy fácilmente en R, pero muestra cómo trabajar con una clase S3 importante. Tenga en cuenta el uso de <code>.inherits()</code> y <code>stop()</code> para verificar que el objeto realmente es un modelo lineal. </p>
+<!-- FIXME: necesita una mejor motivación -->
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> mpe<span class="op">(</span>List mod<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(!</span>mod<span class="op">.</span>inherits<span class="op">(</span><span class="st">"lm"</span><span class="op">))</span> stop<span class="op">(</span><span class="st">"Input must be a linear model"</span><span class="op">);</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  NumericVector resid <span class="op">=</span> as<span class="op">&lt;</span>NumericVector<span class="op">&gt;(</span>mod<span class="op">[</span><span class="st">"residuals"</span><span class="op">]);</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  NumericVector fitted <span class="op">=</span> as<span class="op">&lt;</span>NumericVector<span class="op">&gt;(</span>mod<span class="op">[</span><span class="st">"fitted.values"</span><span class="op">]);</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n <span class="op">=</span> resid<span class="op">.</span>size<span class="op">();</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> err <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    err <span class="op">+=</span> resid<span class="op">[</span>i<span class="op">]</span> <span class="op">/</span> <span class="op">(</span>fitted<span class="op">[</span>i<span class="op">]</span> <span class="op">+</span> resid<span class="op">[</span>i<span class="op">]);</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> err <span class="op">/</span> n<span class="op">;</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> wt, <span class="at">data =</span> mtcars)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mpe</span>(mod)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -0.0154</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-functions-rcpp" class="level3" data-number="25.3.2">
+<h3 data-number="25.3.2" class="anchored" data-anchor-id="sec-functions-rcpp"><span class="header-section-number">25.3.2</span> Funciones</h3>
+<p></p>
+<p>Puede poner funciones R en un objeto de tipo <code>Function</code>. Esto hace que llamar a una función R desde C++ sea sencillo. El único desafío es que no sabemos qué tipo de salida devolverá la función, por lo que usamos el tipo general <code>RObject</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>RObject callWithOne<span class="op">(</span>Function f<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> f<span class="op">(</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">callWithOne</span>(<span class="cf">function</span>(x) x <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">callWithOne</span>(paste)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "1"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Llamar funciones R con argumentos posicionales es obvio:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">(</span><span class="st">"y"</span><span class="op">,</span> <span class="dv">1</span><span class="op">);</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Pero necesita una sintaxis especial para argumentos con nombre:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">(</span>_<span class="op">[</span><span class="st">"x"</span><span class="op">]</span> <span class="op">=</span> <span class="st">"y"</span><span class="op">,</span> _<span class="op">[</span><span class="st">"value"</span><span class="op">]</span> <span class="op">=</span> <span class="dv">1</span><span class="op">);</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="atributos" class="level3" data-number="25.3.3">
+<h3 data-number="25.3.3" class="anchored" data-anchor-id="atributos"><span class="header-section-number">25.3.3</span> Atributos</h3>
+<p></p>
+<p>Todos los objetos R tienen atributos, que se pueden consultar y modificar con <code>.attr()</code>. Rcpp también proporciona <code>.names()</code> como un alias para el atributo de nombre. El siguiente fragmento de código ilustra estos métodos. Tenga en cuenta el uso de <code>::create()</code>, un método de <em>clase</em>. Esto le permite crear un vector R a partir de valores escalares de C++:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>NumericVector attribs<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  NumericVector out <span class="op">=</span> NumericVector<span class="op">::</span>create<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">);</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  out<span class="op">.</span>names<span class="op">()</span> <span class="op">=</span> CharacterVector<span class="op">::</span>create<span class="op">(</span><span class="st">"a"</span><span class="op">,</span> <span class="st">"b"</span><span class="op">,</span> <span class="st">"c"</span><span class="op">);</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  out<span class="op">.</span>attr<span class="op">(</span><span class="st">"my-attr"</span><span class="op">)</span> <span class="op">=</span> <span class="st">"my-value"</span><span class="op">;</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  out<span class="op">.</span>attr<span class="op">(</span><span class="st">"class"</span><span class="op">)</span> <span class="op">=</span> <span class="st">"my-class"</span><span class="op">;</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> out<span class="op">;</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para los objetos S4, <code>.slot()</code> juega un papel similar a <code>.attr()</code>.</p>
+</section>
+</section>
+<section id="sec-rcpp-na" class="level2" data-number="25.4">
+<h2 data-number="25.4" class="anchored" data-anchor-id="sec-rcpp-na"><span class="header-section-number">25.4</span> Valores faltantes</h2>
+<p></p>
+<p>Si está trabajando con valores perdidos, necesita saber dos cosas:</p>
+<ul>
+<li>Cómo se comportan los valores faltantes de R en los escalares de C++ (por ejemplo, <code>doble</code>).</li>
+<li>Cómo obtener y establecer valores faltantes en vectores (por ejemplo, <code>NumericVector</code>).</li>
+</ul>
+<section id="escalares" class="level3" data-number="25.4.1">
+<h3 data-number="25.4.1" class="anchored" data-anchor-id="escalares"><span class="header-section-number">25.4.1</span> Escalares</h3>
+<p>El siguiente código explora lo que sucede cuando tomas uno de los valores faltantes de R, lo conviertes en un escalar y luego vuelves a convertirlo en un vector R. Tenga en cuenta que este tipo de experimentación es una forma útil de descubrir qué hace cualquier operación.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>List scalar_missings<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> int_s <span class="op">=</span> NA_INTEGER<span class="op">;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  String chr_s <span class="op">=</span> NA_STRING<span class="op">;</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">bool</span> lgl_s <span class="op">=</span> NA_LOGICAL<span class="op">;</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> num_s <span class="op">=</span> NA_REAL<span class="op">;</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> List<span class="op">::</span>create<span class="op">(</span>int_s<span class="op">,</span> chr_s<span class="op">,</span> lgl_s<span class="op">,</span> num_s<span class="op">);</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(<span class="fu">scalar_missings</span>())</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; List of 4</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ : int NA</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ : chr NA</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ : logi TRUE</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ : num NA</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Con la excepción de <code>bool</code>, las cosas se ven bastante bien aquí: todos los valores que faltan se han conservado. Sin embargo, como veremos en las siguientes secciones, las cosas no son tan sencillas como parecen.</p>
+<section id="enteros" class="level4" data-number="25.4.1.1">
+<h4 data-number="25.4.1.1" class="anchored" data-anchor-id="enteros"><span class="header-section-number">25.4.1.1</span> Enteros</h4>
+<p>Con números enteros, los valores faltantes se almacenan como el número entero más pequeño. Si no les haces nada, se conservarán. Pero, dado que C++ no sabe que el entero más pequeño tiene este comportamiento especial, si hace algo al respecto, es probable que obtenga un valor incorrecto: por ejemplo, <code>evalCpp('NA_INTEGER + 1')</code> da -2147483647.</p>
+<p>Entonces, si desea trabajar con valores faltantes en números enteros, use un <code>IntegerVector</code> de longitud 1 o tenga mucho cuidado con su código.</p>
+</section>
+<section id="dobles" class="level4" data-number="25.4.1.2">
+<h4 data-number="25.4.1.2" class="anchored" data-anchor-id="dobles"><span class="header-section-number">25.4.1.2</span> Dobles</h4>
+<p>Con los dobles, es posible que pueda ignorar los valores faltantes y trabajar con NaN (no un número). Esto se debe a que el NA de R es un tipo especial de número NaN de punto flotante IEEE 754. Entonces, cualquier expresión lógica que involucre un NaN (o en C++, NAN) siempre se evalúa como FALSE:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">evalCpp</span>(<span class="st">"NAN == 1"</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">evalCpp</span>(<span class="st">"NAN &lt; 1"</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">evalCpp</span>(<span class="st">"NAN &gt; 1"</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="fu">evalCpp</span>(<span class="st">"NAN == NAN"</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>(Aquí estoy usando <code>evalCpp()</code> que le permite ver el resultado de ejecutar una sola expresión de C++, lo que la hace excelente para este tipo de experimentación interactiva.)</p>
+<p>Pero tenga cuidado al combinarlos con valores booleanos:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">evalCpp</span>(<span class="st">"NAN &amp;&amp; TRUE"</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">evalCpp</span>(<span class="st">"NAN || FALSE"</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Sin embargo, en contextos numéricos, los NaN propagarán los NA:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">evalCpp</span>(<span class="st">"NAN + 1"</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] NaN</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">evalCpp</span>(<span class="st">"NAN - 1"</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] NaN</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">evalCpp</span>(<span class="st">"NAN / 1"</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] NaN</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="fu">evalCpp</span>(<span class="st">"NAN * 1"</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] NaN</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="caracteres" class="level3" data-number="25.4.2">
+<h3 data-number="25.4.2" class="anchored" data-anchor-id="caracteres"><span class="header-section-number">25.4.2</span> Caracteres</h3>
+<p><code>String</code> es una clase de cadena de caracteres escalar introducida por Rcpp, por lo que sabe cómo lidiar con los valores faltantes.</p>
+</section>
+<section id="booleano" class="level3" data-number="25.4.3">
+<h3 data-number="25.4.3" class="anchored" data-anchor-id="booleano"><span class="header-section-number">25.4.3</span> Booleano</h3>
+<p>Mientras que <code>bool</code> de C++ tiene dos valores posibles (<code>true</code> o <code>false</code>), un vector lógico en R tiene tres (<code>TRUE</code>, <code>FALSE</code> y <code>NA</code>). Si fuerza un vector lógico de longitud 1, asegúrese de que no contenga ningún valor faltante; de lo contrario, se convertirán en VERDADERO. Una solución fácil es usar <code>int</code> en su lugar, ya que esto puede representar <code>TRUE</code>, <code>FALSE</code> y <code>NA</code>.</p>
+</section>
+<section id="sec-vectors-rcpp" class="level3" data-number="25.4.4">
+<h3 data-number="25.4.4" class="anchored" data-anchor-id="sec-vectors-rcpp"><span class="header-section-number">25.4.4</span> Vectores</h3>
+<p>Con los vectores, debe usar un valor perdido específico para el tipo de vector, <code>NA_REAL</code>, <code>NA_INTEGER</code>, <code>NA_LOGICAL</code>, <code>NA_STRING</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>List missing_sampler<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> List<span class="op">::</span>create<span class="op">(</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    NumericVector<span class="op">::</span>create<span class="op">(</span>NA_REAL<span class="op">),</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    IntegerVector<span class="op">::</span>create<span class="op">(</span>NA_INTEGER<span class="op">),</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    LogicalVector<span class="op">::</span>create<span class="op">(</span>NA_LOGICAL<span class="op">),</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    CharacterVector<span class="op">::</span>create<span class="op">(</span>NA_STRING<span class="op">)</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">);</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(<span class="fu">missing_sampler</span>())</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; List of 4</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ : num NA</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ : int NA</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ : logi NA</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ : chr NA</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ejercicios" class="level3" data-number="25.4.5">
+<h3 data-number="25.4.5" class="anchored" data-anchor-id="ejercicios"><span class="header-section-number">25.4.5</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Vuelva a escribir cualquiera de las funciones del primer ejercicio de la <a href="#sec-exercise-started" class="quarto-xref"><span>Sección 25.2.6</span></a> para tratar con los valores faltantes. Si <code>na.rm</code> es verdadero, ignore los valores faltantes. Si <code>na.rm</code> es falso, devuelve un valor faltante si la entrada contiene valores faltantes. Algunas buenas funciones para practicar son <code>min()</code>, <code>max()</code>, <code>range()</code>, <code>mean()</code> y <code>var()</code>.</p></li>
+<li><p>Vuelva a escribir <code>cumsum()</code> y <code>diff()</code> para que puedan manejar los valores faltantes. Tenga en cuenta que estas funciones tienen un comportamiento un poco más complicado.</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-stl" class="level2" data-number="25.5">
+<h2 data-number="25.5" class="anchored" data-anchor-id="sec-stl"><span class="header-section-number">25.5</span> Biblioteca de plantillas estándar</h2>
+<p>La verdadera fortaleza de C++ se revela cuando necesita implementar algoritmos más complejos. La biblioteca de plantillas estándar (STL) proporciona un conjunto de estructuras de datos y algoritmos extremadamente útiles. Esta sección explicará algunos de los algoritmos y estructuras de datos más importantes y le indicará la dirección correcta para obtener más información. No puedo enseñarte todo lo que necesitas saber sobre STL, pero espero que los ejemplos te muestren el poder de STL y te convenzan de que es útil aprender más. </p>
+<p>Si necesita un algoritmo o una estructura de datos que no esté implementado en STL, un buen lugar para buscar es <a href="http://www.boost.org/doc/">boost</a>. La instalación de boost en su computadora está más allá del alcance de este capítulo, pero una vez que lo haya instalado, puede usar las estructuras de datos y los algoritmos de boost al incluir el archivo de encabezado apropiado con (p.&nbsp;ej.) <code>#include &lt;boost/array.hpp&gt;</code>.</p>
+<section id="usar-iteradores" class="level3" data-number="25.5.1">
+<h3 data-number="25.5.1" class="anchored" data-anchor-id="usar-iteradores"><span class="header-section-number">25.5.1</span> Usar iteradores</h3>
+<p>Los iteradores se utilizan mucho en STL: muchas funciones aceptan o devuelven iteradores. Son el siguiente paso de los bucles básicos, abstrayendo los detalles de la estructura de datos subyacente. Los iteradores tienen tres operadores principales: </p>
+<ol type="1">
+<li>Avanza con <code>++</code>.</li>
+<li>Obtener el valor al que se refieren, o <strong>desreferenciar</strong>, con <code>*</code>.</li>
+<li>Comparar con <code>==</code>.</li>
+</ol>
+<p>Por ejemplo, podríamos reescribir nuestra función de suma usando iteradores:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> sum3<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> total <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  NumericVector<span class="op">::</span>iterator it<span class="op">;</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span>it <span class="op">=</span> x<span class="op">.</span>begin<span class="op">();</span> it <span class="op">!=</span> x<span class="op">.</span>end<span class="op">();</span> <span class="op">++</span>it<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    total <span class="op">+=</span> <span class="op">*</span>it<span class="op">;</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> total<span class="op">;</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Los principales cambios están en el bucle for:</p>
+<ul>
+<li><p>Comenzamos en <code>x.begin()</code> y repetimos hasta llegar a <code>x.end()</code>. Una pequeña optimización es almacenar el valor del iterador final para que no tengamos que buscarlo cada vez. Esto solo ahorra alrededor de 2 ns por iteración, por lo que solo es importante cuando los cálculos en el ciclo son muy simples.</p></li>
+<li><p>En lugar de indexar en x, usamos el operador de desreferencia para obtener su valor actual: <code>*it</code>.</p></li>
+<li><p>Observe el tipo de iterador: <code>NumericVector::iterator</code>. Cada tipo de vector tiene su propio tipo de iterador: <code>LogicalVector::iterator</code>, <code>CharacterVector::iterator</code>, etc.</p></li>
+</ul>
+<p>Este código se puede simplificar aún más mediante el uso de una característica de C++11: bucles for basados en rangos. C ++ 11 está ampliamente disponible y se puede activar fácilmente para usar con Rcpp agregando <code>[[Rcpp::plugins(cpp11)]]</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::plugins(cpp11)]]</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> sum4<span class="op">(</span>NumericVector xs<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> total <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="at">const</span> <span class="kw">auto</span> <span class="op">&amp;</span>x <span class="op">:</span> xs<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    total <span class="op">+=</span> x<span class="op">;</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> total<span class="op">;</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Los iteradores también nos permiten usar los equivalentes de C++ de la familia de funciones apply. Por ejemplo, podríamos volver a escribir <code>sum()</code> para usar la función <code>accumulate()</code>, que toma un iterador inicial y final, y suma todos los valores en el vector. El tercer argumento para <code>acumular</code> da el valor inicial: es particularmente importante porque esto también determina el tipo de datos que usa <code>acumular</code> (así que usamos <code>0.0</code> y no <code>0</code> para que <code>acumule</code> use un <code>doble</code>, no un <code>int</code>.). Para usar <code>accumulate()</code> necesitamos incluir el encabezado <code>&lt;numeric&gt;</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;numeric&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> sum5<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">std::</span>accumulate<span class="op">(</span>x<span class="op">.</span>begin<span class="op">(),</span> x<span class="op">.</span>end<span class="op">(),</span> <span class="fl">0.0</span><span class="op">);</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="algoritmos" class="level3" data-number="25.5.2">
+<h3 data-number="25.5.2" class="anchored" data-anchor-id="algoritmos"><span class="header-section-number">25.5.2</span> Algoritmos</h3>
+<p>El encabezado <code>&lt;algorithm&gt;</code> proporciona una gran cantidad de algoritmos que funcionan con iteradores. Una buena referencia está disponible en <a href="https://en.cppreference.com/w/cpp/algorithm" class="uri">https://en.cppreference.com/w/cpp/algorithm</a>. Por ejemplo, podríamos escribir una versión básica de Rcpp de <code>findInterval()</code> que toma dos argumentos, un vector de valores y un vector de rupturas, y ubica el contenedor en el que cae cada x. Esto muestra algunas características más avanzadas del iterador. Lea el código a continuación y vea si puede descubrir cómo funciona. </p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;algorithm&gt;</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>IntegerVector findInterval2<span class="op">(</span>NumericVector x<span class="op">,</span> NumericVector breaks<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  IntegerVector out<span class="op">(</span>x<span class="op">.</span>size<span class="op">());</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  NumericVector<span class="op">::</span>iterator it<span class="op">,</span> pos<span class="op">;</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  IntegerVector<span class="op">::</span>iterator out_it<span class="op">;</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span>it <span class="op">=</span> x<span class="op">.</span>begin<span class="op">(),</span> out_it <span class="op">=</span> out<span class="op">.</span>begin<span class="op">();</span> it <span class="op">!=</span> x<span class="op">.</span>end<span class="op">();</span> </span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>      <span class="op">++</span>it<span class="op">,</span> <span class="op">++</span>out_it<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>    pos <span class="op">=</span> <span class="bu">std::</span>upper_bound<span class="op">(</span>breaks<span class="op">.</span>begin<span class="op">(),</span> breaks<span class="op">.</span>end<span class="op">(),</span> <span class="op">*</span>it<span class="op">);</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>out_it <span class="op">=</span> <span class="bu">std::</span>distance<span class="op">(</span>breaks<span class="op">.</span>begin<span class="op">(),</span> pos<span class="op">);</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> out<span class="op">;</span></span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Los puntos clave son:</p>
+<ul>
+<li><p>Pasamos por dos iteradores (entrada y salida) simultáneamente.</p></li>
+<li><p>Podemos asignar a un iterador desreferenciado (<code>out_it</code>) para cambiar los valores en <code>out</code>.</p></li>
+<li><p><code>upper_bound()</code> devuelve un iterador. Si quisiéramos el valor de <code>upper_bound()</code>, podríamos quitarle la referencia; para averiguar su ubicación, usamos la función <code>distance()</code>.</p></li>
+<li><p>Pequeña nota: si queremos que esta función sea tan rápida como <code>findInterval()</code> en R (que usa código C escrito a mano), necesitamos calcular las llamadas a <code>.begin()</code> y <code>.end()</code> una vez y guardar los resultados. Esto es fácil, pero distrae la atención de este ejemplo, por lo que se ha omitido. Hacer este cambio produce una función que es un poco más rápida que la función <code>findInterval()</code> de R, pero es aproximadamente 1/10 del código.</p></li>
+</ul>
+<p>En general, es mejor usar algoritmos de STL que bucles enrollados a mano. En <em>Effective STL</em>, Scott Meyers da tres razones: eficiencia, corrección y mantenibilidad. Los algoritmos de STL están escritos por expertos en C++ para que sean extremadamente eficientes y han existido durante mucho tiempo, por lo que están bien probados. El uso de algoritmos estándar también hace que la intención de su código sea más clara, lo que ayuda a que sea más legible y fácil de mantener.</p>
+</section>
+<section id="sec-data-structures-rcpp" class="level3" data-number="25.5.3">
+<h3 data-number="25.5.3" class="anchored" data-anchor-id="sec-data-structures-rcpp"><span class="header-section-number">25.5.3</span> Estructuras de datos</h3>
+<p>El STL proporciona un gran conjunto de estructuras de datos: <code>array</code>, <code>bitset</code>, <code>list</code>, <code>forward_list</code>, <code>map</code>, <code>multimap</code>, <code>multiset</code>, <code>priority_queue</code>, <code>queue</code>, <code>deque</code>, <code>set</code>, <code>stack</code>, <code>unordered_map</code>, <code>unordered_set</code>, <code>unordered_multimap</code>, <code>unordered_multiset</code>, y <code>vector</code>. Las más importantes de estas estructuras de datos son el <code>vector</code>, el <code>unordered_set</code> y el <code>unordered_map</code>. Nos centraremos en estos tres en esta sección, pero el uso de los otros es similar: solo tienen diferentes compensaciones de rendimiento. Por ejemplo, <code>deque</code> (pronunciado “deck”) tiene una interfaz muy similar a los vectores pero una implementación subyacente diferente que tiene diferentes compensaciones de rendimiento. Es posible que desee probarlo para su problema. Una buena referencia para las estructuras de datos STL es <a href="https://en.cppreference.com/w/cpp/container" class="uri">https://en.cppreference.com/w/cpp/container</a> — Le recomiendo que lo mantenga abierto mientras trabaja con STL.</p>
+<p>Rcpp sabe cómo convertir muchas estructuras de datos STL a sus equivalentes R, por lo que puede devolverlas desde sus funciones sin convertirlas explícitamente en estructuras de datos R.</p>
+</section>
+<section id="sec-vectors-stl" class="level3" data-number="25.5.4">
+<h3 data-number="25.5.4" class="anchored" data-anchor-id="sec-vectors-stl"><span class="header-section-number">25.5.4</span> Vectores</h3>
+<p>Un vector STL es muy similar a un vector R, excepto que crece de manera eficiente. Esto hace que los vectores sean apropiados para usar cuando no se sabe de antemano qué tan grande será la salida. Los vectores tienen una plantilla, lo que significa que debe especificar el tipo de objeto que contendrá el vector cuando lo cree: <code>vector&lt;int&gt;</code>, <code>vector&lt;bool&gt;</code>, <code>vector&lt;double&gt;</code>, <code>vector&lt;String&gt;</code>. Puede acceder a elementos individuales de un vector usando la notación estándar <code>[]</code>, y puede agregar un nuevo elemento al final del vector usando <code>.push_back()</code>. Si tiene una idea de antemano de qué tan grande será el vector, puede usar <code>.reserve()</code> para asignar suficiente almacenamiento. </p>
+<p>El siguiente código implementa la codificación de longitud de ejecución (<code>rle()</code>). Produce dos vectores de salida: un vector de valores y un vector de “longitudes” que indica cuántas veces se repite cada elemento. Funciona recorriendo el vector de entrada <code>x</code> comparando cada valor con el anterior: si es el mismo, incrementa el último valor en <code>lengths</code>; si es diferente, agrega el valor al final de <code>values</code> y establece la longitud correspondiente en 1.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>List rleC<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> lengths<span class="op">;</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> values<span class="op">;</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Initialise first value</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> prev <span class="op">=</span> x<span class="op">[</span><span class="dv">0</span><span class="op">];</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  values<span class="op">.</span>push_back<span class="op">(</span>prev<span class="op">);</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>  lengths<span class="op">.</span>push_back<span class="op">(</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>  NumericVector<span class="op">::</span>iterator it<span class="op">;</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span>it <span class="op">=</span> x<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> <span class="dv">1</span><span class="op">;</span> it <span class="op">!=</span> x<span class="op">.</span>end<span class="op">();</span> <span class="op">++</span>it<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>prev <span class="op">==</span> <span class="op">*</span>it<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>      lengths<span class="op">[</span>i<span class="op">]++;</span></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>      values<span class="op">.</span>push_back<span class="op">(*</span>it<span class="op">);</span></span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>      lengths<span class="op">.</span>push_back<span class="op">(</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>      i<span class="op">++;</span></span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>      prev <span class="op">=</span> <span class="op">*</span>it<span class="op">;</span></span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> List<span class="op">::</span>create<span class="op">(</span></span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>    _<span class="op">[</span><span class="st">"lengths"</span><span class="op">]</span> <span class="op">=</span> lengths<span class="op">,</span> </span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a>    _<span class="op">[</span><span class="st">"values"</span><span class="op">]</span> <span class="op">=</span> values</span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a>  <span class="op">);</span></span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>(Una implementación alternativa sería reemplazar <code>i</code> con el iterador <code>lengths.rbegin()</code> que siempre apunta al último elemento del vector. Es posible que desee intentar implementar eso.)</p>
+<p>Otros métodos de un vector se describen en <a href="https://en.cppreference.com/w/cpp/container/vector" class="uri">https://en.cppreference.com/w/cpp/container/vector</a>.</p>
+</section>
+<section id="conjuntos" class="level3" data-number="25.5.5">
+<h3 data-number="25.5.5" class="anchored" data-anchor-id="conjuntos"><span class="header-section-number">25.5.5</span> Conjuntos</h3>
+<p>Los conjuntos mantienen un conjunto único de valores y pueden indicar de manera eficiente si ha visto un valor antes. Son útiles para problemas que involucran duplicados o valores únicos (como <code>unique</code>, <code>duplicated</code> o <code>in</code>). C++ proporciona tanto conjuntos ordenados (<code>std::set</code>) como desordenados (<code>std::unordered_set</code>), dependiendo de si el orden es importante para usted o no. Los conjuntos desordenados tienden a ser mucho más rápidos (porque usan una tabla hash internamente en lugar de un árbol), por lo que incluso si necesita un conjunto ordenado, debe considerar usar un conjunto desordenado y luego ordenar la salida. Al igual que los vectores, los conjuntos tienen plantillas, por lo que debe solicitar el tipo de conjunto adecuado para su propósito: <code>unordered_set&lt;int&gt;</code>, <code>unordered_set&lt;bool&gt;</code>, etc. Hay más detalles disponibles en <a href="https://en.cppreference.com/w/cpp/container/set" class="uri">https://en.cppreference.com/w/cpp/container/set</a> y <a href="https://en.cppreference.com/w/cpp/container/unordered_set" class="uri">https://en.cppreference.com/w/cpp/container/unordered_set</a>. </p>
+<p>La siguiente función usa un conjunto desordenado para implementar un equivalente a <code>duplicated()</code> para vectores enteros. Tenga en cuenta el uso de <code>seen.insert(x[i]).second</code>. <code>insert()</code> devuelve un par, el valor <code>.first</code> es un iterador que apunta al elemento y el valor <code>.second</code> es un valor booleano que es verdadero si el valor fue una nueva adición al conjunto.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::plugins(cpp11)]]</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;unordered_set&gt;</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>LogicalVector duplicatedC<span class="op">(</span>IntegerVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>unordered_set<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> seen<span class="op">;</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n <span class="op">=</span> x<span class="op">.</span>size<span class="op">();</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  LogicalVector out<span class="op">(</span>n<span class="op">);</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>    out<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="op">!</span>seen<span class="op">.</span>insert<span class="op">(</span>x<span class="op">[</span>i<span class="op">]).</span>second<span class="op">;</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> out<span class="op">;</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="map" class="level3" data-number="25.5.6">
+<h3 data-number="25.5.6" class="anchored" data-anchor-id="map"><span class="header-section-number">25.5.6</span> Map</h3>
+<p></p>
+<p>Un mapa es similar a un conjunto, pero en lugar de almacenar presencia o ausencia, puede almacenar datos adicionales. Es útil para funciones como <code>table()</code> o <code>match()</code> que necesitan buscar un valor. Al igual que con los conjuntos, existen versiones ordenadas (<code>std::map</code>) y desordenadas (<code>std::unordered_map</code>). Dado que los mapas tienen un valor y una clave, debe especificar ambos tipos al inicializar un mapa: <code>mapa&lt;doble, int&gt;</code>, <code>mapa_desordenado&lt;int, doble&gt;</code>, etc. El siguiente ejemplo muestra cómo podrías usar un <code>map</code> para implementar <code>table()</code> para vectores numéricos:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>map<span class="op">&lt;</span><span class="dt">double</span><span class="op">,</span> <span class="dt">int</span><span class="op">&gt;</span> tableC<span class="op">(</span>NumericVector x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>map<span class="op">&lt;</span><span class="dt">double</span><span class="op">,</span> <span class="dt">int</span><span class="op">&gt;</span> counts<span class="op">;</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n <span class="op">=</span> x<span class="op">.</span>size<span class="op">();</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    counts<span class="op">[</span>x<span class="op">[</span>i<span class="op">]]++;</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> counts<span class="op">;</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ejercicios-1" class="level3" data-number="25.5.7">
+<h3 data-number="25.5.7" class="anchored" data-anchor-id="ejercicios-1"><span class="header-section-number">25.5.7</span> Ejercicios</h3>
+<p>Para practicar el uso de estructuras de datos y algoritmos STL, implemente lo siguiente mediante funciones R en C++, utilizando las sugerencias proporcionadas:</p>
+<ol type="1">
+<li><p><code>median.default()</code> usando <code>partial_sort</code>.</p></li>
+<li><p><code>%in%</code> usando <code>unordered_set</code> y los <a href="https://en.cppreference.com/w/cpp/container/unordered_set/find"><code>find()</code></a> o <a href="https://en.cppreference.com/w/cpp/container/unordered_set/count"><code>count()</code></a> métodos.</p></li>
+<li><p><code>unique()</code> usando un <code>unordered_set</code> (desafío: ¡hazlo en una línea!).</p></li>
+<li><p><code>min()</code> usando <code>std::min()</code>, o <code>max()</code> usando <code>std::max()</code>.</p></li>
+<li><p><code>which.min()</code> usando <code>min_element</code>, o <code>which.max()</code> usando <code>max_element</code>.</p></li>
+<li><p><code>setdiff()</code>, <code>union()</code>, y <code>intersect()</code> para números enteros usando rangos ordenados y <code>set_union</code>, <code>set_intersection</code> y <code>set_difference</code>.</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-rcpp-case-studies" class="level2" data-number="25.6">
+<h2 data-number="25.6" class="anchored" data-anchor-id="sec-rcpp-case-studies"><span class="header-section-number">25.6</span> Caso de estudio</h2>
+<p>Los siguientes estudios de casos ilustran algunos usos reales de C++ para reemplazar el código R lento.</p>
+<section id="muestreador-de-gibbs" class="level3" data-number="25.6.1">
+<h3 data-number="25.6.1" class="anchored" data-anchor-id="muestreador-de-gibbs"><span class="header-section-number">25.6.1</span> Muestreador de Gibbs</h3>
+<!-- FIXME: necesita más contexto? -->
+<p>El siguiente estudio de caso actualiza un ejemplo <a href="http://dirk.eddelbuettel.com/blog/2011/07/14/">sobre el que se escribió en un blog</a> de Dirk Eddelbuettel, que ilustra la conversión de una muestra de Gibbs en R a C++. El código R y C++ que se muestra a continuación es muy similar (solo tomó unos minutos convertir la versión R a la versión C++), pero se ejecuta unas 20 veces más rápido en mi computadora. La publicación del blog de Dirk también muestra otra forma de hacerlo aún más rápido: usar las funciones de generador de números aleatorios más rápidas en GSL (fácilmente accesible desde R a través del paquete RcppGSL) puede hacerlo otras dos o tres veces más rápido. </p>
+<p>El código R es el siguiente:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>gibbs_r <span class="ot">&lt;-</span> <span class="cf">function</span>(N, thin) {</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> N, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> y <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N) {</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>thin) {</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>      x <span class="ot">&lt;-</span> <span class="fu">rgamma</span>(<span class="dv">1</span>, <span class="dv">3</span>, y <span class="sc">*</span> y <span class="sc">+</span> <span class="dv">4</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>      y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (x <span class="sc">+</span> <span class="dv">1</span>), <span class="dv">1</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> (x <span class="sc">+</span> <span class="dv">1</span>)))</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>    mat[i, ] <span class="ot">&lt;-</span> <span class="fu">c</span>(x, y)</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>  mat</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esto es fácil de convertir a C++. Nosotros:</p>
+<ul>
+<li><p>Agregar declaraciones de tipo a todas las variables.</p></li>
+<li><p>Utilice <code>(</code> en lugar de <code>[</code> para indexar en la matriz.</p></li>
+<li><p>Subíndice los resultados de <code>rgamma</code> y <code>rnorm</code> para convertir de un vector a un escalar.</p></li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>NumericMatrix gibbs_cpp<span class="op">(</span><span class="dt">int</span> N<span class="op">,</span> <span class="dt">int</span> thin<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  NumericMatrix mat<span class="op">(</span>N<span class="op">,</span> <span class="dv">2</span><span class="op">);</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> x <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> y <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> N<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> thin<span class="op">;</span> j<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>      x <span class="op">=</span> rgamma<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">1</span> <span class="op">/</span> <span class="op">(</span>y <span class="op">*</span> y <span class="op">+</span> <span class="dv">4</span><span class="op">))[</span><span class="dv">0</span><span class="op">];</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>      y <span class="op">=</span> rnorm<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">1</span> <span class="op">/</span> <span class="op">(</span>x <span class="op">+</span> <span class="dv">1</span><span class="op">),</span> <span class="dv">1</span> <span class="op">/</span> sqrt<span class="op">(</span><span class="dv">2</span> <span class="op">*</span> <span class="op">(</span>x <span class="op">+</span> <span class="dv">1</span><span class="op">)))[</span><span class="dv">0</span><span class="op">];</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>    mat<span class="op">(</span>i<span class="op">,</span> <span class="dv">0</span><span class="op">)</span> <span class="op">=</span> x<span class="op">;</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>    mat<span class="op">(</span>i<span class="op">,</span> <span class="dv">1</span><span class="op">)</span> <span class="op">=</span> y<span class="op">;</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span><span class="op">(</span>mat<span class="op">);</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La evaluación comparativa de los dos rendimientos de implementación:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gibbs_r</span>(<span class="dv">100</span>, <span class="dv">10</span>),</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gibbs_cpp</span>(<span class="dv">100</span>, <span class="dv">10</span>),</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">check =</span> <span class="cn">FALSE</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 6</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression              min   median `itr/sec` mem_alloc `gc/sec`</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 gibbs_r(100, 10)     2.36ms   2.41ms      411.   107.5KB     15.1</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 gibbs_cpp(100, 10) 238.09µs 254.29µs     3883.    1.61KB     14.5</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="r-vectorización-frente-a-vectorización-c" class="level3" data-number="25.6.2">
+<h3 data-number="25.6.2" class="anchored" data-anchor-id="r-vectorización-frente-a-vectorización-c"><span class="header-section-number">25.6.2</span> R vectorización frente a vectorización C++</h3>
+<!-- FIXME: necesita más contexto? -->
+<p>Este ejemplo está adaptado de <a href="https://gweissman.github.io/post/rcpp-is-Smoking-fast-for-agent-based-models-%20en-marcos-de-datos/">“Rcpp fuma rápido para modelos basados en agentes en marcos de datos”</a>. El desafío es predecir la respuesta de un modelo a partir de tres entradas. La versión básica de R del predictor se ve así:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>vacc1a <span class="ot">&lt;-</span> <span class="cf">function</span>(age, female, ily) {</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fl">0.25</span> <span class="sc">+</span> <span class="fl">0.3</span> <span class="sc">*</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="fl">0.04</span> <span class="sc">*</span> age)) <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> ily</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p <span class="sc">*</span> <span class="cf">if</span> (female) <span class="fl">1.25</span> <span class="cf">else</span> <span class="fl">0.75</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="dv">0</span>, p)</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="dv">1</span>, p)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  p</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Queremos poder aplicar esta función a muchas entradas, por lo que podríamos escribir una versión de entrada vectorial usando un bucle for.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>vacc1 <span class="ot">&lt;-</span> <span class="cf">function</span>(age, female, ily) {</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(age)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_len</span>(n)) {</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    out[i] <span class="ot">&lt;-</span> <span class="fu">vacc1a</span>(age[i], female[i], ily[i])</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si está familiarizado con R, tendrá el presentimiento de que esto será lento, y de hecho lo es. Hay dos formas en las que podemos atacar este problema. Si tiene un buen vocabulario de R, puede ver inmediatamente cómo vectorizar la función (usando <code>ifelse()</code>, <code>pmin()</code> y <code>pmax()</code>). Alternativamente, podríamos reescribir <code>vacc1a()</code> y <code>vacc1()</code> en C++, utilizando nuestro conocimiento de que los bucles y las llamadas a funciones tienen una sobrecarga mucho menor en C++.</p>
+<p>Cualquiera de los dos enfoques es bastante sencillo. En R:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>vacc2 <span class="ot">&lt;-</span> <span class="cf">function</span>(age, female, ily) {</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fl">0.25</span> <span class="sc">+</span> <span class="fl">0.3</span> <span class="sc">*</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="fl">0.04</span> <span class="sc">*</span> age)) <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">*</span> ily</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p <span class="sc">*</span> <span class="fu">ifelse</span>(female, <span class="fl">1.25</span>, <span class="fl">0.75</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="dv">0</span>, p)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">pmin</span>(<span class="dv">1</span>, p)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  p</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>(Si ha trabajado mucho con R, es posible que reconozca algunos cuellos de botella potenciales en este código: se sabe que <code>ifelse</code>, <code>pmin</code> y <code>pmax</code> son lentos y podrían reemplazarse con <code>p * 0.75 + p * 0.5 * mujer</code>, <code>p[p &lt; 0] &lt;- 0</code>, <code>p[p &gt; 1] &lt;- 1</code>. Es posible que desee intentar cronometrar esas variaciones.)</p>
+<p>O en C++:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;Rcpp.h&gt;</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> Rcpp<span class="op">;</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> vacc3a<span class="op">(</span><span class="dt">double</span> age<span class="op">,</span> <span class="dt">bool</span> female<span class="op">,</span> <span class="dt">bool</span> ily<span class="op">){</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> p <span class="op">=</span> <span class="fl">0.25</span> <span class="op">+</span> <span class="fl">0.3</span> <span class="op">*</span> <span class="dv">1</span> <span class="op">/</span> <span class="op">(</span><span class="dv">1</span> <span class="op">-</span> exp<span class="op">(</span><span class="fl">0.04</span> <span class="op">*</span> age<span class="op">))</span> <span class="op">+</span> <span class="fl">0.1</span> <span class="op">*</span> ily<span class="op">;</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  p <span class="op">=</span> p <span class="op">*</span> <span class="op">(</span>female <span class="op">?</span> <span class="fl">1.25</span> <span class="op">:</span> <span class="fl">0.75</span><span class="op">);</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  p <span class="op">=</span> <span class="bu">std::</span>max<span class="op">(</span>p<span class="op">,</span> <span class="fl">0.0</span><span class="op">);</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>  p <span class="op">=</span> <span class="bu">std::</span>min<span class="op">(</span>p<span class="op">,</span> <span class="fl">1.0</span><span class="op">);</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> p<span class="op">;</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>NumericVector vacc3<span class="op">(</span>NumericVector age<span class="op">,</span> LogicalVector female<span class="op">,</span> </span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>                    LogicalVector ily<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> n <span class="op">=</span> age<span class="op">.</span>size<span class="op">();</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>  NumericVector out<span class="op">(</span>n<span class="op">);</span></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>    out<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> vacc3a<span class="op">(</span>age<span class="op">[</span>i<span class="op">],</span> female<span class="op">[</span>i<span class="op">],</span> ily<span class="op">[</span>i<span class="op">]);</span></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> out<span class="op">;</span></span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A continuación, generamos algunos datos de muestra y verificamos que las tres versiones devuelvan los mismos valores:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>age <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">50</span>, <span class="at">sd =</span> <span class="dv">10</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>female <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(T, F), n, <span class="at">rep =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>ily <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(T, F), n, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.2</span>), <span class="at">rep =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all.equal</span>(<span class="fu">vacc1</span>(age, female, ily), <span class="fu">vacc2</span>(age, female, ily)),</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all.equal</span>(<span class="fu">vacc1</span>(age, female, ily), <span class="fu">vacc3</span>(age, female, ily))</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La publicación del blog original olvidó hacer esto e introdujo un error en la versión C++: usaba <code>0.004</code> en lugar de <code>0.04</code>. Finalmente, podemos comparar nuestros tres enfoques:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">vacc1 =</span> <span class="fu">vacc1</span>(age, female, ily),</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">vacc2 =</span> <span class="fu">vacc2</span>(age, female, ily),</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">vacc3 =</span> <span class="fu">vacc3</span>(age, female, ily)</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 6</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 vacc1        1.49ms   1.54ms      600.    7.86KB     19.5</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 vacc2       41.81µs   43.5µs    21846.  148.56KB     45.0</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 vacc3       11.35µs  11.62µs    85187.   14.48KB     17.0</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>No es sorprendente que nuestro enfoque original con bucles sea muy lento. La vectorización en R proporciona una gran aceleración, y podemos obtener aún más rendimiento (unas diez veces) con el ciclo de C++. Me sorprendió un poco que C++ fuera mucho más rápido, pero se debe a que la versión R tiene que crear 11 vectores para almacenar resultados intermedios, mientras que el código C++ solo necesita crear 1.</p>
+</section>
+</section>
+<section id="sec-rcpp-package" class="level2" data-number="25.7">
+<h2 data-number="25.7" class="anchored" data-anchor-id="sec-rcpp-package"><span class="header-section-number">25.7</span> Using Rcpp in a package</h2>
+<p>El mismo código C++ que se usa con <code>sourceCpp()</code> también se puede agrupar en un paquete. Hay varios beneficios de mover el código de un archivo fuente de C++ independiente a un paquete: </p>
+<ol type="1">
+<li><p>Su código puede estar disponible para los usuarios sin las herramientas de desarrollo de C++.</p></li>
+<li><p>El sistema de compilación de paquetes R gestiona automáticamente varios archivos de origen y sus dependencias.</p></li>
+<li><p>Los paquetes brindan infraestructura adicional para pruebas, documentación y consistencia.</p></li>
+</ol>
+<p>Para agregar <code>Rcpp</code> a un paquete existente, coloque sus archivos C++ en el directorio <code>src/</code> y cree o modifique los siguientes archivos de configuración:</p>
+<ul>
+<li><p>En <code>DESCRIPTION</code> añade</p>
+<pre><code>LinkingTo: Rcpp
+Imports: Rcpp</code></pre></li>
+<li><p>Asegúrese de que su <code>NAMESPACE</code> incluye:</p>
+<pre><code>useDynLib(mypackage)
+importFrom(Rcpp, sourceCpp)</code></pre>
+<p>Necesitamos importar algo (cualquier cosa) de Rcpp para que el código interno de Rcpp se cargue correctamente. Este es un error en R y, con suerte, se solucionará en el futuro.</p></li>
+</ul>
+<p>La forma más fácil de configurar esto automáticamente es llamar a <code>usethis::use_rcpp()</code>.</p>
+<p>Antes de compilar el paquete, deberá ejecutar <code>Rcpp::compileAttributes()</code>. Esta función escanea los archivos C++ en busca de atributos <code>Rcpp::export</code> y genera el código necesario para que las funciones estén disponibles en R. Vuelva a ejecutar <code>compileAttributes()</code> cada vez que se agreguen, eliminen o cambien sus firmas. Esto lo hace automáticamente el paquete devtools y Rstudio.</p>
+<p>Para obtener más detalles, consulte la viñeta del paquete Rcpp, <code>vignette("Rcpp-package")</code>.</p>
+</section>
+<section id="sec-rcpp-more" class="level2" data-number="25.8">
+<h2 data-number="25.8" class="anchored" data-anchor-id="sec-rcpp-more"><span class="header-section-number">25.8</span> Aprendiendo más</h2>
+<p>Este capítulo solo ha tocado una pequeña parte de Rcpp, brindándole las herramientas básicas para reescribir código R de bajo rendimiento en C++. Como se señaló, Rcpp tiene muchas otras capacidades que facilitan la interfaz de R con el código C++ existente, que incluyen:</p>
+<ul>
+<li><p>Características adicionales de los atributos, incluida la especificación de argumentos predeterminados, la vinculación en dependencias externas de C++ y la exportación de interfaces de C++ desde paquetes. Estas características y más están cubiertas en la viñeta de atributos de Rcpp, <code>vignette("Rcpp-attributes")</code>.</p></li>
+<li><p>Creación automática de contenedores entre estructuras de datos de C++ y estructuras de datos de R, incluida la asignación de clases de C++ a clases de referencia. Una buena introducción a este tema es la viñeta de módulos Rcpp, <code>vignette("Rcpp-modules")</code>.</p></li>
+<li><p>La guía de referencia rápida de Rcpp, <code>vignette("Rcpp-quickref")</code>, contiene un resumen útil de las clases de Rcpp y lenguajes de programación comunes.</p></li>
+</ul>
+<p>Recomiendo encarecidamente estar atento a la <a href="http://www.rcpp.org">página de inicio de Rcpp</a> y registrarse en la <a href="http://lists.r-forge.r-project.org/%20cgi-bin/mailman/listinfo/rcpp-devel">lista de correo de Rcpp</a>.</p>
+<p>Otros recursos que he encontrado útiles para aprender C++ son:</p>
+<ul>
+<li><p><em>Effective C++</em> <span class="citation" data-cites="effective-cpp">(<a href="References.html#ref-effective-cpp" role="doc-biblioref">Meyers 2005</a>)</span> y <em>Effective STL</em> <span class="citation" data-cites="effective-stl">(<a href="References.html#ref-effective-stl" role="doc-biblioref">Meyers 2001</a>)</span>.</p></li>
+<li><p><a href="http://www.icce.rug.nl/documents/cplusplus/cplusplus.html"><em>C++ Annotations</em></a>, dirigido a usuarios expertos en C (o cualquier otro lenguaje que use una gramática similar a C, como Perl o Java) que deseen saber más sobre C++ o hacer la transición a C++.</p></li>
+<li><p><a href="http://www.cs.helsinki.fi/u/tpkarkka/alglib/k06/"><em>Algorithm Libraries</em></a>, que proporciona una descripción más técnica, pero aún concisa, de conceptos importantes de STL. (Siga los enlaces debajo de las notas).</p></li>
+</ul>
+<p>Escribir código de rendimiento también puede requerir que reconsidere su enfoque básico: una sólida comprensión de las estructuras de datos y los algoritmos básicos es muy útil aquí. Eso está más allá del alcance de este libro, pero sugeriría el <em>Manual de diseño de algoritmos</em> <span class="citation" data-cites="alg-design-man">(<a href="References.html#ref-alg-design-man" role="doc-biblioref">Skiena 1998</a>)</span>, <a href="http://ocw.mit.edu/courses/electrical%20-engineering-and-computer-science/6-046j-introduction-to-algorithms-sma-5503-fall-2005/"><em>Introducción a los algoritmos</em> del MIT</a>, <em>Algorithms</em> de Robert Sedgewick y Kevin Wayne, que tiene un <a href="http:/%20/algs4.cs.princeton.edu/home/">libro de texto en línea gratuito</a> y un [curso de Coursera] correspondiente (https://www.coursera.org/learn/algorithms-part1).</p>
+</section>
+<section id="reconocimientos" class="level2" data-number="25.9">
+<h2 data-number="25.9" class="anchored" data-anchor-id="reconocimientos"><span class="header-section-number">25.9</span> Reconocimientos</h2>
+<p>Me gustaría agradecer a la lista de correo de Rcpp por muchas conversaciones útiles, en particular a Romain Francois y Dirk Eddelbuettel, quienes no solo han brindado respuestas detalladas a muchas de mis preguntas, sino que también han sido increíblemente receptivos para mejorar Rcpp. Este capítulo no hubiera sido posible sin JJ Allaire; me animó a aprender C++ y luego respondió muchas de mis preguntas tontas en el camino.</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-Rcpp" class="csl-entry" role="listitem">
+Eddelbuettel, Dirk, y Romain François. 2011. <span>«<span>Rcpp</span>: Seamless <span>R</span> and <span>C++</span> Integration»</span>. <em>Journal of Statistical Software</em> 40 (8): 1-18. <a href="https://doi.org/10.18637/jss.v040.i08">https://doi.org/10.18637/jss.v040.i08</a>.
+</div>
+<div id="ref-effective-stl" class="csl-entry" role="listitem">
+Meyers, Scott. 2001. <em>Effective <span>STL</span>: 50 specific ways to improve your use of the standard template library</em>. Pearson Education. <a href="http://amzn.com/0201749629">http://amzn.com/0201749629</a>.
+</div>
+<div id="ref-effective-cpp" class="csl-entry" role="listitem">
+———. 2005. <em>Effective <span>C++</span>: 55 specific ways to improve your programs and designs</em>. Pearson Education. <a href="http://amzn.com/0321334876">http://amzn.com/0321334876</a>.
+</div>
+<div id="ref-alg-design-man" class="csl-entry" role="listitem">
+Skiena, Steven S. 1998. <em>The Algorithm Design Manual</em>. Springer. <a href="http://amzn.com/0387948600">http://amzn.com/0387948600</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+
+<script>
+
+  // Chapter name
+  const currentChapterFile = window.location.pathname.split('/').pop().replace('.html', '');
+
+  //Deffining urls
+  const originalURL = "https://github.com/hadley/adv-r";
+  const translationURL = "https://github.com/davidrsch/adv-res";
+
+  //Deffining texts
+  const edit_text = "Editar esta página";
+  const issue_text = "Informar de un problema"
+
+  //Deffining git_i
+  const git_i = '<div><i class="bi bi-github"></i></div>';
+
+  // Adding TOC if not exist
+  const sidebarmargin = document.getElementById('quarto-margin-sidebar');
+  const buscar_TOC = document.getElementById('TOC');
+
+  if (!buscar_TOC) {
+    const crear_TOC = document.createElement('nav');
+    crear_TOC.id = 'TOC';
+    crear_TOC.role = "doc-toc";
+    crear_TOC.class = "toc-active";
+    sidebarmargin.appendChild(crear_TOC);
+  }
+
+
+  // Adding original github actions
+  const TOC = document.getElementById('TOC');
+  const originalga = document.createElement('h2');
+  originalga.textContent = "Original";
+  originalga.style["border-top"] = "1px solid #ccc";
+  originalga.style["padding-top"] = "0.5rem";
+  const toc_act_O = document.createElement('div');
+  toc_act_O.className = 'toc-actions';
+  toc_act_O.id = 'toc-act-O';
+  const act_link_O = document.createElement('div');
+  act_link_O.className='action-links';
+  act_link_O.id='act-link-O';
+  const edit_issue_O ='<p><a href="'+originalURL+'/edit/master/'+currentChapterFile+'.Rmd" class="toc-action">'+edit_text+'</p><p><a href="'+originalURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(originalga);
+  TOC.appendChild(toc_act_O);
+  toc_act_O.innerHTML += git_i;
+  toc_act_O.appendChild(act_link_O);
+  act_link_O.innerHTML += edit_issue_O;
+
+  // Adding translation github actions
+  const translationga = document.createElement('h2');
+  translationga.textContent = "Traducción";
+  const toc_act_T = document.createElement('div');
+  toc_act_T.className = 'toc-actions';
+  toc_act_T.id = 'toc-act-T';
+  const act_link_T = document.createElement('div');
+  act_link_T.className='action-links';
+  act_link_T.id='act-link-T';
+  const edit_issue_T ='<p><a href="'+translationURL+'/edit/main/'+currentChapterFile+'.qmd" class="toc-action">'+edit_text+'</p><p><a href="'+translationURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(translationga);
+  TOC.appendChild(toc_act_T);
+  toc_act_T.innerHTML += git_i;
+  toc_act_T.appendChild(act_link_T);
+  act_link_T.innerHTML += edit_issue_T;
+
+
+</script>
+
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Perf-improve.html" class="pagination-link" aria-label="Mejorando el desempeño">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Mejorando el desempeño</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./References.html" class="pagination-link" aria-label="Referencias">
+        <span class="nav-page-text">Referencias</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><b>“R Avanzado”</b> fue escrito por Hadley Wickham.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

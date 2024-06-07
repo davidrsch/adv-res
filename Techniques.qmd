@@ -1,9 +1,0 @@
-# Introducción {#sec-techniques .unnumbered}
-
-Los últimos cuatro capítulos cubren dos técnicas generales de programación: encontrar y corregir errores, y encontrar y corregir problemas de rendimiento. Las herramientas para medir y mejorar el rendimiento son particularmente importantes porque R no es un lenguaje rápido. Esto no es un accidente: R fue diseñado a propósito para hacer que el análisis de datos interactivo sea más fácil para los humanos, no para hacer que las computadoras sean lo más rápidas posible. Si bien R es lento en comparación con otros lenguajes de programación, para la mayoría de los propósitos, es lo suficientemente rápido. Estos capítulos lo ayudan a manejar los casos en los que R ya no es lo suficientemente rápido, ya sea mejorando el rendimiento de su código R o cambiando a un lenguaje, C++, que está diseñado para el rendimiento.
-
--   @sec-debugging habla de depuración, porque encontrar la causa raíz del error puede ser extremadamente frustrante. Afortunadamente, R tiene algunas herramientas excelentes para la depuración y, cuando se combinan con una estrategia sólida, debería poder encontrar la causa raíz de la mayoría de los problemas de forma rápida y relativamente sencilla.
-
--   @sec-perf-measure se enfoca en medir el desempeño.
-
--   @sec-perf-improve luego muestra cómo mejorar el rendimiento.

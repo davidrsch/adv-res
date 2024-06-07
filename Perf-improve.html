@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>R Avanzado - 24&nbsp; Mejorando el desempeño</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./Rcpp.html" rel="next">
+<link href="./Perf-measure.html" rel="prev">
+<link href="./cover.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="adv-r.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Techniques.html">Tecnicas</a></li><li class="breadcrumb-item"><a href="./Perf-improve.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Mejorando el desempeño</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Avanzado</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/adv-r">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/adv-res">
+            Traducción
+            </a>
+          </li>
+      </ul>
+    </div>
+    <a href="./R-Avanzado.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Fundamentos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Names-values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Nombres y valores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Vectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Vectores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Subsetting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Subconjunto</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Control-flow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Flujo de control</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Environments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Entornos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Conditions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Condiciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Programación funcional</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./FP.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functionals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Funcionales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-factories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Fábricas de funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-operators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Operadores de funciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Programación orientada a objetos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introdución</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./base-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Tipos básicos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">S3</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./R6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">R6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">S4</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Compensaciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Metaprogramación</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Meta.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Big-picture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Panorama general</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Expresiones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Quotation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Cuasicita</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Evaluation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Evaluación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Translation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Traducir código R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Tecnicas</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Techniques.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Depuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Medición de desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-improve.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Mejorando el desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Rcpp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Reescribiendo código de R en C++</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./References.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción"><span class="header-section-number">24.1</span> Introducción</a>
+  <ul class="collapse">
+  <li><a href="#estructura" id="toc-estructura" class="nav-link" data-scroll-target="#estructura">Estructura</a></li>
+  <li><a href="#requisitos-previos" id="toc-requisitos-previos" class="nav-link" data-scroll-target="#requisitos-previos">Requisitos previos</a></li>
+  </ul></li>
+  <li><a href="#sec-code-organisation" id="toc-sec-code-organisation" class="nav-link" data-scroll-target="#sec-code-organisation"><span class="header-section-number">24.2</span> Organización del código</a></li>
+  <li><a href="#sec-already-solved" id="toc-sec-already-solved" class="nav-link" data-scroll-target="#sec-already-solved"><span class="header-section-number">24.3</span> Comprobación de soluciones existentes</a>
+  <ul class="collapse">
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios"><span class="header-section-number">24.3.1</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-be-lazy" id="toc-sec-be-lazy" class="nav-link" data-scroll-target="#sec-be-lazy"><span class="header-section-number">24.4</span> Haciendo lo menos posible</a>
+  <ul class="collapse">
+  <li><a href="#mean" id="toc-mean" class="nav-link" data-scroll-target="#mean"><span class="header-section-number">24.4.1</span> <code>mean()</code></a></li>
+  <li><a href="#as.data.frame" id="toc-as.data.frame" class="nav-link" data-scroll-target="#as.data.frame"><span class="header-section-number">24.4.2</span> <code>as.data.frame()</code></a></li>
+  <li><a href="#ejercicios-1" id="toc-ejercicios-1" class="nav-link" data-scroll-target="#ejercicios-1"><span class="header-section-number">24.4.3</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-vectorise" id="toc-sec-vectorise" class="nav-link" data-scroll-target="#sec-vectorise"><span class="header-section-number">24.5</span> Vectorizar</a>
+  <ul class="collapse">
+  <li><a href="#ejercicios-2" id="toc-ejercicios-2" class="nav-link" data-scroll-target="#ejercicios-2"><span class="header-section-number">24.5.1</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-avoid-copies" id="toc-sec-avoid-copies" class="nav-link" data-scroll-target="#sec-avoid-copies"><span class="header-section-number">24.6</span> Evitar copias</a></li>
+  <li><a href="#sec-t-test" id="toc-sec-t-test" class="nav-link" data-scroll-target="#sec-t-test"><span class="header-section-number">24.7</span> Caso de estudio: t-test</a></li>
+  <li><a href="#sec-more-techniques" id="toc-sec-more-techniques" class="nav-link" data-scroll-target="#sec-more-techniques"><span class="header-section-number">24.8</span> Otras tecnicas</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Techniques.html">Tecnicas</a></li><li class="breadcrumb-item"><a href="./Perf-improve.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Mejorando el desempeño</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-perf-improve" class="quarto-section-identifier"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Mejorando el desempeño</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción" class="level2" data-number="24.1">
+<h2 data-number="24.1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">24.1</span> Introducción</h2>
+<p></p>
+<blockquote class="blockquote">
+<p>Deberíamos olvidarnos de las pequeñas eficiencias, digamos alrededor del 97% del tiempo: la optimización prematura es la raíz de todos los males. Sin embargo, no debemos dejar pasar nuestras oportunidades en ese crítico 3%. Un buen programador no se dejará llevar por la complacencia de tal razonamiento, será prudente al mirar cuidadosamente el código crítico; pero solo después de que ese código haya sido identificado.</p>
+<p>— Donald Knuth</p>
+</blockquote>
+<p>Una vez que haya utilizado la creación de perfiles para identificar un cuello de botella, debe hacerlo más rápido. Es difícil dar consejos generales sobre cómo mejorar el rendimiento, pero hago lo mejor que puedo con cuatro técnicas que se pueden aplicar en muchas situaciones. También sugeriré una estrategia general para la optimización del rendimiento que ayude a garantizar que su código más rápido siga siendo correcto.</p>
+<p>Es fácil quedar atrapado tratando de eliminar todos los cuellos de botella. ¡No! Su tiempo es valioso y es mejor gastarlo analizando sus datos, no eliminando posibles ineficiencias en su código. Sea pragmático: no gaste horas de su tiempo para ahorrar segundos de tiempo de computadora. Para hacer cumplir este consejo, debe establecer un objetivo de tiempo para su código y optimizar solo hasta ese objetivo. Esto significa que no eliminará todos los cuellos de botella. Algunas no las alcanzarás porque has cumplido tu objetivo. Es posible que deba pasar por alto otros y aceptarlos porque no hay una solución rápida y fácil o porque el código ya está bien optimizado y no es posible una mejora significativa. Acepte estas posibilidades y pase al siguiente candidato.</p>
+<p>Si desea obtener más información sobre las características de rendimiento del lenguaje R, le recomiendo <em>Evaluar el diseño del lenguaje R</em> <span class="citation" data-cites="r-design">(<a href="References.html#ref-r-design" role="doc-biblioref">Morandat et&nbsp;al. 2012</a>)</span>. Saca conclusiones al combinar un intérprete R modificado con un amplio conjunto de código que se encuentra en la naturaleza.</p>
+<section id="estructura" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="estructura">Estructura</h3>
+<ul>
+<li><p>La <a href="#sec-code-organisation" class="quarto-xref"><span>Sección 24.2</span></a> le enseña cómo organizar su código para que la optimización sea lo más fácil y libre de errores posible.</p></li>
+<li><p>La <a href="#sec-already-solved" class="quarto-xref"><span>Sección 24.3</span></a> le recuerda que busque las soluciones existentes.</p></li>
+<li><p>La <a href="#sec-be-lazy" class="quarto-xref"><span>Sección 24.4</span></a> enfatiza la importancia de ser perezoso: a menudo, la forma más fácil de hacer una función más rápida es dejar que haga menos trabajo.</p></li>
+<li><p>La <a href="#sec-vectorise" class="quarto-xref"><span>Sección 24.5</span></a> define de forma concisa la vectorización y le muestra cómo aprovechar al máximo las funciones integradas.</p></li>
+<li><p>La <a href="#sec-avoid-copies" class="quarto-xref"><span>Sección 24.6</span></a> analiza los peligros de rendimiento de la copia de datos.</p></li>
+<li><p>La <a href="#sec-t-test" class="quarto-xref"><span>Sección 24.7</span></a> reúne todas las piezas en un estudio de caso que muestra cómo acelerar las pruebas t repetidas unas mil veces.</p></li>
+<li><p>La <a href="#sec-more-techniques" class="quarto-xref"><span>Sección 24.8</span></a> termina el capítulo con indicaciones a más recursos que lo ayudarán a escribir código rápido.</p></li>
+</ul>
+</section>
+<section id="requisitos-previos" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="requisitos-previos">Requisitos previos</h3>
+<p>Usaremos <a href="https://bench.r-lib.org/">bench</a> para comparar con precisión el rendimiento de pequeños fragmentos de código independientes.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bench)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-code-organisation" class="level2" data-number="24.2">
+<h2 data-number="24.2" class="anchored" data-anchor-id="sec-code-organisation"><span class="header-section-number">24.2</span> Organización del código</h2>
+<p></p>
+<p>Hay dos trampas en las que es fácil caer cuando intentas hacer tu código más rápido:</p>
+<ol type="1">
+<li>Escribir código más rápido pero incorrecto.</li>
+<li>Escribir código que crees que es más rápido, pero que en realidad no es mejor.</li>
+</ol>
+<p>La estrategia descrita a continuación le ayudará a evitar estas trampas.</p>
+<p>Al abordar un cuello de botella, es probable que encuentre múltiples enfoques. Escriba una función para cada enfoque, encapsulando todo el comportamiento relevante. Esto hace que sea más fácil verificar que cada enfoque devuelva el resultado correcto y cronometrar cuánto tiempo lleva ejecutarse. Para demostrar la estrategia, compararé dos enfoques para calcular la media:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mean1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">mean</span>(x)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mean2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">sum</span>(x) <span class="sc">/</span> <span class="fu">length</span>(x)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Te recomiendo que lleves un registro de todo lo que intentes, incluso de los fracasos. Si ocurre un problema similar en el futuro, será útil ver todo lo que ha intentado. Para hacer esto, recomiendo RMarkdown, que facilita la combinación de código con comentarios y notas detallados.</p>
+<p>A continuación, genere un caso de prueba representativo. El caso debe ser lo suficientemente grande para capturar la esencia de su problema, pero lo suficientemente pequeño como para que solo tome unos segundos como máximo. No desea que tarde demasiado porque necesitará ejecutar el caso de prueba muchas veces para comparar enfoques. Por otro lado, no desea que el caso sea demasiado pequeño porque es posible que los resultados no alcancen el problema real. Aquí voy a usar 100,000 números:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e5</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora usa <code>bench::mark()</code> para comparar con precisión las variaciones. <code>bench::mark()</code> verifica automáticamente que todas las llamadas devuelvan los mismos valores. Esto no garantiza que la función se comporte de la misma manera para todas las entradas, por lo que en un mundo ideal también tendrá pruebas unitarias para asegurarse de no cambiar accidentalmente el comportamiento de la función.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean1</span>(x),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean2</span>(x)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 4</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression      min   median `itr/sec`</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean1(x)      417µs    437µs     2277.</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean2(x)      186µs    187µs     5319.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>(Puede que te sorprendan los resultados: <code>mean(x)</code> es considerablemente más lento que <code>sum(x) / length(x)</code>. Esto se debe a que, entre otras razones, <code>mean(x)</code> hace dos pasadas sobre el vector para que sea numéricamente más preciso.)</p>
+<p>Si desea ver esta estrategia en acción, la he usado varias veces en stackoverflow:</p>
+<ul>
+<li><a href="http://stackoverflow.com/questions/22515525#22518603" class="uri">http://stackoverflow.com/questions/22515525#22518603</a></li>
+<li><a href="http://stackoverflow.com/questions/22515175#22515856" class="uri">http://stackoverflow.com/questions/22515175#22515856</a></li>
+<li><a href="http://stackoverflow.com/questions/3476015#22511936" class="uri">http://stackoverflow.com/questions/3476015#22511936</a></li>
+</ul>
+</section>
+<section id="sec-already-solved" class="level2" data-number="24.3">
+<h2 data-number="24.3" class="anchored" data-anchor-id="sec-already-solved"><span class="header-section-number">24.3</span> Comprobación de soluciones existentes</h2>
+<p>Una vez que haya organizado su código y capturado todas las variaciones que se le ocurran, es natural ver lo que otros han hecho. Eres parte de una gran comunidad y es muy posible que alguien ya haya abordado el mismo problema. Dos buenos lugares para comenzar son:</p>
+<ul>
+<li><p><a href="http://cran.rstudio.com/web/views/">CRAN task views</a>. Si hay una vista de tareas CRAN relacionada con el dominio de su problema, vale la pena mirar los paquetes enumerados allí.</p></li>
+<li><p>Dependencias inversas de Rcpp, como se indica en su <a href="http://cran.r-project.org/web/packages/Rcpp">página de CRAN</a>. Dado que estos paquetes usan C++, es probable que sean rápidos.</p></li>
+</ul>
+<p>De lo contrario, el desafío es describir su cuello de botella de una manera que lo ayude a encontrar problemas y soluciones relacionados. Saber el nombre del problema o sus sinónimos hará que esta búsqueda sea mucho más fácil. Pero como no sabes cómo se llama, ¡es difícil buscarlo! La mejor manera de resolver este problema es leer mucho para que puedas construir tu propio vocabulario con el tiempo. Alternativamente, pregunte a otros. Hable con sus colegas y haga una lluvia de ideas sobre algunos nombres posibles, luego busque en Google y StackOverflow. Suele ser útil restringir la búsqueda a páginas relacionadas con R. Para Google, pruebe <a href="http://www.rseek.org/">rseek</a>. Para stackoverflow, restrinja su búsqueda incluyendo la etiqueta R, <code>[R]</code>, en su búsqueda.</p>
+<p>Registre todas las soluciones que encuentre, no solo aquellas que parezcan ser más rápidas inmediatamente. Algunas soluciones pueden ser más lentas inicialmente, pero terminan siendo más rápidas porque son más fáciles de optimizar. También puede combinar las partes más rápidas desde diferentes enfoques. Si ha encontrado una solución lo suficientemente rápida, ¡felicidades! De lo contrario, sigue leyendo.</p>
+<section id="ejercicios" class="level3" data-number="24.3.1">
+<h3 data-number="24.3.1" class="anchored" data-anchor-id="ejercicios"><span class="header-section-number">24.3.1</span> Ejercicios</h3>
+<ol type="1">
+<li><p>¿Cuáles son las alternativas más rápidas a <code>lm()</code>? ¿Cuáles están diseñados específicamente para trabajar con conjuntos de datos más grandes?</p></li>
+<li><p>¿Qué paquete implementa una versión de <code>match()</code> que es más rápida para búsquedas repetidas? ¿Cuánto más rápido es?</p></li>
+<li><p>Enumere cuatro funciones (no solo las de base R) que convierten una cadena en un objeto de fecha y hora. Cuales son sus fortalezas y debilidades?</p></li>
+<li><p>¿Qué paquetes brindan la capacidad de calcular una media móvil?</p></li>
+<li><p>¿Cuáles son las alternativas a <code>optim()</code>?</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-be-lazy" class="level2" data-number="24.4">
+<h2 data-number="24.4" class="anchored" data-anchor-id="sec-be-lazy"><span class="header-section-number">24.4</span> Haciendo lo menos posible</h2>
+<p>La forma más fácil de hacer que una función sea más rápida es dejar que haga menos trabajo. Una forma de hacerlo es usar una función adaptada a un tipo de entrada o salida más específico, o a un problema más específico. Por ejemplo:</p>
+<ul>
+<li><p><code>rowSums()</code>, <code>colSums()</code>, <code>rowMeans()</code>, y <code>colMeans()</code> son más rápidas que las invocaciones equivalentes que usan <code>apply()</code> porque están vectorizadas (<a href="#sec-vectorise" class="quarto-xref"><span>Sección 24.5</span></a>).</p></li>
+<li><p><code>vapply()</code> es más rápido que <code>sapply()</code> porque especifica previamente el tipo de salida.</p></li>
+<li><p>Si quiere ver si un vector contiene un solo valor, <code>any(x == 10)</code> es mucho más rápido que <code>10 %in% x</code> porque probar la igualdad es más simple que probar la inclusión de conjuntos.</p></li>
+</ul>
+<p>Tener este conocimiento al alcance de la mano requiere saber que existen funciones alternativas: es necesario tener un buen vocabulario. Amplíe su vocabulario leyendo regularmente el código R. Buenos lugares para leer código son la <a href="https://stat.ethz.ch/mailman/listinfo/r-help">lista de correo de R-help</a> y <a href="http://stackoverflow.com/questions/tagged/%20r">StackOverflow</a>.</p>
+<p>Algunas funciones obligan a sus entradas a un tipo específico. Si su entrada no es del tipo correcto, la función tiene que hacer un trabajo extra. En su lugar, busque una función que funcione con sus datos tal como están, o considere cambiar la forma en que almacena sus datos. El ejemplo más común de este problema es usar <code>apply()</code> en un marco de datos. <code>apply()</code> siempre convierte su entrada en una matriz. No solo es propenso a errores (porque un marco de datos es más general que una matriz), sino que también es más lento.</p>
+<p>Otras funciones harán menos trabajo si les proporciona más información sobre el problema. Siempre vale la pena leer detenidamente la documentación y experimentar con diferentes argumentos. Algunos ejemplos que he descubierto en el pasado incluyen:</p>
+<ul>
+<li><p><code>read.csv()</code>: especificar tipos de columnas conocidas con <code>colClasses</code>. (También considere cambiar a <code>readr::read_csv()</code> o <code>data.table::fread()</code> que son considerablemente más rápidos que <code>read.csv()</code>.)</p></li>
+<li><p><code>factor()</code>: especificar niveles conocidos con <code>levels</code>.</p></li>
+<li><p><code>cut()</code>: no genere etiquetas con <code>labels = FALSE</code> si no las necesita o, mejor aún, use <code>findInterval()</code> como se menciona en la sección “ver también” de la documentación.</p></li>
+<li><p><code>unlist(x, use.names = FALSE)</code> es mucho más rápido que <code>unlist(x)</code>.</p></li>
+<li><p><code>interaction()</code>: si solo necesita combinaciones que existen en los datos, use <code>drop = TRUE</code>.</p></li>
+</ul>
+<p>A continuación, exploro cómo podría mejorar la aplicación de esta estrategia para mejorar el rendimiento de <code>mean()</code> y <code>as.data.frame()</code>.</p>
+<section id="mean" class="level3" data-number="24.4.1">
+<h3 data-number="24.4.1" class="anchored" data-anchor-id="mean"><span class="header-section-number">24.4.1</span> <code>mean()</code></h3>
+<p></p>
+<p></p>
+<p>A veces, puede hacer que una función sea más rápida evitando el envío de métodos. Si está llamando a un método en un ciclo cerrado, puede evitar algunos de los costos haciendo la búsqueda del método solo una vez:</p>
+<ul>
+<li><p>Para S3, puede hacer esto llamando a <code>generic.class()</code> en lugar de <code>generic()</code>.</p></li>
+<li><p>Para S4, puede hacer esto usando <code>selectMethod()</code> para encontrar el método, guardándolo en una variable y luego llamando a esa función.</p></li>
+</ul>
+<p>Por ejemplo, llamar a <code>mean.default()</code> es un poco más rápido que llamar a <code>mean()</code> para vectores pequeños:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e2</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(x),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean.default</span>(x)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 4</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression           min   median `itr/sec`</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean(x)           2.88µs   3.15µs   288781.</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean.default(x)   1.86µs   1.99µs   478356.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esta optimización es un poco arriesgada. Si bien <code>mean.default()</code> es casi el doble de rápido para 100 valores, fallará de manera sorprendente si <code>x</code> no es un vector numérico.</p>
+<p>Una optimización aún más arriesgada es llamar directamente a la función <code>.Internal</code> subyacente. Esto es más rápido porque no realiza ninguna verificación de entrada ni maneja NA, por lo que está comprando velocidad a costa de la seguridad.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e2</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(x),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean.default</span>(x),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.Internal</span>(<span class="fu">mean</span>(x))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 4</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression              min   median `itr/sec`</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean(x)              2.92µs   3.19µs   306080.</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean.default(x)      1.87µs   1.98µs   485384.</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 .Internal(mean(x))  480.1ns 501.05ns  1981460.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>NB: La mayoría de estas diferencias surgen porque <code>x</code> es pequeño. Si aumenta el tamaño, las diferencias básicamente desaparecen, porque la mayor parte del tiempo ahora se dedica a calcular la media, sin encontrar la implementación subyacente. Este es un buen recordatorio de que el tamaño de la entrada es importante y debe motivar sus optimizaciones en función de datos realistas.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e4</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(x),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean.default</span>(x),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.Internal</span>(<span class="fu">mean</span>(x))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 4</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression              min   median `itr/sec`</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean(x)              41.7µs   46.1µs    21606.</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean.default(x)        41µs   44.8µs    22202.</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 .Internal(mean(x))   37.7µs   43.3µs    23053.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="as.data.frame" class="level3" data-number="24.4.2">
+<h3 data-number="24.4.2" class="anchored" data-anchor-id="as.data.frame"><span class="header-section-number">24.4.2</span> <code>as.data.frame()</code></h3>
+<p></p>
+<p>Saber que está tratando con un tipo específico de entrada puede ser otra forma de escribir código más rápido. Por ejemplo, <code>as.data.frame()</code> es bastante lento porque convierte cada elemento en un marco de datos y luego <code>rbind()</code> los une. Si tiene una lista con nombre con vectores de igual longitud, puede transformarla directamente en un marco de datos. En este caso, si puede hacer suposiciones sólidas sobre su entrada, puede escribir un método que sea considerablemente más rápido que el predeterminado.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>quickdf <span class="ot">&lt;-</span> <span class="cf">function</span>(l) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">class</span>(l) <span class="ot">&lt;-</span> <span class="st">"data.frame"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(l, <span class="st">"row.names"</span>) <span class="ot">&lt;-</span> <span class="fu">.set_row_names</span>(<span class="fu">length</span>(l[[<span class="dv">1</span>]]))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  l</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>l <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">26</span>, <span class="cf">function</span>(i) <span class="fu">runif</span>(<span class="fl">1e3</span>))</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(l) <span class="ot">&lt;-</span> letters</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">as.data.frame =</span> <span class="fu">as.data.frame</span>(l),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">quick_df      =</span> <span class="fu">quickdf</span>(l)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 4</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression         min   median `itr/sec`</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;    &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 as.data.frame 956.43µs   1.01ms      970.</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 quick_df        6.42µs   7.31µs   129784.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Una vez más, tenga en cuenta la compensación. Este método es rápido porque es peligroso. Si le da entradas incorrectas, obtendrá un marco de datos corrupto:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quickdf</span>(<span class="fu">list</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in format.data.frame(if (omit) x[seq_len(n0), , drop = FALSE] else x, :</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; corrupt data frame: columns will be truncated or padded with NAs</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   x y</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 1 1</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para llegar a este método mínimo, leí cuidadosamente y luego reescribí el código fuente para <code>as.data.frame.list()</code> y <code>data.frame()</code>. Hice muchos pequeños cambios, comprobando cada vez que no había roto el comportamiento existente. Después de varias horas de trabajo, pude aislar el código mínimo que se muestra arriba. Esta es una técnica muy útil. La mayoría de las funciones básicas de R están escritas para la flexibilidad y la funcionalidad, no para el rendimiento. Por lo tanto, reescribir para su necesidad específica a menudo puede generar mejoras sustanciales. Para hacer esto, deberá leer el código fuente. Puede ser complejo y confuso, ¡pero no te rindas!</p>
+</section>
+<section id="ejercicios-1" class="level3" data-number="24.4.3">
+<h3 data-number="24.4.3" class="anchored" data-anchor-id="ejercicios-1"><span class="header-section-number">24.4.3</span> Ejercicios</h3>
+<ol type="1">
+<li><p>¿Cuál es la diferencia entre <code>rowSums()</code> y <code>.rowSums()</code>?</p></li>
+<li><p>Cree una versión más rápida de <code>chisq.test()</code> que solo calcula la estadística de prueba de chi-cuadrado cuando la entrada son dos vectores numéricos sin valores faltantes. Puede intentar simplificar <code>chisq.test()</code> o codificar desde la <a href="http://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test">definición matemática</a>.</p></li>
+<li><p>¿Puedes hacer una versión más rápida de <code>table()</code> para el caso de una entrada de dos vectores enteros sin valores perdidos? ¿Puedes usarlo para acelerar tu prueba de chi-cuadrado?</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-vectorise" class="level2" data-number="24.5">
+<h2 data-number="24.5" class="anchored" data-anchor-id="sec-vectorise"><span class="header-section-number">24.5</span> Vectorizar</h2>
+<p></p>
+<p>Si ha usado R durante algún tiempo, probablemente haya escuchado la advertencia de “vectorizar su código”. Pero, ¿qué significa eso realmente? Vectorizar su código no se trata solo de evitar bucles for, aunque eso suele ser un paso. Vectorizar se trata de adoptar un enfoque de objeto completo para un problema, pensando en vectores, no en escalares. Hay dos atributos clave de una función vectorizada:</p>
+<ul>
+<li><p>Simplifica muchos problemas. En lugar de tener que pensar en los componentes de un vector, solo piensa en vectores completos.</p></li>
+<li><p>Los bucles en una función vectorizada están escritos en C en lugar de R. Los bucles en C son mucho más rápidos porque tienen mucha menos sobrecarga.</p></li>
+</ul>
+<p>El <a href="Functionals.html" class="quarto-xref"><span>Capítulo 9</span></a> hizo hincapié en la importancia del código vectorizado como una abstracción de mayor nivel. La vectorización también es importante para escribir código R rápido. Esto no significa simplemente usar <code>map()</code> o <code>lapply()</code>. En cambio, la vectorización significa encontrar la función R existente que se implementa en C y se aplica más a su problema.</p>
+<p>Las funciones vectorizadas que se aplican a muchos cuellos de botella de rendimiento comunes incluyen:</p>
+<ul>
+<li><p><code>rowSums()</code>, <code>colSums()</code>, <code>rowMeans()</code>, y <code>colMeans()</code>. Estas funciones matriciales vectorizadas siempre serán más rápidas que usar <code>apply()</code>. A veces puede usar estas funciones para construir otras funciones vectorizadas.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>rowAny <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">rowSums</span>(x) <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>rowAll <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">rowSums</span>(x) <span class="sc">==</span> <span class="fu">ncol</span>(x)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p>La creación de subconjuntos vectorizados puede conducir a grandes mejoras en la velocidad. Recuerde las técnicas detrás de las tablas de búsqueda (<a href="Subsetting.html#sec-lookup-tables" class="quarto-xref"><span>Sección 4.5.1</span></a>) y la combinación y combinación manual (<a href="Subsetting.html#sec-matching-merging" class="quarto-xref"><span>Sección 4.5.2</span></a>). Recuerde también que puede usar la asignación de subconjuntos para reemplazar varios valores en un solo paso. Si <code>x</code> es un vector, una matriz o un marco de datos, entonces <code>x[is.na(x)] &lt;- 0</code> reemplazará todos los valores faltantes con 0.</p></li>
+<li><p>Si está extrayendo o reemplazando valores en ubicaciones dispersas en una matriz o marco de datos, subconjunto con una matriz de enteros. Consulte <a href="Subsetting.html#sec-matrix-subsetting" class="quarto-xref"><span>Sección 4.2.3</span></a> para obtener más detalles.</p></li>
+<li><p>Si está convirtiendo valores continuos a categóricos, asegúrese de saber cómo usar <code>cut()</code> y <code>findInterval()</code>.</p></li>
+<li><p>Tenga en cuenta las funciones vectorizadas como <code>cumsum()</code> y <code>diff()</code>.</p></li>
+</ul>
+<p>El álgebra matricial es un ejemplo general de vectorización. Estos bucles son ejecutados por bibliotecas externas altamente optimizadas como BLAS. Si puede encontrar una manera de usar el álgebra matricial para resolver su problema, a menudo obtendrá una solución muy rápida. La habilidad para resolver problemas con álgebra matricial es producto de la experiencia. Un buen lugar para comenzar es preguntar a personas con experiencia en su dominio.</p>
+<p>La vectorización tiene un inconveniente: es más difícil predecir cómo escalarán las operaciones. El siguiente ejemplo mide cuánto tiempo lleva usar subconjuntos de caracteres para buscar 1, 10 y 100 elementos de una lista. Podría esperar que buscar 10 elementos tomara 10 veces más que buscar 1, y que buscar 100 elementos tomaría 10 veces más de nuevo. De hecho, el siguiente ejemplo muestra que solo se tarda aproximadamente ~10 veces más en buscar 100 elementos que en buscar 1. Eso sucede porque una vez que llega a un cierto tamaño, la implementación interna cambia a una estrategia que tiene un mayor costo de instalación, pero escala mejor.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>lookup <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">as.list</span>(<span class="fu">sample</span>(<span class="dv">100</span>, <span class="dv">26</span>)), letters)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">&lt;-</span> <span class="st">"j"</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>x10 <span class="ot">&lt;-</span> <span class="fu">sample</span>(letters, <span class="dv">10</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>x100 <span class="ot">&lt;-</span> <span class="fu">sample</span>(letters, <span class="dv">100</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  lookup[x1],</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  lookup[x10],</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  lookup[x100],</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">check =</span> <span class="cn">FALSE</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 4</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression        min   median `itr/sec`</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 lookup[x1]   420.03ns  461.1ns  1983301.</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 lookup[x10]    1.24µs    1.3µs   716742.</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 lookup[x100]   2.88µs    4.6µs   226070.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La vectorización no resolverá todos los problemas y, en lugar de convertir un algoritmo existente en uno que utilice un enfoque vectorizado, a menudo es mejor escribir su propia función vectorizada en C++. Aprenderá cómo hacerlo en el <a href="Rcpp.html" class="quarto-xref"><span>Capítulo 25</span></a>.</p>
+<section id="ejercicios-2" class="level3" data-number="24.5.1">
+<h3 data-number="24.5.1" class="anchored" data-anchor-id="ejercicios-2"><span class="header-section-number">24.5.1</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Las funciones de densidad, por ejemplo, <code>dnorm()</code>, tienen una interfaz común. ¿Qué argumentos se vectorizan? ¿Qué hace <code>rnorm(10, mean = 10:1)</code>?</p></li>
+<li><p>Compara la velocidad de <code>apply(x, 1, sum)</code> con <code>rowSums(x)</code> para diferentes tamaños de <code>x</code>.</p></li>
+<li><p>¿Cómo puedes usar <code>crossprod()</code> para calcular una suma ponderada? ¿Cuánto más rápido es que el ingenuo <code>sum(x * w)</code>?</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-avoid-copies" class="level2" data-number="24.6">
+<h2 data-number="24.6" class="anchored" data-anchor-id="sec-avoid-copies"><span class="header-section-number">24.6</span> Evitar copias</h2>
+<p> </p>
+<p>Una fuente perniciosa de código R lento es hacer crecer un objeto con un bucle. Siempre que use <code>c()</code>, <code>append()</code>, <code>cbind()</code>, <code>rbind()</code> o <code>paste()</code> para crear un objeto más grande, R primero debe asignar espacio para el nuevo objeto y luego copiar el objeto antiguo a su nuevo hogar. Si repite esto muchas veces, como en un ciclo for, esto puede ser bastante costoso. Has entrado en el Círculo 2 del <a href="http://www.burns-stat.com/pages/Tutor/R_inferno.pdf"><em>R inferno</em></a>.</p>
+<p>Viste un ejemplo de este tipo de problema en la <a href="Perf-measure.html#sec-memory-profiling" class="quarto-xref"><span>Sección 23.2.2</span></a>, así que aquí mostraré un ejemplo un poco más complejo del mismo problema básico. Primero generamos algunas cadenas aleatorias y luego las combinamos iterativamente con un ciclo usando <code>collapse()</code>, o en un solo paso usando <code>paste()</code>. Tenga en cuenta que el rendimiento de <code>collapse()</code> empeora relativamente a medida que aumenta el número de cadenas: combinar 100 cadenas lleva casi 30 veces más que combinar 10 cadenas.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>random_string <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="fu">sample</span>(letters, <span class="dv">50</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>), <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>strings10 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">10</span>, <span class="fu">random_string</span>())</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>strings100 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">100</span>, <span class="fu">random_string</span>())</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>collapse <span class="ot">&lt;-</span> <span class="cf">function</span>(xs) {</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="st">""</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (x <span class="cf">in</span> xs) {</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">paste0</span>(out, x)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">loop10  =</span> <span class="fu">collapse</span>(strings10),</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">loop100 =</span> <span class="fu">collapse</span>(strings100),</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">vec10   =</span> <span class="fu">paste</span>(strings10, <span class="at">collapse =</span> <span class="st">""</span>),</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">vec100  =</span> <span class="fu">paste</span>(strings100, <span class="at">collapse =</span> <span class="st">""</span>),</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">check =</span> <span class="cn">FALSE</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 4</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression      min   median `itr/sec`</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 loop10      19.64µs  21.08µs    46392.</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 loop100    521.65µs 555.82µs     1799.</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 vec10        3.56µs   3.88µs   253849.</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 vec100      22.41µs  23.05µs    42740.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Modificar un objeto en un bucle, por ejemplo, <code>x[i] &lt;- y</code>, también puede crear una copia, dependiendo de la clase de <code>x</code>. La <a href="Names-values.html#sec-single-binding" class="quarto-xref"><span>Sección 2.5.1</span></a> analiza este problema con mayor profundidad y le brinda algunas herramientas para determinar cuándo está haciendo copias.</p>
+</section>
+<section id="sec-t-test" class="level2" data-number="24.7">
+<h2 data-number="24.7" class="anchored" data-anchor-id="sec-t-test"><span class="header-section-number">24.7</span> Caso de estudio: t-test</h2>
+<p>El siguiente estudio de caso muestra cómo hacer que las pruebas t sean más rápidas utilizando algunas de las técnicas descritas anteriormente. Se basa en un ejemplo de <a href="http://stat-computing.org/newsletter/issues/scgn-18-1.pdf"><em>Cálculo de miles de estadísticas de prueba simultáneamente en R</em></a> de Holger Schwender y Tina Müller. Recomiendo encarecidamente leer el documento completo para ver la misma idea aplicada a otras pruebas.</p>
+<p>Imagine que hemos realizado 1000 experimentos (filas), cada uno de los cuales recopila datos de 50 individuos (columnas). Los primeros 25 individuos de cada experimento se asignan al grupo 1 y el resto al grupo 2. Primero generaremos algunos datos aleatorios para representar este problema:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(m <span class="sc">*</span> n, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="dv">3</span>), <span class="at">nrow =</span> m)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>grp <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">each =</span> n <span class="sc">/</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para los datos en este formulario, hay dos formas de usar <code>t.test()</code>. Podemos usar la interfaz de fórmula o proporcionar dos vectores, uno para cada grupo. El tiempo revela que la interfaz de la fórmula es considerablemente más lenta.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>m) {</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">t.test</span>(X[i, ] <span class="sc">~</span> grp)<span class="sc">$</span>statistic</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.388   0.004   0.392</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>m) {</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">t.test</span>(X[i, grp <span class="sc">==</span> <span class="dv">1</span>], X[i, grp <span class="sc">==</span> <span class="dv">2</span>])<span class="sc">$</span>statistic</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.113   0.000   0.113</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Por supuesto, un bucle for calcula, pero no guarda los valores. Podemos <code>map_dbl()</code> (<a href="Functionals.html#sec-map-atomic" class="quarto-xref"><span>Sección 9.2.1</span></a>) para hacer eso. Esto agrega un poco de sobrecarga:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>compT <span class="ot">&lt;-</span> <span class="cf">function</span>(i){</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t.test</span>(X[i, grp <span class="sc">==</span> <span class="dv">1</span>], X[i, grp <span class="sc">==</span> <span class="dv">2</span>])<span class="sc">$</span>statistic</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(t1 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, compT))</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.124   0.000   0.124</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>¿Cómo podemos hacer esto más rápido? Primero, podríamos intentar hacer menos trabajo. Si observa el código fuente de <code>stats:::t.test.default()</code>, verá que hace mucho más que calcular la estadística t. También calcula el valor p y formatea la salida para su impresión. Podemos intentar que nuestro código sea más rápido eliminando esas piezas.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>my_t <span class="ot">&lt;-</span> <span class="cf">function</span>(x, grp) {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  t_stat <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    var <span class="ot">&lt;-</span> <span class="fu">sum</span>((x <span class="sc">-</span> m) <span class="sc">^</span> <span class="dv">2</span>) <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">m =</span> m, <span class="at">n =</span> n, <span class="at">var =</span> var)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  g1 <span class="ot">&lt;-</span> <span class="fu">t_stat</span>(x[grp <span class="sc">==</span> <span class="dv">1</span>])</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  g2 <span class="ot">&lt;-</span> <span class="fu">t_stat</span>(x[grp <span class="sc">==</span> <span class="dv">2</span>])</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  se_total <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(g1<span class="sc">$</span>var <span class="sc">/</span> g1<span class="sc">$</span>n <span class="sc">+</span> g2<span class="sc">$</span>var <span class="sc">/</span> g2<span class="sc">$</span>n)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  (g1<span class="sc">$</span>m <span class="sc">-</span> g2<span class="sc">$</span>m) <span class="sc">/</span> se_total</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(t2 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, <span class="sc">~</span> <span class="fu">my_t</span>(X[.,], grp)))</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.024   0.000   0.024</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(t1, t2))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esto nos da una mejora de velocidad de seis veces.</p>
+<p>Ahora que tenemos una función bastante simple, podemos hacerla aún más rápida al vectorizarla. En lugar de recorrer la matriz fuera de la función, modificaremos <code>t_stat()</code> para que funcione con una matriz de valores. Por lo tanto, <code>mean()</code> se convierte en <code>rowMeans()</code>, <code>length()</code> se convierte en <code>ncol()</code> y <code>sum()</code> se convierte en <code>rowSums()</code>. El resto del código permanece igual.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rowtstat <span class="ot">&lt;-</span> <span class="cf">function</span>(X, grp){</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  t_stat <span class="ot">&lt;-</span> <span class="cf">function</span>(X) {</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(X)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(X)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    var <span class="ot">&lt;-</span> <span class="fu">rowSums</span>((X <span class="sc">-</span> m) <span class="sc">^</span> <span class="dv">2</span>) <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">m =</span> m, <span class="at">n =</span> n, <span class="at">var =</span> var)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  g1 <span class="ot">&lt;-</span> <span class="fu">t_stat</span>(X[, grp <span class="sc">==</span> <span class="dv">1</span>])</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  g2 <span class="ot">&lt;-</span> <span class="fu">t_stat</span>(X[, grp <span class="sc">==</span> <span class="dv">2</span>])</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  se_total <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(g1<span class="sc">$</span>var <span class="sc">/</span> g1<span class="sc">$</span>n <span class="sc">+</span> g2<span class="sc">$</span>var <span class="sc">/</span> g2<span class="sc">$</span>n)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  (g1<span class="sc">$</span>m <span class="sc">-</span> g2<span class="sc">$</span>m) <span class="sc">/</span> se_total</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(t3 <span class="ot">&lt;-</span> <span class="fu">rowtstat</span>(X, grp))</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.010   0.000   0.009</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(t1, t3))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>¡Eso es mucho más rápido! Es al menos 40 veces más rápido que nuestro esfuerzo anterior y alrededor de 1000 veces más rápido que donde comenzamos.</p>
+<!-- Estas comparaciones de tiempo no se reflejan en el código. En la copia en pdf esta última función tarda 0,011 s mientras que la versión original tarda 0,191 s (unas 17 veces más lento). ¿Quizás hubo una mejora en la versión base de t.test? -->
+</section>
+<section id="sec-more-techniques" class="level2" data-number="24.8">
+<h2 data-number="24.8" class="anchored" data-anchor-id="sec-more-techniques"><span class="header-section-number">24.8</span> Otras tecnicas</h2>
+<p>Ser capaz de escribir código R rápido es parte de ser un buen programador R. Más allá de las sugerencias específicas de este capítulo, si desea escribir código R rápido, deberá mejorar sus habilidades generales de programación. Algunas formas de hacer esto son:</p>
+<ul>
+<li><p><a href="http://www.r-bloggers.com/">Read R blogs</a> para ver con qué problemas de rendimiento han luchado otras personas y cómo han hecho que su código sea más rápido.</p></li>
+<li><p>Lea otros libros de programación R, como <em>El arte de la programación R</em> <span class="citation" data-cites="art-r-prog">(<a href="References.html#ref-art-r-prog" role="doc-biblioref">Matloff 2011</a>)</span> o [<em>R Inferno</em>] de Patrick Burns (http://www.burns-stat.com/documents/books/the -r-inferno/) para conocer las trampas comunes.</p></li>
+<li><p>Tome un curso de algoritmos y estructura de datos para aprender algunas formas bien conocidas de abordar ciertas clases de problemas. Escuché cosas buenas sobre el <a href="https://www.coursera.org/course/algs4partI">curso de algoritmos de Princeton</a> que se ofrece en Coursera.</p></li>
+<li><p>Aprende a paralelizar tu código. Dos lugares para comenzar son <em>Parallel R</em> <span class="citation" data-cites="parallel-r">(<a href="References.html#ref-parallel-r" role="doc-biblioref">McCallum y Weston 2011</a>)</span> y <em>Parallel Computing for Data Science</em> <span class="citation" data-cites="parcomp-ds">(<a href="References.html#ref-parcomp-ds" role="doc-biblioref">Matloff 2015</a>)</span>.</p></li>
+<li><p>Lea libros generales sobre optimización como <em>Optimización madura</em> <span class="citation" data-cites="mature-opt">(<a href="References.html#ref-mature-opt" role="doc-biblioref">Bueno 2013</a>)</span> o el <em>Programador pragmático</em> <span class="citation" data-cites="pragprog">(<a href="References.html#ref-pragprog" role="doc-biblioref">Hunt y Thomas 1990</a>)</span>.</p></li>
+</ul>
+<p>También puede comunicarse con la comunidad para obtener ayuda. StackOverflow puede ser un recurso útil. Deberá esforzarse un poco para crear un ejemplo fácilmente digerible que también capture las características más destacadas de su problema. Si su ejemplo es demasiado complejo, pocas personas tendrán el tiempo y la motivación para intentar una solución. Si es demasiado simple, obtendrá respuestas que resuelven el problema del juguete pero no el problema real. Si también intenta responder preguntas en StackOverflow, rápidamente tendrá una idea de lo que constituye una buena pregunta.</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-mature-opt" class="csl-entry" role="listitem">
+Bueno, Carlos. 2013. <em>Mature Optimization Handbook</em>. <a href="http://carlos.bueno.org/optimization/">http://carlos.bueno.org/optimization/</a>.
+</div>
+<div id="ref-pragprog" class="csl-entry" role="listitem">
+Hunt, Andrew, y David Thomas. 1990. <em>The Pragmatic Programmer</em>. Addison Wesley.
+</div>
+<div id="ref-art-r-prog" class="csl-entry" role="listitem">
+Matloff, Norman. 2011. <em>The Art of <span>R</span> Programming</em>. No Starch Press.
+</div>
+<div id="ref-parcomp-ds" class="csl-entry" role="listitem">
+———. 2015. <em>Parallel Computing for Data Science</em>. Chapman &amp; Hall/CRC. <a href="http://amzn.com/1466587016">http://amzn.com/1466587016</a>.
+</div>
+<div id="ref-parallel-r" class="csl-entry" role="listitem">
+McCallum, Q. Ethan, y Steve Weston. 2011. <em>Parallel <span>R</span></em>. O’Reilly. <a href="http://amzn.com/B005Z29QT4">http://amzn.com/B005Z29QT4</a>.
+</div>
+<div id="ref-r-design" class="csl-entry" role="listitem">
+Morandat, Floréal, Brandon Hill, Leo Osvald, y Jan Vitek. 2012. <span>«Evaluating the design of the <span>R</span> language»</span>. En <em>European Conference on Object-Oriented Programming</em>, 104-31. Springer. <a href="http://r.cs.purdue.edu/pub/ecoop12.pdf">http://r.cs.purdue.edu/pub/ecoop12.pdf</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+
+<script>
+
+  // Chapter name
+  const currentChapterFile = window.location.pathname.split('/').pop().replace('.html', '');
+
+  //Deffining urls
+  const originalURL = "https://github.com/hadley/adv-r";
+  const translationURL = "https://github.com/davidrsch/adv-res";
+
+  //Deffining texts
+  const edit_text = "Editar esta página";
+  const issue_text = "Informar de un problema"
+
+  //Deffining git_i
+  const git_i = '<div><i class="bi bi-github"></i></div>';
+
+  // Adding TOC if not exist
+  const sidebarmargin = document.getElementById('quarto-margin-sidebar');
+  const buscar_TOC = document.getElementById('TOC');
+
+  if (!buscar_TOC) {
+    const crear_TOC = document.createElement('nav');
+    crear_TOC.id = 'TOC';
+    crear_TOC.role = "doc-toc";
+    crear_TOC.class = "toc-active";
+    sidebarmargin.appendChild(crear_TOC);
+  }
+
+
+  // Adding original github actions
+  const TOC = document.getElementById('TOC');
+  const originalga = document.createElement('h2');
+  originalga.textContent = "Original";
+  originalga.style["border-top"] = "1px solid #ccc";
+  originalga.style["padding-top"] = "0.5rem";
+  const toc_act_O = document.createElement('div');
+  toc_act_O.className = 'toc-actions';
+  toc_act_O.id = 'toc-act-O';
+  const act_link_O = document.createElement('div');
+  act_link_O.className='action-links';
+  act_link_O.id='act-link-O';
+  const edit_issue_O ='<p><a href="'+originalURL+'/edit/master/'+currentChapterFile+'.Rmd" class="toc-action">'+edit_text+'</p><p><a href="'+originalURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(originalga);
+  TOC.appendChild(toc_act_O);
+  toc_act_O.innerHTML += git_i;
+  toc_act_O.appendChild(act_link_O);
+  act_link_O.innerHTML += edit_issue_O;
+
+  // Adding translation github actions
+  const translationga = document.createElement('h2');
+  translationga.textContent = "Traducción";
+  const toc_act_T = document.createElement('div');
+  toc_act_T.className = 'toc-actions';
+  toc_act_T.id = 'toc-act-T';
+  const act_link_T = document.createElement('div');
+  act_link_T.className='action-links';
+  act_link_T.id='act-link-T';
+  const edit_issue_T ='<p><a href="'+translationURL+'/edit/main/'+currentChapterFile+'.qmd" class="toc-action">'+edit_text+'</p><p><a href="'+translationURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(translationga);
+  TOC.appendChild(toc_act_T);
+  toc_act_T.innerHTML += git_i;
+  toc_act_T.appendChild(act_link_T);
+  act_link_T.innerHTML += edit_issue_T;
+
+
+</script>
+
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Perf-measure.html" class="pagination-link" aria-label="Medición de desempeño">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Medición de desempeño</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./Rcpp.html" class="pagination-link" aria-label="Reescribiendo código de R en C++">
+        <span class="nav-page-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Reescribiendo código de R en C++</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><b>“R Avanzado”</b> fue escrito por Hadley Wickham.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

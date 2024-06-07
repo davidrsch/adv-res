@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>R Avanzado - 1&nbsp; Introducción</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./Foundations.html" rel="next">
+<link href="./Preface.html" rel="prev">
+<link href="./cover.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="adv-r.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Introduction.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Avanzado</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/adv-r">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/adv-res">
+            Traducción
+            </a>
+          </li>
+      </ul>
+    </div>
+    <a href="./R-Avanzado.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Introduction.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Fundamentos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Names-values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Nombres y valores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Vectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Vectores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Subsetting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Subconjunto</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Control-flow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Flujo de control</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Environments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Entornos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Conditions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Condiciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Programación funcional</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./FP.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functionals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Funcionales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-factories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Fábricas de funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-operators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Operadores de funciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Programación orientada a objetos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introdución</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./base-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Tipos básicos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">S3</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./R6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">R6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">S4</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Compensaciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Metaprogramación</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Meta.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Big-picture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Panorama general</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Expresiones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Quotation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Cuasicita</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Evaluation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Evaluación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Translation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Traducir código R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Tecnicas</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Techniques.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Depuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Medición de desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-improve.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Mejorando el desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Rcpp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Reescribiendo código de R en C++</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./References.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#por-qué-r" id="toc-por-qué-r" class="nav-link active" data-scroll-target="#por-qué-r"><span class="header-section-number">1.1</span> ¿Por qué R?</a></li>
+  <li><a href="#who-should-read" id="toc-who-should-read" class="nav-link" data-scroll-target="#who-should-read"><span class="header-section-number">1.2</span> ¿Quién debería leer este libro?</a></li>
+  <li><a href="#what-you-will-get" id="toc-what-you-will-get" class="nav-link" data-scroll-target="#what-you-will-get"><span class="header-section-number">1.3</span> ¿Qué obtendrás de este libro?</a></li>
+  <li><a href="#qué-no-aprenderás" id="toc-qué-no-aprenderás" class="nav-link" data-scroll-target="#qué-no-aprenderás"><span class="header-section-number">1.4</span> ¿Qué no aprenderás?</a></li>
+  <li><a href="#meta-techniques" id="toc-meta-techniques" class="nav-link" data-scroll-target="#meta-techniques"><span class="header-section-number">1.5</span> Meta-técnicas</a></li>
+  <li><a href="#recommended-reading" id="toc-recommended-reading" class="nav-link" data-scroll-target="#recommended-reading"><span class="header-section-number">1.6</span> Lectura recomendada</a></li>
+  <li><a href="#sec-getting-help" id="toc-sec-getting-help" class="nav-link" data-scroll-target="#sec-getting-help"><span class="header-section-number">1.7</span> Obteniendo ayuda</a></li>
+  <li><a href="#intro-ack" id="toc-intro-ack" class="nav-link" data-scroll-target="#intro-ack"><span class="header-section-number">1.8</span> Reconocimientos</a></li>
+  <li><a href="#conventions" id="toc-conventions" class="nav-link" data-scroll-target="#conventions"><span class="header-section-number">1.9</span> Convenciones</a></li>
+  <li><a href="#colophon" id="toc-colophon" class="nav-link" data-scroll-target="#colophon"><span class="header-section-number">1.10</span> Colofón</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Ahora he estado programando en R durante más de 15 años y lo he estado haciendo a tiempo completo durante los últimos cinco años. Esto me ha dado el lujo de tiempo para examinar cómo funciona el lenguaje. Este libro es mi intento de transmitir lo que he aprendido para que pueda comprender las complejidades de R tan rápido y sin dolor como sea posible. Leerlo te ayudará a evitar los errores que he cometido y los callejones sin salida en los que me he metido, y te enseñará herramientas, técnicas y modismos útiles que pueden ayudarte a atacar muchos tipos de problemas. En el proceso, espero mostrar que, a pesar de sus peculiaridades a veces frustrantes, R es, en el fondo, un lenguaje elegante y hermoso, bien adaptado para la ciencia de datos.</p>
+<section id="por-qué-r" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="por-qué-r"><span class="header-section-number">1.1</span> ¿Por qué R?</h2>
+<p>Si es nuevo en R, es posible que se pregunte qué hace que valga la pena aprender un lenguaje tan peculiar. Para mí, algunas de las mejores características son:</p>
+<ul>
+<li><p>Es gratis, de código abierto y está disponible en todas las plataformas principales. Como resultado, si realiza su análisis en R, cualquiera puede replicarlo fácilmente, independientemente de dónde viva o cuánto dinero gane.</p></li>
+<li><p>R tiene una comunidad diversa y acogedora, tanto en línea (por ejemplo, <a href="https://twitter.com/search?q=%23rstats">la comunidad de Twitter #rstats</a>) como en persona (como las <a href="https://www.meetup.com/topics/r-programming-language/">muchas reuniones de R</a>). Dos grupos comunitarios particularmente inspiradores son <a href="https://rweekly.org">rweekly newsletter</a> que facilita mantenerse al día con R, y <a href="http://r-ladies.org">R-Ladies</a> que ha creado una comunidad maravillosamente acogedora para mujeres y otros géneros minoritarios.</p></li>
+<li><p>Un conjunto masivo de paquetes para modelado estadístico, aprendizaje automático, visualización e importación y manipulación de datos. Sea cual sea el modelo o el gráfico que esté tratando de hacer, lo más probable es que alguien ya haya intentado hacerlo y pueda aprender de sus esfuerzos.</p></li>
+<li><p>Potentes herramientas para comunicar sus resultados. <a href="https://quarto.org/">Quarto</a> facilita convertir sus resultados en archivos HTML, PDF, documentos de Word, presentaciones de PowerPoint, tableros y más. <a href="http://shiny.rstudio.com">Shiny</a> le permite crear hermosas aplicaciones interactivas sin ningún conocimiento de HTML o javascript.</p></li>
+<li><p><a href="https://posit.co/products/open-source/rstudio/">RStudio</a>, proporciona un entorno de desarrollo integrado, adaptado a las necesidades de la ciencia de datos, el análisis interactivo de datos y la programación estadística.</p></li>
+<li><p>Herramientas de vanguardia. Los investigadores en estadística y aprendizaje automático suelen publicar un paquete R para acompañar sus artículos. Esto significa acceso inmediato a las últimas técnicas e implementaciones estadísticas.</p></li>
+<li><p>Soporte de lenguaje profundamente arraigado para el análisis de datos. Esto incluye funciones como valores perdidos, marcos de datos y vectorización.</p></li>
+<li><p>Una base sólida de programación funcional. Las ideas de la programación funcional se adaptan bien a los desafíos de la ciencia de datos, y el lenguaje R es funcional en el fondo y proporciona muchas primitivas necesarias para una programación funcional efectiva.</p></li>
+<li><p><a href="https://posit.co/">Posit</a>, que gana dinero vendiendo productos profesionales a equipos de usuarios de R, y da la vuelta e invierte gran parte de ese dinero en la comunidad de código abierto (más del 50 % de los ingenieros de software de Posit trabajan en proyectos de código abierto). Trabajo para Posit porque creo fundamentalmente en su misión.</p></li>
+<li><p>Potentes instalaciones de metaprogramación. Las capacidades de metaprogramación de R le permiten escribir funciones mágicamente sucintas y concisas y proporcionan un entorno excelente para diseñar lenguajes específicos de dominio como ggplot2, dplyr, data.table y más.</p></li>
+<li><p>La facilidad con la que R puede conectarse a lenguajes de programación de alto rendimiento como C, Fortran y C++.</p></li>
+</ul>
+<p>Por supuesto, R no es perfecto. El mayor desafío (¡y oportunidad!) de R es que la mayoría de los usuarios de R no son programadores. Esto significa que:</p>
+<ul>
+<li><p>Gran parte del código R que verá en la naturaleza está escrito a toda prisa para resolver un problema apremiante. Como resultado, el código no es muy elegante, rápido o fácil de entender. La mayoría de los usuarios no revisan su código para abordar estas deficiencias.</p></li>
+<li><p>En comparación con otros lenguajes de programación, la comunidad R está más enfocada en los resultados que en los procesos. El conocimiento de las mejores prácticas de ingeniería de software es irregular. Por ejemplo, no hay suficientes programadores de R que usen control de código fuente o pruebas automatizadas.</p></li>
+<li><p>La metaprogramación es un arma de doble filo. Demasiadas funciones de R usan trucos para reducir la cantidad de escritura a costa de crear un código que es difícil de entender y que puede fallar de formas inesperadas.</p></li>
+<li><p>La incoherencia abunda entre los paquetes contribuidos, e incluso dentro de la base R. Cada vez que usa R, se enfrenta a más de 25 años de evolución, y esto puede dificultar el aprendizaje de R porque hay muchos casos especiales que recordar.</p></li>
+<li><p>R no es un lenguaje de programación particularmente rápido, y el código R mal escrito puede ser terriblemente lento. R también es un usuario derrochador de la memoria.</p></li>
+</ul>
+<p>Personalmente, creo que estos desafíos crean una gran oportunidad para que los programadores experimentados tengan un profundo impacto positivo en R y en la comunidad de R. Los usuarios de R se preocupan por escribir código de alta calidad, en particular para la investigación reproducible, pero aún no tienen las habilidades para hacerlo. Espero que este libro no solo ayude a más usuarios de R a convertirse en programadores de R, sino que también anime a los programadores de otros lenguajes a contribuir con R.</p>
+</section>
+<section id="who-should-read" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="who-should-read"><span class="header-section-number">1.2</span> ¿Quién debería leer este libro?</h2>
+<p>Este libro está dirigido a dos públicos complementarios:</p>
+<ul>
+<li><p>Programadores intermedios de R que quieran profundizar en R, comprender cómo funciona el lenguaje y aprender nuevas estrategias para resolver diversos problemas.</p></li>
+<li><p>Programadores de otros lenguajes que están aprendiendo R y quieren entender por qué R funciona de la forma en que lo hace.</p></li>
+</ul>
+<p>Para aprovechar al máximo este libro, deberá haber escrito una cantidad decente de código en R u otro lenguaje de programación. Debe estar familiarizado con los conceptos básicos del análisis de datos (es decir, importación, manipulación y visualización de datos), haber escrito una serie de funciones y estar familiarizado con la instalación y el uso de paquetes CRAN.</p>
+<p>Este libro recorre la estrecha línea entre ser un libro de referencia (utilizado principalmente para búsquedas) y ser legible linealmente. Esto implica algunas compensaciones, porque es difícil linealizar el material sin dejar de mantener juntos los materiales relacionados, y algunos conceptos son mucho más fáciles de explicar si ya está familiarizado con el vocabulario técnico específico. He tratado de usar notas al pie y referencias cruzadas para asegurarme de que aún pueda tener sentido incluso si solo sumerge los dedos de los pies en un capítulo.</p>
+</section>
+<section id="what-you-will-get" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="what-you-will-get"><span class="header-section-number">1.3</span> ¿Qué obtendrás de este libro?</h2>
+<p>Este libro brinda el conocimiento que creo que un programador avanzado de R debe poseer: una comprensión profunda de los fundamentos junto con un amplio vocabulario que significa que puede aprender tácticamente más sobre un tema cuando sea necesario.</p>
+<p>Después de leer este libro, usted:</p>
+<ul>
+<li><p>Estará familiarizado con los fundamentos de R. Comprenderá los tipos de datos complejos y las mejores formas de realizar operaciones en ellos. Tendrá una comprensión profunda de cómo funcionan las funciones, sabrá qué son los entornos y cómo hacer uso del sistema de condiciones.</p></li>
+<li><p>Comprenderá qué significa la programación funcional y por qué es una herramienta útil para la ciencia de datos. Podrá aprender rápidamente cómo usar las herramientas existentes y tener el conocimiento para crear sus propias herramientas funcionales cuando sea necesario.</p></li>
+<li><p>Conocerá la rica variedad de sistemas orientados a objetos de R. Estará más familiarizado con S3, pero sabrá de S4 y R6 y dónde buscar más información cuando sea necesario.</p></li>
+<li><p>Apreciará la espada de doble filo de la metaprogramación. Podrá crear funciones que utilicen una evaluación ordenada, ahorrando tipeo y creando código elegante para expresar operaciones importantes. También comprenderá los peligros y cuándo evitarlos.</p></li>
+<li><p>Tendrá una buena intuición para saber qué operaciones en R son lentas o usan mucha memoria. Sabrá cómo usar la creación de perfiles para identificar cuellos de botella en el rendimiento y sabrá lo suficiente de C++ para convertir funciones lentas de R en equivalentes rápidos de C++.</p></li>
+</ul>
+</section>
+<section id="qué-no-aprenderás" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="qué-no-aprenderás"><span class="header-section-number">1.4</span> ¿Qué no aprenderás?</h2>
+<p>Este libro trata sobre R, el lenguaje de programación, no sobre R, la herramienta de análisis de datos. Si está buscando mejorar sus habilidades en ciencia de datos, le recomiendo que aprenda sobre <a href="https://www.tidyverse.org/">tidyverse</a>, una colección de paquetes consistentes desarrollados por mis colegas y yo. En este libro aprenderá las técnicas utilizadas para desarrollar los paquetes tidyverse; si desea aprender a usarlos, le recomiendo <a href="http://r4ds.hadley.nz/"><em>R para la Ciencia de Datos</em></a>.</p>
+<p>Si desea compartir su código R con otros, deberá crear un paquete R. Esto le permite agrupar el código junto con la documentación y las pruebas unitarias, y distribuirlo fácilmente a través de CRAN. En mi opinión, la forma más sencilla de desarrollar paquetes es con <a href="http://devtools.r-lib.org">devtools</a>, <a href="http://roxygen2.r-lib.org/">roxygen2</a>, <a href="http://testthat.r-lib.org">testthat</a> y <a href="http://usethis.r-lib.org">usethis</a>. Puede aprender a usar estos paquetes para crear su propio paquete en <a href="http://r-pkgs.had.co.nz/"><em>Paquetes de R</em></a>.</p>
+</section>
+<section id="meta-techniques" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="meta-techniques"><span class="header-section-number">1.5</span> Meta-técnicas</h2>
+<p>Hay dos metatécnicas que son tremendamente útiles para mejorar tus habilidades como programador de R: leer el código fuente y adoptar una mentalidad científica.</p>
+<p>Leer el código fuente es importante porque te ayudará a escribir mejor código. Un excelente lugar para comenzar a desarrollar esta habilidad es mirar el código fuente de las funciones y paquetes que usa con más frecuencia. Encontrará cosas que vale la pena emular en su propio código y desarrollará un sentido del gusto por lo que hace un buen código R. También verás cosas que no te gustan, ya sea porque sus virtudes no son evidentes o porque ofende tu sensibilidad. No obstante, dicho código es valioso, porque ayuda a concretar sus opiniones sobre el código bueno y el malo.</p>
+<p>Una mentalidad científica es extremadamente útil cuando se aprende R. Si no comprende cómo funciona algo, debe desarrollar una hipótesis, diseñar algunos experimentos, ejecutarlos y registrar los resultados. Este ejercicio es extremadamente útil ya que si no puede resolver algo y necesita ayuda, puede mostrar fácilmente a otros lo que intentó. Además, cuando aprendas la respuesta correcta, estarás mentalmente preparado para actualizar tu visión del mundo.</p>
+</section>
+<section id="recommended-reading" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="recommended-reading"><span class="header-section-number">1.6</span> Lectura recomendada</h2>
+<p>Debido a que la comunidad de R se compone principalmente de científicos de datos, no de informáticos, hay relativamente pocos libros que profundicen en los fundamentos técnicos de R. En mi viaje personal para comprender R, he encontrado que es particularmente útil usar recursos de otros lenguajes de programación. R tiene aspectos de lenguajes de programación tanto funcionales como orientados a objetos (OO). Aprender cómo se expresan estos conceptos en R lo ayudará a aprovechar su conocimiento existente de otros lenguajes de programación y lo ayudará a identificar áreas en las que puede mejorar.</p>
+<p>Para comprender por qué los sistemas de objetos de R funcionan de la forma en que lo hacen, descubrí que <em>La estructura e interpretación de los programas informáticos</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a><a href="SICP"><span class="citation" data-cites="SICP">Abelson, Sussman, y Sussman (<span>1996</span>)</span></a> es particularmente útil. Es un libro conciso pero profundo, y después de leerlo, sentí por primera vez que podía diseñar mi propio sistema orientado a objetos. El libro fue mi primera introducción al paradigma encapsulado de la programación orientada a objetos que se encuentra en R y me ayudó a comprender las fortalezas y debilidades de este sistema. SICP también enseña la mentalidad funcional en la que crea funciones que son simples individualmente y que se vuelven poderosas cuando se componen juntas.</p>
+<p>Para comprender las compensaciones que ha hecho R en comparación con otros lenguajes de programación, encontré <em>Conceptos, técnicas y modelos de programación de computadoras</em> <span class="citation" data-cites="ctmcp">(<a href="References.html#ref-ctmcp" role="doc-biblioref">Van-Roy y Haridi 2004</a>)</span> extremadamente útil. Me ayudó a comprender que la semántica de copiar al modificar de R hace que sea sustancialmente más fácil razonar sobre el código y que, si bien su implementación actual no es particularmente eficiente, es un problema solucionable.</p>
+<p>Si quieres aprender a ser un mejor programador, no hay mejor lugar al que acudir que <em>El programador pragmático</em> <span class="citation" data-cites="pragprog">(<a href="References.html#ref-pragprog" role="doc-biblioref">Hunt y Thomas 1990</a>)</span>. Este libro es independiente del lenguaje y brinda excelentes consejos sobre cómo ser un mejor programador.</p>
+</section>
+<section id="sec-getting-help" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="sec-getting-help"><span class="header-section-number">1.7</span> Obteniendo ayuda</h2>
+<p> </p>
+<p>Actualmente, hay tres lugares principales para obtener ayuda cuando está atascado y no puede averiguar qué está causando el problema: <a href="https://community.rstudio.com/">Comunidad Posit</a>, <a href="http://stackoverflow.com">StackOverflow</a> y la <a href="https://stat.ethz.ch/mailman/listinfo/r-help">lista de correo R-help</a>. Puede obtener ayuda fantástica en cada lugar, pero tienen sus propias culturas y expectativas. Por lo general, es una buena idea pasar un poco de tiempo investigando, aprendiendo sobre las expectativas de la comunidad, antes de publicar tu primera publicación.</p>
+<p>Algunos buenos consejos generales:</p>
+<ul>
+<li><p>Algunos buenos consejos generales: asegúrese de tener la última versión de R y del paquete (o paquetes) con los que tiene problemas. Puede ser que su problema sea el resultado de un error solucionado recientemente.</p></li>
+<li><p>Dedique algún tiempo a crear un ejemplo reproducible o reprex (de sus siglas en inglés <strong>repr</strong>oducible <strong>ex</strong>ample). Esto ayudará a que otros te ayuden y, a menudo, conduce a una solución sin preguntar a otros, porque en el proceso de hacer que el problema sea reproducible, a menudo descubres la causa raíz. Recomiendo aprender y usar el paquete <a href="https://reprex.tidyverse.org/">reprex</a>.</p></li>
+</ul>
+<!-- GVW:¿alguien lo revisará una vez que haya terminado y creará un glosario? Si marcó cosas como "reprex" en negrita, debería ser fácil encontrar términos. -->
+<p>Si está buscando ayuda específica para resolver los ejercicios de este libro, las soluciones de Malte Grosser y Henning Bumann están disponibles en <a href="https://advanced-r-solutions.rbind.io" class="uri">https://advanced-r-solutions.rbind.io</a>.</p>
+</section>
+<section id="intro-ack" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="intro-ack"><span class="header-section-number">1.8</span> Reconocimientos</h2>
+<p>Me gustaría agradecer a los muchos colaboradores de R-devel y R-help y, más recientemente, Stack Overflow y Posit Community. Hay demasiados para nombrarlos individualmente, pero me gustaría agradecer especialmente a Luke Tierney, John Chambers, JJ Allaire y Brian Ripley por brindarme generosamente su tiempo y corregir mis innumerables malentendidos.</p>
+<p>Este libro fue <a href="https://github.com/hadley/adv-r/">escrito al aire libre</a>, y los capítulos se anunciaron en <a href="https://twitter.com/hadleywickham">twitter</a> cuando se completó. Es verdaderamente un esfuerzo de la comunidad: muchas personas leen borradores, corrigen errores tipográficos, sugieren mejoras y contribuyen con contenido. Sin esos colaboradores, el libro no sería tan bueno como es y estoy profundamente agradecido por su ayuda. Un agradecimiento especial a Jeff Hammerbacher, Peter Li, Duncan Murdoch y Greg Wilson, quienes leyeron el libro de cabo a rabo y proporcionaron muchas correcciones y sugerencias.</p>
+<div class="cell" data-layout-align="center">
+<p>A big thank you to all 386 contributors (in alphabetical order by username): Aaron Wolen (@aaronwolen), @absolutelyNoWarranty, Adam Hunt (@adamphunt), @agrabovsky, Alexander Grueneberg (@agrueneberg), Anthony Damico (@ajdamico), James Manton (@ajdm), Aaron Schumacher (@ajschumacher), Alan Dipert (@alandipert), Alex Brown (@alexbbrown), @alexperrone, Alex Whitworth (@alexWhitworth), Alexandros Kokkalis (@alko989), @amarchin, Amelia McNamara (@AmeliaMN), Bryce Mecum (@amoeba), Andrew Laucius (@andrewla), Andrew Bray (@andrewpbray), Andrie de Vries (@andrie), Angela Li (@angela-li), @aranlunzer, Ari Lamstein (@arilamstein), @asnr, Andy Teucher (@ateucher), Albert Vilella (@avilella), baptiste (@baptiste), Brian G. Barkley (@BarkleyBG), Mara Averick (@batpigandme), Byron (@bcjaeger), Brandon Greenwell (@bgreenwell), Brandon Hurr (@bhive01), Jason Knight (@binarybana), Brett Klamer (@bklamer), Jesse Anderson (@blindjesse), Brian Mayer (@blmayer), Benjamin L. Moore (@blmoore), Brian Diggs (@BrianDiggs), Brian S. Yandell (@byandell), @carey1024, Chip Hogg (@chiphogg), Chris Muir (@ChrisMuir), Christopher Gandrud (@christophergandrud), Clay Ford (@clayford), Colin Fay (@ColinFay), @cortinah, Cameron Plouffe (@cplouffe), Carson Sievert (@cpsievert), Craig Citro (@craigcitro), Craig Grabowski (@craiggrabowski), Christopher Roach (@croach), Peter Meilstrup (@crowding), Crt Ahlin (@crtahlin), Carlos Scheidegger (@cscheid), Colin Gillespie (@csgillespie), Christopher Brown (@ctbrown), Davor Cubranic (@cubranic), Darren Cusanovich (@cusanovich), Christian G. Warden (@cwarden), Charlotte Wickham (@cwickham), Dean Attali (@daattali), Dan Sullivan (@dan87134), Daniel Barnett (@daniel-barnett), Daniel (@danielruc91), Kenny Darrell (@darrkj), Tracy Nance (@datapixie), Dave Childers (@davechilders), David Vukovic (@david-vukovic), David Rubinger (@davidrubinger), David Chudzicki (@dchudz), Deependra Dhakal (@DeependraD), Daisuke ICHIKAWA (@dichika), david kahle (@dkahle), David LeBauer (@dlebauer), David Schweizer (@dlschweizer), David Montaner (@dmontaner), @dmurdoch, Zhuoer Dong (@dongzhuoer), Doug Mitarotonda (@dougmitarotonda), Dragoș Moldovan-Grünfeld (@dragosmg), Jonathan Hill (@Dripdrop12), @drtjc, Julian During (@duju211), @duncanwadsworth, @eaurele, Dirk Eddelbuettel (@eddelbuettel), @EdFineOKL, Eduard Szöcs (@EDiLD), Edwin Thoen (@EdwinTh), Ethan Heinzen (@eheinzen), @eijoac, Joel Schwartz (@eipi10), Eric Ronald Legrand (@elegrand), Elio Campitelli (@eliocamp), Ellis Valentiner (@ellisvalentiner), Emil Hvitfeldt (@EmilHvitfeldt), Emil Rehnberg (@EmilRehnberg), Daniel Lee (@erget), Eric C. Anderson (@eriqande), Enrico Spinielli (@espinielli), @etb, David Hajage (@eusebe), Fabian Scheipl (@fabian-s), @flammy0530, François Michonneau (@fmichonneau), Francois Pepin (@fpepin), Frank Farach (@frankfarach), @freezby, Frans van Dunné (@FvD), @fyears, @gagnagaman, Garrett Grolemund (@garrettgman), Gavin Simpson (@gavinsimpson), Brooke Anderson (@geanders), @gezakiss7, @gggtest, Gökçen Eraslan (@gokceneraslan), Josh Goldberg (@GoldbergData), Georg Russ (@gr650), @grasshoppermouse, Gregor Thomas (@gregorp), Garrett See (@gsee), Ari Friedman (@gsk3), Gunnlaugur Thor Briem (@gthb), Greg Wilson (@gvwilson), Hamed (@hamedbh), Jeff Hammerbacher (@hammer), Harley Day (@harleyday), @hassaad85, @helmingstay, Henning (@henningsway), Henrik Bengtsson (@HenrikBengtsson), Ching Boon (@hoscb), @hplieninger, Hörmet Yiltiz (@hyiltiz), Iain Dillingham (@iaindillingham), @IanKopacka, Ian Lyttle (@ijlyttle), Ilan Man (@ilanman), Imanuel Costigan (@imanuelcostigan), Thomas Bürli (@initdch), Os Keyes (@Ironholds), @irudnyts, i (@isomorphisms), Irene Steves (@isteves), Jan Gleixner (@jan-glx), Jannes Muenchow (@jannes-m), Jason Asher (@jasonasher), Jason Davies (@jasondavies), Chris (@jastingo), jcborras (@jcborras), Joe Cheng (@jcheng5), John Blischak (@jdblischak), @jeharmse, Lukas Burk (@jemus42), Jennifer (Jenny) Bryan (@jennybc), Justin Jent (@jentjr), Jeston (@JestonBlu), Josh Cook (@jhrcook), Jim Hester (@jimhester), @JimInNashville, @jimmyliu2017, Jim Vine (@jimvine), Jinlong Yang (@jinlong25), J.J. Allaire (@jjallaire), @JMHay, Jochen Van de Velde (@jochenvdv), Johann Hibschman (@johannh), John Baumgartner (@johnbaums), John Horton (@johnjosephhorton), @johnthomas12, Jon Calder (@jonmcalder), Jon Harmon (@jonthegeek), Julia Gustavsen (@jooolia), JorneBiccler (@JorneBiccler), Jeffrey Arnold (@jrnold), Joyce Robbins (@jtr13), Juan Manuel Truppia (@juancentro), @juangomezduaso, Kevin Markham (@justmarkham), john verzani (@jverzani), Michael Kane (@kaneplusplus), Bart Kastermans (@kasterma), Kevin D’Auria (@kdauria), Karandeep Singh (@kdpsingh), Ken Williams (@kenahoo), Kendon Bell (@kendonB), Kent Johnson (@kent37), Kevin Ushey (@kevinushey), 电线杆 (@kfeng123), Karl Forner (@kforner), Kirill Sevastyanenko (@kirillseva), Brian Knaus (@knausb), Kirill Müller (@krlmlr), Kriti Sen Sharma (@ksens), Kai Tang (唐恺） (@ktang), Kevin Wright (@kwstat), suo.lawrence.liu@gmail.com (@Lawrence-Liu), @ldfmrails, Kevin Kainan Li (@legendre6891), Rachel Severson (@leighseverson), Laurent Gatto (@lgatto), C. Jason Liang (@liangcj), Steve Lianoglou (@lianos), Yongfu Liao (@liao961120), Likan (@likanzhan), @lindbrook, Lingbing Feng (@Lingbing), Marcel Ramos (@LiNk-NY), Zhongpeng Lin (@linzhp), Lionel Henry (@lionel-), Lluís (@llrs), myq (@lrcg), Luke W Johnston (@lwjohnst86), Kevin Lynagh (@lynaghk), @MajoroMask, Malcolm Barrett (@malcolmbarrett), @mannyishere, @mascaretti, Matt (@mattbaggott), Matthew Grogan (@mattgrogan), @matthewhillary, Matthieu Gomez (@matthieugomez), Matt Malin (@mattmalin), Mauro Lepore (@maurolepore), Max Ghenis (@MaxGhenis), Maximilian Held (@maxheld83), Michal Bojanowski (@mbojan), Mark Rosenstein (@mbrmbr), Michael Sumner (@mdsumner), Jun Mei (@meijun), merkliopas (@merkliopas), mfrasco (@mfrasco), Michael Bach (@michaelbach), Michael Bishop (@MichaelMBishop), Michael Buckley (@michaelmikebuckley), Michael Quinn (@michaelquinn32), @miguelmorin, Michael (@mikekaminsky), Mine Cetinkaya-Rundel (@mine-cetinkaya-rundel), @mjsduncan, Mamoun Benghezal (@MoBeng), Matt Pettis (@mpettis), Martin Morgan (@mtmorgan), Guy Dawson (@Mullefa), Nacho Caballero (@nachocab), Natalya Rapstine (@natalya-patrikeeva), Nick Carchedi (@ncarchedi), Pascal Burkhard (@Nenuial), Noah Greifer (@ngreifer), Nicholas Vasile (@nickv9), Nikos Ignatiadis (@nignatiadis), Nina Munkholt Jakobsen (@nmjakobsen), Xavier Laviron (@norival), Nick Pullen (@nstjhp), Oge Nnadi (@ogennadi), Oliver Paisley (@oliverpaisley), Pariksheet Nanda (@omsai), Øystein Sørensen (@osorensen), Paul (@otepoti), Otho Mantegazza (@othomantegazza), Dewey Dunnington (@paleolimbot), Paola Corrales (@paocorrales), Parker Abercrombie (@parkerabercrombie), Patrick Hausmann (@patperu), Patrick Miller (@patr1ckm), Patrick Werkmeister (@Patrick01), @paulponcet, @pdb61, Tom Crockett (@pelotom), @pengyu, Jeremiah (@perryjer1), Peter Hickey (@PeteHaitch), Phil Chalmers (@philchalmers), Jose Antonio Magaña Mesa (@picarus), Pierre Casadebaig (@picasa), Antonio Piccolboni (@piccolbo), Pierre Roudier (@pierreroudier), Poor Yorick (@pooryorick), Marie-Helene Burle (@prosoitos), Peter Schulam (@pschulam), John (@quantbo), Quyu Kong (@qykong), Ramiro Magno (@ramiromagno), Ramnath Vaidyanathan (@ramnathv), Kun Ren (@renkun-ken), Richard Reeve (@richardreeve), Richard Cotton (@richierocks), Robert M Flight (@rmflight), R. Mark Sharp (@rmsharp), Robert Krzyzanowski (@robertzk), @robiRagan, Romain François (@romainfrancois), Ross Holmberg (@rossholmberg), Ricardo Pietrobon (@rpietro), @rrunner, Ryan Walker (@rtwalker), @rubenfcasal, Rob Weyant (@rweyant), Rumen Zarev (@rzarev), Nan Wang (@sailingwave), Samuel Perreault (@samperochkin), @sbgraves237, Scott Kostyshak (@scottkosty), Scott Leishman (@scttl), Sean Hughes (@seaaan), Sean Anderson (@seananderson), Sean Carmody (@seancarmody), Sebastian (@sebastian-c), Matthew Sedaghatfar (@sedaghatfar), @see24, Sven E. Templer (@setempler), @sflippl, @shabbybanks, Steven Pav (@shabbychef), Shannon Rush (@shannonrush), S’busiso Mkhondwane (@sibusiso16), Sigfried Gold (@Sigfried), Simon O’Hanlon (@simonohanlon101), Simon Potter (@sjp), Leo Razoumov (@slonik-az), Richard M. Smith (@Smudgerville), Steve (@SplashDance), Scott Ritchie (@sritchie73), Tim Cole (@statist7), @ste-fan, @stephens999, Steve Walker (@stevencarlislewalker), Stefan Widgren (@stewid), Homer Strong (@strongh), Suman Khanal (@sumanstats), Dirk (@surmann), Sebastien Vigneau (@svigneau), Steven Nydick (@swnydick), Taekyun Kim (@taekyunk), Tal Galili (@talgalili), @Tazinho, Tyler Bradley (@tbradley1013), Tom B (@tbuckl), @tdenes, @thomasherbig, Thomas (@thomaskern), Thomas Lin Pedersen (@thomasp85), Thomas Zumbrunn (@thomaszumbrunn), Tim Waterhouse (@timwaterhouse), TJ Mahr (@tjmahr), Thomas Nagler (@tnagler), Anton Antonov (@tonytonov), Ben Torvaney (@Torvaney), Jeff Allen (@trestletech), Tyler Rinker (@trinker), Chitu Okoli (@Tripartio), Kirill Tsukanov (@tskir), Terence Teo (@tteo), Tim Triche, Jr.&nbsp;(@ttriche), @tyhenkaline, Tyler Ritchie (@tylerritchie), Tyler Littlefield (@tyluRp), Varun Agrawal (@varun729), Vijay Barve (@vijaybarve), Victor (@vkryukov), Vaidotas Zemlys-Balevičius (@vzemlys), Winston Chang (@wch), Linda Chin (@wchi144), Welliton Souza (@Welliton309), Gregg Whitworth (@whitwort), Will Beasley (@wibeasley), William R Bauer (@WilCrofter), William Doane (@WilDoane), Sean Wilkinson (@wilkinson), Christof Winter (@winterschlaefer), Jake Thompson (@wjakethompson), Bill Carver (@wmc3), Wolfgang Huber (@wolfganghuber), Krishna Sankar (@xsankar), Yihui Xie (@yihui), yang (@yiluheihei), Yoni Ben-Meshulam (@yoni), @yuchouchen, Yuqi Liao (@yuqiliao), Hiroaki Yutani (@yutannihilation), Zachary Foster (@zachary-foster), @zachcp, @zackham, Sergio Oller (@zeehio), Edward Cho (@zerokarmaleft), Albert Zhao (@zxzb).</p>
+</div>
+</section>
+<section id="conventions" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="conventions"><span class="header-section-number">1.9</span> Convenciones</h2>
+<p>A lo largo de este libro utilizo <code>f()</code> para referirme a funciones, <code>g</code> para referirme a variables y parámetros de funciones, y <code>h/</code> a rutas.</p>
+<p>Los bloques de código más grandes entremezclan la entrada y la salida. La salida se comenta (<code>#&gt;</code>) de modo que si tiene una versión electrónica del libro, por ejemplo, <a href="https://adv-r.hadley.nz/" class="uri">https://adv-r.hadley.nz/</a>, puede copiar y pegar fácilmente ejemplos en R.</p>
+<p>Muchos ejemplos usan números aleatorios. Estos se hacen reproducibles mediante <code>set.seed(1014)</code>, que se ejecuta automáticamente al comienzo de cada capítulo.</p>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="colophon" class="level2" data-number="1.10">
+<h2 data-number="1.10" class="anchored" data-anchor-id="colophon"><span class="header-section-number">1.10</span> Colofón</h2>
+<p>Este libro fue escrito en <a href="http://bookdown.org/">bookdown</a> dentro de <a href="http://www.rstudio.com/ide/">RStudio</a>. El <a href="https://adv-r.hadley.nz/">sitio web</a> está alojado en <a href="http://netlify.com/">netlify</a>, y <a href="https://travis-ci.org/">travis-ci</a> lo actualiza automáticamente después de cada confirmación. La fuente completa está disponible en <a href="https://github.com/hadley/adv-r">GitHub</a>. El código del libro impreso se establece en <a href="http://levien.com/type/myfonts/inconsolata.html">inconsolata</a>. Las imágenes de emoji en el libro impreso provienen de [Twitter Emoji] con licencia abierta (https://github.com/twitter/twemoji).</p>
+<p>Esta versión del libro se creó con R version 4.4.0 (2024-04-24) y los siguientes paquetes.</p>
+<div class="cell" data-layout-align="center">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 13%">
+<col style="width: 71%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">package</th>
+<th style="text-align: left;">version</th>
+<th style="text-align: left;">source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">bench</td>
+<td style="text-align: left;">1.1.3</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bookdown</td>
+<td style="text-align: left;">0.39</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">bslib</td>
+<td style="text-align: left;">0.7.0</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dbplyr</td>
+<td style="text-align: left;">2.5.0</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">desc</td>
+<td style="text-align: left;">1.4.3</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">downlit</td>
+<td style="text-align: left;">0.4.3</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">emo</td>
+<td style="text-align: left;">0.0.0.9000</td>
+<td style="text-align: left;">git (hadley/emo@3f03b11491ce3d6fc5601e210927eff73bf8e350)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ggbeeswarm</td>
+<td style="text-align: left;">0.7.2</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ggplot2</td>
+<td style="text-align: left;">3.5.1</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">jsonlite</td>
+<td style="text-align: left;">1.8.8</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">knitr</td>
+<td style="text-align: left;">1.46</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">lobstr</td>
+<td style="text-align: left;">1.1.2</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">memoise</td>
+<td style="text-align: left;">2.0.1</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">png</td>
+<td style="text-align: left;">0.1-8</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">profvis</td>
+<td style="text-align: left;">0.3.8</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rcpp</td>
+<td style="text-align: left;">1.0.12</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rlang</td>
+<td style="text-align: left;">1.1.3</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RSQLite</td>
+<td style="text-align: left;">2.3.6</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">scales</td>
+<td style="text-align: left;">1.3.0</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sessioninfo</td>
+<td style="text-align: left;">1.2.2</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sloop</td>
+<td style="text-align: left;">1.0.1</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">testthat</td>
+<td style="text-align: left;">3.2.1.1</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">tidyr</td>
+<td style="text-align: left;">1.3.1</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">vctrs</td>
+<td style="text-align: left;">0.6.5</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">xml2</td>
+<td style="text-align: left;">1.3.6</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">zeallot</td>
+<td style="text-align: left;">0.1.0</td>
+<td style="text-align: left;">RSPM (R 4.4.0)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-SICP" class="csl-entry" role="listitem">
+Abelson, Harold, Gerald Jay Sussman, y Julie Sussman. 1996. <em>Structure and Interpretation of Computer Programs</em>. MIT Press.
+</div>
+<div id="ref-pragprog" class="csl-entry" role="listitem">
+Hunt, Andrew, y David Thomas. 1990. <em>The Pragmatic Programmer</em>. Addison Wesley.
+</div>
+<div id="ref-ctmcp" class="csl-entry" role="listitem">
+Van-Roy, Peter, y Seif Haridi. 2004. <em>Concepts, Techniques, and Models of Computer Programming</em>. MIT press.
+</div>
+</div>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Puedes leerlo en línea gratis en <a href="https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book.html" class="uri">https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book.html</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+
+<script>
+
+  // Chapter name
+  const currentChapterFile = window.location.pathname.split('/').pop().replace('.html', '');
+
+  //Deffining urls
+  const originalURL = "https://github.com/hadley/adv-r";
+  const translationURL = "https://github.com/davidrsch/adv-res";
+
+  //Deffining texts
+  const edit_text = "Editar esta página";
+  const issue_text = "Informar de un problema"
+
+  //Deffining git_i
+  const git_i = '<div><i class="bi bi-github"></i></div>';
+
+  // Adding TOC if not exist
+  const sidebarmargin = document.getElementById('quarto-margin-sidebar');
+  const buscar_TOC = document.getElementById('TOC');
+
+  if (!buscar_TOC) {
+    const crear_TOC = document.createElement('nav');
+    crear_TOC.id = 'TOC';
+    crear_TOC.role = "doc-toc";
+    crear_TOC.class = "toc-active";
+    sidebarmargin.appendChild(crear_TOC);
+  }
+
+
+  // Adding original github actions
+  const TOC = document.getElementById('TOC');
+  const originalga = document.createElement('h2');
+  originalga.textContent = "Original";
+  originalga.style["border-top"] = "1px solid #ccc";
+  originalga.style["padding-top"] = "0.5rem";
+  const toc_act_O = document.createElement('div');
+  toc_act_O.className = 'toc-actions';
+  toc_act_O.id = 'toc-act-O';
+  const act_link_O = document.createElement('div');
+  act_link_O.className='action-links';
+  act_link_O.id='act-link-O';
+  const edit_issue_O ='<p><a href="'+originalURL+'/edit/master/'+currentChapterFile+'.Rmd" class="toc-action">'+edit_text+'</p><p><a href="'+originalURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(originalga);
+  TOC.appendChild(toc_act_O);
+  toc_act_O.innerHTML += git_i;
+  toc_act_O.appendChild(act_link_O);
+  act_link_O.innerHTML += edit_issue_O;
+
+  // Adding translation github actions
+  const translationga = document.createElement('h2');
+  translationga.textContent = "Traducción";
+  const toc_act_T = document.createElement('div');
+  toc_act_T.className = 'toc-actions';
+  toc_act_T.id = 'toc-act-T';
+  const act_link_T = document.createElement('div');
+  act_link_T.className='action-links';
+  act_link_T.id='act-link-T';
+  const edit_issue_T ='<p><a href="'+translationURL+'/edit/main/'+currentChapterFile+'.qmd" class="toc-action">'+edit_text+'</p><p><a href="'+translationURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(translationga);
+  TOC.appendChild(toc_act_T);
+  toc_act_T.innerHTML += git_i;
+  toc_act_T.appendChild(act_link_T);
+  act_link_T.innerHTML += edit_issue_T;
+
+
+</script>
+
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Preface.html" class="pagination-link" aria-label="Prefacio">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Prefacio</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./Foundations.html" class="pagination-link" aria-label="Introducción">
+        <span class="nav-page-text">Introducción</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><b>“R Avanzado”</b> fue escrito por Hadley Wickham.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

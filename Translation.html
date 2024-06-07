@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>R Avanzado - 21&nbsp; Traducir código R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./Techniques.html" rel="next">
+<link href="./Evaluation.html" rel="prev">
+<link href="./cover.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="adv-r.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Meta.html">Metaprogramación</a></li><li class="breadcrumb-item"><a href="./Translation.html"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Traducir código R</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R Avanzado</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/adv-r">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/adv-res">
+            Traducción
+            </a>
+          </li>
+      </ul>
+    </div>
+    <a href="./R-Avanzado.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bienvenida</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Preface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Fundamentos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Foundations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Names-values.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Nombres y valores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Vectors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Vectores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Subsetting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Subconjunto</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Control-flow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Flujo de control</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Environments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Entornos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Conditions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Condiciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Programación funcional</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./FP.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Functionals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Funcionales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-factories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Fábricas de funciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Function-operators.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Operadores de funciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Programación orientada a objetos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introdución</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./base-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Tipos básicos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">S3</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./R6.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">R6</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./S4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">S4</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./OO-tradeoffs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Compensaciones</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Metaprogramación</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Meta.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Big-picture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Panorama general</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Expresiones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Quotation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Cuasicita</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Evaluation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Evaluación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Translation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Traducir código R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Tecnicas</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Techniques.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introducción</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Depuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-measure.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Medición de desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Perf-improve.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Mejorando el desempeño</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Rcpp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Reescribiendo código de R en C++</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./References.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referencias</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#introducción" id="toc-introducción" class="nav-link active" data-scroll-target="#introducción"><span class="header-section-number">21.1</span> Introducción</a>
+  <ul class="collapse">
+  <li><a href="#estructura" id="toc-estructura" class="nav-link" data-scroll-target="#estructura">Estructura</a></li>
+  <li><a href="#requisitos-previos" id="toc-requisitos-previos" class="nav-link" data-scroll-target="#requisitos-previos">Requisitos previos</a></li>
+  </ul></li>
+  <li><a href="#sec-html" id="toc-sec-html" class="nav-link" data-scroll-target="#sec-html"><span class="header-section-number">21.2</span> HTML</a>
+  <ul class="collapse">
+  <li><a href="#objetivo" id="toc-objetivo" class="nav-link" data-scroll-target="#objetivo"><span class="header-section-number">21.2.1</span> Objetivo</a></li>
+  <li><a href="#escapar" id="toc-escapar" class="nav-link" data-scroll-target="#escapar"><span class="header-section-number">21.2.2</span> Escapar</a></li>
+  <li><a href="#funciones-básicas-de-etiquetas" id="toc-funciones-básicas-de-etiquetas" class="nav-link" data-scroll-target="#funciones-básicas-de-etiquetas"><span class="header-section-number">21.2.3</span> Funciones básicas de etiquetas</a></li>
+  <li><a href="#sec-tag-functions" id="toc-sec-tag-functions" class="nav-link" data-scroll-target="#sec-tag-functions"><span class="header-section-number">21.2.4</span> Funciones de etiquetas</a></li>
+  <li><a href="#sec-html-env" id="toc-sec-html-env" class="nav-link" data-scroll-target="#sec-html-env"><span class="header-section-number">21.2.5</span> Procesando todas las etiquetas</a></li>
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios"><span class="header-section-number">21.2.6</span> Ejercicios</a></li>
+  </ul></li>
+  <li><a href="#sec-latex" id="toc-sec-latex" class="nav-link" data-scroll-target="#sec-latex"><span class="header-section-number">21.3</span> LaTeX</a>
+  <ul class="collapse">
+  <li><a href="#latex-matemáticas" id="toc-latex-matemáticas" class="nav-link" data-scroll-target="#latex-matemáticas"><span class="header-section-number">21.3.1</span> LaTeX matemáticas</a></li>
+  <li><a href="#meta" id="toc-meta" class="nav-link" data-scroll-target="#meta"><span class="header-section-number">21.3.2</span> Meta</a></li>
+  <li><a href="#to_math" id="toc-to_math" class="nav-link" data-scroll-target="#to_math"><span class="header-section-number">21.3.3</span> <code>to_math</code>()</a></li>
+  <li><a href="#símbolos-conocidos" id="toc-símbolos-conocidos" class="nav-link" data-scroll-target="#símbolos-conocidos"><span class="header-section-number">21.3.4</span> Símbolos conocidos</a></li>
+  <li><a href="#símbolos-desconocidos" id="toc-símbolos-desconocidos" class="nav-link" data-scroll-target="#símbolos-desconocidos"><span class="header-section-number">21.3.5</span> Símbolos desconocidos</a></li>
+  <li><a href="#funciones-conocidas" id="toc-funciones-conocidas" class="nav-link" data-scroll-target="#funciones-conocidas"><span class="header-section-number">21.3.6</span> Funciones conocidas</a></li>
+  <li><a href="#funciones-desconocidas" id="toc-funciones-desconocidas" class="nav-link" data-scroll-target="#funciones-desconocidas"><span class="header-section-number">21.3.7</span> Funciones desconocidas</a></li>
+  <li><a href="#ejercicios-1" id="toc-ejercicios-1" class="nav-link" data-scroll-target="#ejercicios-1"><span class="header-section-number">21.3.8</span> Ejercicios</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Meta.html">Metaprogramación</a></li><li class="breadcrumb-item"><a href="./Translation.html"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Traducir código R</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-translation" class="quarto-section-identifier"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Traducir código R</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción" class="level2" data-number="21.1">
+<h2 data-number="21.1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">21.1</span> Introducción</h2>
+<p>La combinación de entornos de primera clase, alcance léxico y metaprogramación nos brinda un poderoso conjunto de herramientas para traducir código R a otros lenguajes. Un ejemplo completo de esta idea es dbplyr, que impulsa los backends de la base de datos para dplyr, lo que le permite expresar la manipulación de datos en R y traducirlos automáticamente a SQL. Puedes ver la idea clave en <code>translate_sql()</code> que toma el código R y devuelve el SQL equivalente:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dbplyr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">simulate_dbi</span>()</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">translate_sql</span>(x <span class="sc">^</span> <span class="dv">2</span>, <span class="at">con =</span> con)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;SQL&gt; POWER(`x`, 2.0)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">translate_sql</span>(x <span class="sc">&lt;</span> <span class="dv">5</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(x), <span class="at">con =</span> con)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;SQL&gt; `x` &lt; 5.0 AND NOT((`x` IS NULL))</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">translate_sql</span>(<span class="sc">!</span>first <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"John"</span>, <span class="st">"Roger"</span>, <span class="st">"Robert"</span>), <span class="at">con =</span> con)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;SQL&gt; NOT(`first` IN ('John', 'Roger', 'Robert'))</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">translate_sql</span>(select <span class="sc">==</span> <span class="dv">7</span>, <span class="at">con =</span> con)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;SQL&gt; `select` = 7.0</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Traducir R a SQL es complejo debido a las muchas idiosincrasias de los dialectos de SQL, por lo que aquí desarrollaré dos lenguajes específicos de dominio (DSL) simples pero útiles: uno para generar HTML y el otro para generar ecuaciones matemáticas en LaTeX.</p>
+<p>Si está interesado en obtener más información sobre los idiomas específicos del dominio en general, le recomiendo <em>Idiomas específicos del dominio</em> <span class="citation" data-cites="dsls">(<a href="References.html#ref-dsls" role="doc-biblioref">Fowler 2010</a>)</span>. Analiza muchas opciones para crear un DSL y proporciona muchos ejemplos de diferentes idiomas.</p>
+<section id="estructura" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="estructura">Estructura</h3>
+<ul>
+<li><p>La <a href="#sec-html" class="quarto-xref"><span>Sección 21.2</span></a> crea un DSL para generar HTML, usando quasiquotation y purrr para generar una función para cada etiqueta HTML, luego ordena la evaluación para acceder fácilmente a ellos.</p></li>
+<li><p>La <a href="#sec-latex" class="quarto-xref"><span>Sección 21.3</span></a>) transforma matemáticamente el código R en su equivalente LaTeX usando una combinación de evaluación ordenada y caminata de expresión.</p></li>
+</ul>
+</section>
+<section id="requisitos-previos" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="requisitos-previos">Requisitos previos</h3>
+<p>Este capítulo reúne muchas técnicas discutidas en otras partes del libro. En particular, deberá comprender los entornos, las expresiones, la evaluación ordenada y un poco de programación funcional y S3. Usaremos <a href="https://rlang.r-lib.org">rlang</a> para herramientas de metaprogramación y <a href="https://purrr.tidyverse.org">purrr</a> para programación funcional.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rlang)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="sec-html" class="level2" data-number="21.2">
+<h2 data-number="21.2" class="anchored" data-anchor-id="sec-html"><span class="header-section-number">21.2</span> HTML</h2>
+<p></p>
+<p>HTML (lenguaje de marcado de hipertexto) subyace en la mayor parte de la web. Es un caso especial de SGML (Lenguaje de marcado generalizado estándar), y es similar pero no idéntico a XML (Lenguaje de marcado extensible). HTML se ve así:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">h1</span><span class="ot"> id</span><span class="op">=</span><span class="st">'first'</span><span class="dt">&gt;</span>A heading<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Some text <span class="dv">&amp;amp;</span> <span class="dt">&lt;</span><span class="kw">b</span><span class="dt">&gt;</span>some bold text.<span class="dt">&lt;/</span><span class="kw">b</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">'myimg.png'</span><span class="ot"> width</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> height</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Incluso si nunca antes ha mirado HTML, aún puede ver que el componente clave de su estructura de codificación son las etiquetas, que se ven como <code>&lt;tag&gt;&lt;/tag&gt;</code> o <code>&lt;tag/&gt;</code>. Las etiquetas se pueden anidar dentro de otras etiquetas y entremezclarse con el texto. Hay más de 100 etiquetas HTML, pero en este capítulo nos centraremos en unas pocas:</p>
+<ul>
+<li><code>&lt;body&gt;</code> es la etiqueta de nivel superior que contiene todo el contenido.</li>
+<li><code>&lt;h1&gt;</code> define un encabezado de nivel superior.</li>
+<li><code>&lt;p&gt;</code> define un párrafo.</li>
+<li><code>&lt;b&gt;</code> texto envalentonado.</li>
+<li><code>&lt;img&gt;</code> incrusta una imagen.</li>
+</ul>
+<p>Las etiquetas pueden tener <strong>atributos</strong> con nombre que se parecen a <code>&lt;tag nombre1='valor1' nombre2='valor2'&gt;&lt;/tag&gt;</code>. Dos de los atributos más importantes son <code>id</code> y <code>class</code>, que se utilizan junto con CSS (hojas de estilo en cascada) para controlar la apariencia visual de la página.</p>
+<p><strong>Etiquetas anuladas</strong>, como <code>&lt;img&gt;</code>, no tienen hijos y se escriben <code>&lt;img /&gt;</code>, no <code>&lt;img&gt;&lt;/img&gt;</code>. Dado que no tienen contenido, los atributos son más importantes, y <code>img</code> tiene tres que se usan con casi todas las imágenes: <code>src</code> (donde vive la imagen), <code>width</code> y <code>height</code>.</p>
+<p>Debido a que <code>&lt;</code> y <code>&gt;</code> tienen significados especiales en HTML, no puede escribirlos directamente. En su lugar, debe usar los <strong>escapes</strong> de HTML: <code>&amp;gt;</code> y <code>&amp;lt;</code>. Y dado que esos escapes usan <code>&amp;</code>, si quieres un ampersand literal, tienes que escapar como <code>&amp;amp;</code>.</p>
+<section id="objetivo" class="level3" data-number="21.2.1">
+<h3 data-number="21.2.1" class="anchored" data-anchor-id="objetivo"><span class="header-section-number">21.2.1</span> Objetivo</h3>
+<p>Nuestro objetivo es facilitar la generación de HTML desde R. Para dar un ejemplo concreto, queremos generar el siguiente HTML:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">h1</span><span class="ot"> id</span><span class="op">=</span><span class="st">'first'</span><span class="dt">&gt;</span>A heading<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Some text <span class="dv">&amp;amp;</span> <span class="dt">&lt;</span><span class="kw">b</span><span class="dt">&gt;</span>some bold text.<span class="dt">&lt;/</span><span class="kw">b</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">'myimg.png'</span><span class="ot"> width</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> height</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Usando el siguiente código que coincida lo más posible con la estructura del HTML:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with_html</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">body</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">h1</span>(<span class="st">"Un encabezado"</span>, <span class="at">id =</span> <span class="st">"first"</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">p</span>(<span class="st">"Un poco de textp &amp;"</span>, <span class="fu">b</span>(<span class="st">"un poco de texto en negrita."</span>)),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">img</span>(<span class="at">src =</span> <span class="st">"myimg.png"</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">100</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Este DSL tiene las siguientes tres propiedades:</p>
+<ul>
+<li><p>El anidamiento de llamadas a funciones coincide con el anidamiento de etiquetas.</p></li>
+<li><p>Los argumentos sin nombre se convierten en el contenido de la etiqueta y los argumentos con nombre se convierten en sus atributos.</p></li>
+<li><p><code>&amp;</code> y otros caracteres especiales se escapan automáticamente.</p></li>
+</ul>
+</section>
+<section id="escapar" class="level3" data-number="21.2.2">
+<h3 data-number="21.2.2" class="anchored" data-anchor-id="escapar"><span class="header-section-number">21.2.2</span> Escapar</h3>
+<p></p>
+<p>Escapar es tan fundamental para la traducción que será nuestro primer tema. Hay dos desafíos relacionados:</p>
+<ul>
+<li><p>En la entrada del usuario, necesitamos escapar automáticamente <code>&amp;</code>, <code>&lt;</code> y <code>&gt;</code>.</p></li>
+<li><p>Al mismo tiempo, debemos asegurarnos de que <code>&amp;</code>, <code>&lt;</code> y <code>&gt;</code> que generamos no tengan doble escape (es decir, que no generemos accidentalmente <code>&amp;amp;amp;</code>, <code>&amp;amp;lt ;</code> y <code>&amp;amp;gt;</code>).</p></li>
+</ul>
+<p>La forma más sencilla de hacer esto es crear una clase S3 (<a href="S3.html#sec-s3-classes" class="quarto-xref"><span>Sección 13.3</span></a>) que distinga entre texto normal (que necesita escape) y HTML (que no).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>html <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">structure</span>(x, <span class="at">class =</span> <span class="st">"advr_html"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>print.advr_html <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"&lt;HTML&gt; "</span>, x)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">paste</span>(<span class="fu">strwrap</span>(out), <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Luego escribimos un escape genérico. Tiene dos métodos importantes:</p>
+<ul>
+<li><p><code>escape.character()</code> toma un vector de caracteres regular y devuelve un vector HTML con caracteres especiales (<code>&amp;</code>, <code>&lt;</code>, <code>&gt;</code>) escapados.</p></li>
+<li><p><code>escape.advr_html()</code> deja solo el HTML escapado.</p></li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>escape <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">UseMethod</span>(<span class="st">"escape"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>escape.character <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&amp;"</span>, <span class="st">"&amp;amp;"</span>, x)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&lt;"</span>, <span class="st">"&amp;lt;"</span>, x)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&gt;"</span>, <span class="st">"&amp;gt;"</span>, x)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html</span>(x)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>escape.advr_html <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora comprobamos que funciona</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">escape</span>(<span class="st">"This is some text."</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;HTML&gt; This is some text.</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">escape</span>(<span class="st">"x &gt; 1 &amp; y &lt; 2"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;HTML&gt; x &amp;gt; 1 &amp;amp; y &amp;lt; 2</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Doble escape no es un problema</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">escape</span>(<span class="fu">escape</span>(<span class="st">"This is some text. 1 &gt; 2"</span>))</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;HTML&gt; This is some text. 1 &amp;gt; 2</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Y el texto que sabemos que es HTML no se escapa.</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">escape</span>(<span class="fu">html</span>(<span class="st">"&lt;hr /&gt;"</span>))</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;HTML&gt; &lt;hr /&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Convenientemente, esto también permite que un usuario opte por nuestro escape si sabe que el contenido ya está escapado.</p>
+</section>
+<section id="funciones-básicas-de-etiquetas" class="level3" data-number="21.2.3">
+<h3 data-number="21.2.3" class="anchored" data-anchor-id="funciones-básicas-de-etiquetas"><span class="header-section-number">21.2.3</span> Funciones básicas de etiquetas</h3>
+<p>A continuación, escribiremos una función de una etiqueta a mano, luego descubriremos cómo generalizarla para que podamos generar una función para cada etiqueta con código.</p>
+<p>Comencemos con <code>&lt;p&gt;</code>. Las etiquetas HTML pueden tener tanto atributos (por ejemplo, id o clase) como elementos secundarios (como <code>&lt;b&gt;</code> o <code>&lt;i&gt;</code>). Necesitamos alguna forma de separarlos en la llamada a la función. Dado que los atributos tienen nombre y los hijos no, parece natural usar argumentos con nombre y sin nombre para ellos, respectivamente. Por ejemplo, una llamada a <code>p()</code> podría verse así:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">p</span>(<span class="st">"Texo. "</span>, <span class="fu">b</span>(<span class="fu">i</span>(<span class="st">"some bold italic text"</span>)), <span class="at">class =</span> <span class="st">"mypara"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podríamos enumerar todos los atributos posibles de la etiqueta <code>&lt;p&gt;</code> en la definición de la función, pero eso es difícil porque hay muchos atributos y porque es posible usar [atributos personalizados] (http://html5doctor.com/html5- atributos-de-datos-personalizados/). En su lugar, usaremos <code>...</code> y separaremos los componentes en función de si tienen nombre o no. Con esto en mente, creamos una función auxiliar que envuelve <code>rlang::list2()</code> (<a href="Quotation.html#sec-tidy-dots" class="quarto-xref"><span>Sección 19.6</span></a>) y devuelve los componentes con nombre y sin nombre por separado:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dots_partition <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  dots <span class="ot">&lt;-</span> <span class="fu">list2</span>(...)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a> <span class="cf">if</span> (<span class="fu">is.null</span>(<span class="fu">names</span>(dots))) {</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  is_named <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="fu">length</span>(dots))</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  is_named <span class="ot">&lt;-</span> <span class="fu">names</span>(dots) <span class="sc">!=</span> <span class="st">""</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">named =</span> dots[is_named],</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">unnamed =</span> dots[<span class="sc">!</span>is_named]</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(<span class="fu">dots_partition</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="dv">2</span>, <span class="at">b =</span> <span class="dv">3</span>, <span class="dv">4</span>))</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; List of 2</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ named  :List of 2</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ a: num 1</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ b: num 3</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ unnamed:List of 2</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ : num 2</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ : num 4</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora podemos crear nuestra función <code>p()</code>. Note que hay una nueva función aquí: <code>html_attributes()</code>. Toma una lista con nombre y devuelve la especificación del atributo HTML como una cadena. Es un poco complicado (en parte, porque trata con algunas idiosincrasias de HTML que no he mencionado aquí), pero no es tan importante y no introduce nuevas ideas de programación, así que no lo discutiré en detalle. Puede encontrar la <a href="https://github.com/hadley/adv-r/blob/master/dsl-html-attributes.r">fuente en línea</a> si desea resolverlo usted mismo.</p>
+<!-- GVW: ¿Es posible/útil mostrar una versión muy simple de `html_attributes`, luego señalar uno o dos casos en los que falla y luego decirles que lean la fuente? Siempre me pongo nervioso cuando alguien me dice "no tienes que preocuparte por los detalles de esto". -->
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"dsl-html-attributes.r"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  dots <span class="ot">&lt;-</span> <span class="fu">dots_partition</span>(...)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  attribs <span class="ot">&lt;-</span> <span class="fu">html_attributes</span>(dots<span class="sc">$</span>named)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  children <span class="ot">&lt;-</span> <span class="fu">map_chr</span>(dots<span class="sc">$</span>unnamed, escape)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html</span>(<span class="fu">paste0</span>(</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"&lt;p"</span>, attribs, <span class="st">"&gt;"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste</span>(children, <span class="at">collapse =</span> <span class="st">""</span>),</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"&lt;/p&gt;"</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="fu">p</span>(<span class="st">"Some text"</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;HTML&gt; &lt;p&gt;Some text&lt;/p&gt;</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="fu">p</span>(<span class="st">"Some text"</span>, <span class="at">id =</span> <span class="st">"myid"</span>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;HTML&gt; &lt;p id='myid'&gt;Some text&lt;/p&gt;</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="fu">p</span>(<span class="st">"Some text"</span>, <span class="at">class =</span> <span class="st">"important"</span>, <span class="st">`</span><span class="at">data-value</span><span class="st">`</span> <span class="ot">=</span> <span class="dv">10</span>)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;HTML&gt; &lt;p class='important' data-value='10'&gt;Some text&lt;/p&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-tag-functions" class="level3" data-number="21.2.4">
+<h3 data-number="21.2.4" class="anchored" data-anchor-id="sec-tag-functions"><span class="header-section-number">21.2.4</span> Funciones de etiquetas</h3>
+<p>Es sencillo adaptar <code>p()</code> a otras etiquetas: solo necesitamos reemplazar <code>"p"</code> con el nombre de la etiqueta. Una forma elegante de hacerlo es crear una función con <code>rlang::new_function()</code> (<a href="Quotation.html#sec-new-function" class="quarto-xref"><span>Sección 19.7.4</span></a>), utilizando la eliminación de comillas y <code>paste0()</code> para generar las etiquetas de inicio y finalización.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tag <span class="ot">&lt;-</span> <span class="cf">function</span>(tag) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">new_function</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expr</span>({</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      dots <span class="ot">&lt;-</span> <span class="fu">dots_partition</span>(...)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      attribs <span class="ot">&lt;-</span> <span class="fu">html_attributes</span>(dots<span class="sc">$</span>named)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>      children <span class="ot">&lt;-</span> <span class="fu">map_chr</span>(dots<span class="sc">$</span>unnamed, escape)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">html</span>(<span class="fu">paste0</span>(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        <span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag), attribs, <span class="st">"&gt;"</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">paste</span>(children, <span class="at">collapse =</span> <span class="st">""</span>),</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        <span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;/"</span>, tag, <span class="st">"&gt;"</span>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>      ))</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    }),</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">caller_env</span>()</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="fu">tag</span>(<span class="st">"b"</span>)</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function (...) </span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; {</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     dots &lt;- dots_partition(...)</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     attribs &lt;- html_attributes(dots$named)</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     children &lt;- map_chr(dots$unnamed, escape)</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     html(paste0("&lt;b", attribs, "&gt;", paste(children, collapse = ""), </span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         "&lt;/b&gt;"))</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; }</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Necesitamos la extraña sintaxis <code>exprs(... = )</code> para generar el argumento vacío <code>...</code> en la función de etiqueta. Consulte la <a href="Expressions.html#sec-empty-symbol" class="quarto-xref"><span>Sección 18.6.2</span></a> para obtener más detalles.</p>
+<p>Ahora podemos ejecutar nuestro ejemplo anterior:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">tag</span>(<span class="st">"p"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">tag</span>(<span class="st">"b"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">tag</span>(<span class="st">"i"</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">p</span>(<span class="st">"Some text. "</span>, <span class="fu">b</span>(<span class="fu">i</span>(<span class="st">"some bold italic text"</span>)), <span class="at">class =</span> <span class="st">"mypara"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;HTML&gt; &lt;p class='mypara'&gt;Some text. &lt;b&gt;&lt;i&gt;some bold italic</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; text&lt;/i&gt;&lt;/b&gt;&lt;/p&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Antes de generar funciones para cada etiqueta HTML posible, necesitamos crear una variante que maneje etiquetas vacías. <code>void_tag()</code> es bastante similar a <code>tag()</code>, pero arroja un error si hay etiquetas secundarias, como lo capturan los puntos sin nombre. La etiqueta en sí también se ve un poco diferente.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>void_tag <span class="ot">&lt;-</span> <span class="cf">function</span>(tag) {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">new_function</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expr</span>({</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>      dots <span class="ot">&lt;-</span> <span class="fu">dots_partition</span>(...)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">length</span>(dots<span class="sc">$</span>unnamed) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">abort</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag, <span class="st">"&gt; must not have unnamed arguments"</span>))</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>      attribs <span class="ot">&lt;-</span> <span class="fu">html_attributes</span>(dots<span class="sc">$</span>named)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">html</span>(<span class="fu">paste0</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag), attribs, <span class="st">" /&gt;"</span>))</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    }),</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">caller_env</span>()</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>img <span class="ot">&lt;-</span> <span class="fu">void_tag</span>(<span class="st">"img"</span>)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>img</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function (...) </span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; {</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     dots &lt;- dots_partition(...)</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     if (length(dots$unnamed) &gt; 0) {</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         abort("&lt;img&gt; must not have unnamed arguments")</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     }</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     attribs &lt;- html_attributes(dots$named)</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     html(paste0("&lt;img", attribs, " /&gt;"))</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; }</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="fu">img</span>(<span class="at">src =</span> <span class="st">"myimage.png"</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">100</span>)</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;HTML&gt; &lt;img src='myimage.png' width='100' height='100' /&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-html-env" class="level3" data-number="21.2.5">
+<h3 data-number="21.2.5" class="anchored" data-anchor-id="sec-html-env"><span class="header-section-number">21.2.5</span> Procesando todas las etiquetas</h3>
+<p>A continuación, debemos generar estas funciones para cada etiqueta. Comenzaremos con una lista de todas las etiquetas HTML:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tags <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"abbr"</span>, <span class="st">"address"</span>, <span class="st">"article"</span>, <span class="st">"aside"</span>, <span class="st">"audio"</span>,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"b"</span>,<span class="st">"bdi"</span>, <span class="st">"bdo"</span>, <span class="st">"blockquote"</span>, <span class="st">"body"</span>, <span class="st">"button"</span>, <span class="st">"canvas"</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"caption"</span>,<span class="st">"cite"</span>, <span class="st">"code"</span>, <span class="st">"colgroup"</span>, <span class="st">"data"</span>, <span class="st">"datalist"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dd"</span>, <span class="st">"del"</span>,<span class="st">"details"</span>, <span class="st">"dfn"</span>, <span class="st">"div"</span>, <span class="st">"dl"</span>, <span class="st">"dt"</span>, <span class="st">"em"</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"eventsource"</span>,<span class="st">"fieldset"</span>, <span class="st">"figcaption"</span>, <span class="st">"figure"</span>, <span class="st">"footer"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"form"</span>, <span class="st">"h1"</span>, <span class="st">"h2"</span>, <span class="st">"h3"</span>, <span class="st">"h4"</span>, <span class="st">"h5"</span>, <span class="st">"h6"</span>, <span class="st">"head"</span>, <span class="st">"header"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"hgroup"</span>, <span class="st">"html"</span>, <span class="st">"i"</span>,<span class="st">"iframe"</span>, <span class="st">"ins"</span>, <span class="st">"kbd"</span>, <span class="st">"label"</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"legend"</span>, <span class="st">"li"</span>, <span class="st">"mark"</span>, <span class="st">"map"</span>,<span class="st">"menu"</span>, <span class="st">"meter"</span>, <span class="st">"nav"</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"noscript"</span>, <span class="st">"object"</span>, <span class="st">"ol"</span>, <span class="st">"optgroup"</span>, <span class="st">"option"</span>, <span class="st">"output"</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"p"</span>, <span class="st">"pre"</span>, <span class="st">"progress"</span>, <span class="st">"q"</span>, <span class="st">"ruby"</span>, <span class="st">"rp"</span>,<span class="st">"rt"</span>, <span class="st">"s"</span>, <span class="st">"samp"</span>,</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"script"</span>, <span class="st">"section"</span>, <span class="st">"select"</span>, <span class="st">"small"</span>, <span class="st">"span"</span>, <span class="st">"strong"</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"style"</span>, <span class="st">"sub"</span>, <span class="st">"summary"</span>, <span class="st">"sup"</span>, <span class="st">"table"</span>, <span class="st">"tbody"</span>, <span class="st">"td"</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"textarea"</span>, <span class="st">"tfoot"</span>, <span class="st">"th"</span>, <span class="st">"thead"</span>, <span class="st">"time"</span>, <span class="st">"title"</span>, <span class="st">"tr"</span>,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"u"</span>, <span class="st">"ul"</span>, <span class="st">"var"</span>, <span class="st">"video"</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>void_tags <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"area"</span>, <span class="st">"base"</span>, <span class="st">"br"</span>, <span class="st">"col"</span>, <span class="st">"command"</span>, <span class="st">"embed"</span>,</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"hr"</span>, <span class="st">"img"</span>, <span class="st">"input"</span>, <span class="st">"keygen"</span>, <span class="st">"link"</span>, <span class="st">"meta"</span>, <span class="st">"param"</span>,</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"source"</span>, <span class="st">"track"</span>, <span class="st">"wbr"</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si observa esta lista detenidamente, verá que hay bastantes etiquetas que tienen el mismo nombre que las funciones base de R (<code>body</code>, <code>col</code>, <code>q</code>, <code>source</code>, <code>sub</code>, <code>summary</code>, <code>tabla</code>). Esto significa que no queremos que todas las funciones estén disponibles de forma predeterminada, ya sea en el entorno global o en un paquete. En su lugar, los pondremos en una lista (como en la <a href="Function-factories.html#sec-functional-factories" class="quarto-xref"><span>Sección 10.5</span></a>) y luego proporcionaremos una ayuda para que sea más fácil usarlos cuando se desee. Primero, hacemos una lista con nombre que contiene todas las funciones de etiqueta:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>html_tags <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  tags <span class="sc">%&gt;%</span> <span class="fu">set_names</span>() <span class="sc">%&gt;%</span> <span class="fu">map</span>(tag),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  void_tags <span class="sc">%&gt;%</span> <span class="fu">set_names</span>() <span class="sc">%&gt;%</span> <span class="fu">map</span>(void_tag)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esto nos da una forma explícita (pero detallada) de crear HTML:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>html_tags<span class="sc">$</span><span class="fu">p</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Some text. "</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  html_tags<span class="sc">$</span><span class="fu">b</span>(html_tags<span class="sc">$</span><span class="fu">i</span>(<span class="st">"some bold italic text"</span>)),</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">class =</span> <span class="st">"mypara"</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;HTML&gt; &lt;p class='mypara'&gt;Some text. &lt;b&gt;&lt;i&gt;some bold italic</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; text&lt;/i&gt;&lt;/b&gt;&lt;/p&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Entonces podemos terminar nuestro DSL HTML con una función que nos permita evaluar el código en el contexto de esa lista. Aquí abusamos ligeramente de la máscara de datos, pasándole una lista de funciones en lugar de un marco de datos. Este es un truco rápido para mezclar el entorno de ejecución del <code>código</code> con las funciones en <code>html_tags</code>.</p>
+<p></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>with_html <span class="ot">&lt;-</span> <span class="cf">function</span>(code) {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  code <span class="ot">&lt;-</span> <span class="fu">enquo</span>(code)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">eval_tidy</span>(code, html_tags)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esto nos brinda una API sucinta que nos permite escribir HTML cuando lo necesitamos, pero no abarrota el espacio de nombres cuando no lo necesitamos.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">with_html</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">body</span>(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">h1</span>(<span class="st">"A heading"</span>, <span class="at">id =</span> <span class="st">"first"</span>),</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">p</span>(<span class="st">"Some text &amp;"</span>, <span class="fu">b</span>(<span class="st">"some bold text."</span>)),</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">img</span>(<span class="at">src =</span> <span class="st">"myimg.png"</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">100</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;HTML&gt; &lt;body&gt;&lt;h1 id='first'&gt;A heading&lt;/h1&gt;&lt;p&gt;Some text &amp;amp;&lt;b&gt;some</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; bold text.&lt;/b&gt;&lt;/p&gt;&lt;img src='myimg.png' width='100' height='100'</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; /&gt;&lt;/body&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si desea acceder a la función R anulada por una etiqueta HTML con el mismo nombre dentro de <code>with_html()</code>, puede usar la especificación <code>package::function</code> completa.</p>
+</section>
+<section id="ejercicios" class="level3" data-number="21.2.6">
+<h3 data-number="21.2.6" class="anchored" data-anchor-id="ejercicios"><span class="header-section-number">21.2.6</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Las reglas de escape para las etiquetas <code>&lt;script&gt;</code> son diferentes porque contienen JavaScript, no HTML. En lugar de escapar los corchetes angulares o los símbolos de unión, debe escapar <code>&lt;/script&gt;</code> para que la etiqueta no se cierre demasiado pronto. Por ejemplo, <code>script("'&lt;/script&gt;'")</code>, no debería generar esto:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">script</span><span class="dt">&gt;</span><span class="st">'&lt;/script&gt;'</span><span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>But</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">script</span><span class="dt">&gt;</span><span class="st">'&lt;</span><span class="sc">\/</span><span class="st">script&gt;'</span><span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Adapte <code>escape()</code> para seguir estas reglas cuando un nuevo argumento <code>script</code> se establezca en <code>TRUE</code>.</p></li>
+<li><p>El uso de <code>...</code> para todas las funciones tiene algunas desventajas importantes. No hay validación de entrada y habrá poca información en la documentación o autocompletar sobre cómo se usan en la función. Cree una nueva función que, cuando se le proporcione una lista con nombre de etiquetas y sus nombres de atributos (como se muestra a continuación), cree funciones de etiqueta con argumentos con nombre.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">a =</span> <span class="fu">c</span>(<span class="st">"href"</span>),</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">img =</span> <span class="fu">c</span>(<span class="st">"src"</span>, <span class="st">"width"</span>, <span class="st">"height"</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Todas las etiquetas deben obtener los atributos <code>class</code> e <code>id</code>.</p></li>
+<li><p>Razona sobre el siguiente código que llama <code>with_html()</code> haciendo referencia a objetos del entorno. ¿Funcionará o fallará? ¿Por qué? Ejecute el código para verificar sus predicciones.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>greeting <span class="ot">&lt;-</span> <span class="st">"Hello!"</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">with_html</span>(<span class="fu">p</span>(greeting))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="st">"p"</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>address <span class="ot">&lt;-</span> <span class="st">"123 anywhere street"</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="fu">with_html</span>(<span class="fu">p</span>(address))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p>Actualmente, el HTML no se ve muy bonito y es difícil ver la estructura. ¿Cómo podrías adaptar <code>tag()</code> para sangrar y formatear? (Es posible que deba investigar un poco sobre las etiquetas en bloque y en línea).</p></li>
+</ol>
+</section>
+</section>
+<section id="sec-latex" class="level2" data-number="21.3">
+<h2 data-number="21.3" class="anchored" data-anchor-id="sec-latex"><span class="header-section-number">21.3</span> LaTeX</h2>
+<p></p>
+<p>El próximo DSL convertirá las expresiones R en sus equivalentes matemáticos de LaTeX. (Esto es un poco como <code>?plotmath</code>, pero para texto en lugar de gráficos.) LaTeX es la lingua franca de los matemáticos y estadísticos: es común usar la notación LaTeX cada vez que desea expresar una ecuación en texto, como en un correo electrónico. Dado que muchos informes se producen con R y LaTeX, podría ser útil poder convertir automáticamente expresiones matemáticas de un idioma a otro.</p>
+<p>Debido a que necesitamos convertir funciones y nombres, este DSL matemático será más complicado que el HTML DSL. También necesitaremos crear una conversión predeterminada, para que los símbolos que no conocemos obtengan una conversión estándar. Esto significa que ya no podemos usar solo la evaluación: también necesitamos recorrer el árbol de sintaxis abstracta (AST).</p>
+<section id="latex-matemáticas" class="level3" data-number="21.3.1">
+<h3 data-number="21.3.1" class="anchored" data-anchor-id="latex-matemáticas"><span class="header-section-number">21.3.1</span> LaTeX matemáticas</h3>
+<p>Antes de comenzar, veamos rápidamente cómo se expresan las fórmulas en LaTeX. El estándar completo es muy complejo, pero afortunadamente está <a href="http://en.wikibooks.org/wiki/LaTeX/Mathematics">bien documentado</a>, y los comandos más comunes tienen una estructura bastante simple:</p>
+<ul>
+<li><p>La mayoría de las ecuaciones matemáticas simples se escriben de la misma manera que las escribirías en R: <code>x * y</code>, <code>z ^ 5</code>. Los subíndices se escriben usando <code>_</code> (por ejemplo, <code>x_1</code>).</p></li>
+<li><p>Los caracteres especiales comienzan con <code>\</code>: <code>\pi</code> = <span class="math inline">\(\pi\)</span>, <code>\pm</code> = <span class="math inline">\(\pm\)</span>, y así sucesivamente. Hay una gran cantidad de símbolos disponibles en LaTeX: la búsqueda en línea de “símbolos matemáticos de látex” arroja muchas <a href="http://www.sunilpatel.co.uk/latex-type/latex-math-symbols/">listas</a>. Incluso hay <a href="http://detexify.kirelabs.org/classify.html">un servicio</a> que buscará el símbolo que dibujes en el navegador.</p></li>
+<li><p>Las funciones más complicadas se ven como <code>\name{arg1}{arg2}</code>. Por ejemplo, para escribir una fracción usarías <code>\frac{a}{b}</code>. Para escribir una raíz cuadrada, usarías <code>\sqrt{a}</code>.</p></li>
+<li><p>Para agrupar elementos, use <code>{}</code>: es decir, <code>x ^ a + b</code> versus <code>x ^ {a + b}</code>.</p></li>
+<li><p>En una buena composición tipográfica matemática, se hace una distinción entre variables y funciones. Pero sin información adicional, LaTeX no sabe si <code>f(a * b)</code> representa llamar a la función <code>f</code> con la entrada <code>a * b</code>, o si es una abreviatura de <code>f * (a * b)</code>. Si <code>f</code> es una función, puede decirle a LaTeX que la escriba usando una fuente vertical con <code>\textrm{f}(a * b)</code>. (El <code>rm</code> significa “romano”, lo contrario de la cursiva).</p></li>
+</ul>
+</section>
+<section id="meta" class="level3" data-number="21.3.2">
+<h3 data-number="21.3.2" class="anchored" data-anchor-id="meta"><span class="header-section-number">21.3.2</span> Meta</h3>
+<p>Nuestro objetivo es usar estas reglas para convertir automáticamente una expresión R a su representación LaTeX adecuada. Abordaremos esto en cuatro etapas:</p>
+<ul>
+<li><p>Convertir símbolos conocidos: <code>pi</code> → <code>\pi</code></p></li>
+<li><p>Dejar otros símbolos sin cambios: <code>x</code> → <code>x</code>, <code>y</code> → <code>y</code></p></li>
+<li><p>Convertir funciones conocidas a sus formas especiales: <code>sqrt(frac(a, b))</code> → <code>\sqrt{\frac{a}{b}}</code></p></li>
+<li><p>Envuelve funciones desconocidas con <code>\textrm</code>: <code>f(a)</code> → <code>\textrm{f}(a)</code></p></li>
+</ul>
+<p>Codificaremos esta traducción en la dirección opuesta a lo que hicimos con HTML DSL. Comenzaremos con la infraestructura, porque eso hace que sea fácil experimentar con nuestro DSL, y luego trabajaremos de regreso para generar el resultado deseado.</p>
+</section>
+<section id="to_math" class="level3" data-number="21.3.3">
+<h3 data-number="21.3.3" class="anchored" data-anchor-id="to_math"><span class="header-section-number">21.3.3</span> <code>to_math</code>()</h3>
+<p>Para comenzar, necesitamos una función contenedora que convierta las expresiones R en expresiones matemáticas LaTeX. Esto funcionará como <code>to_html()</code> capturando la expresión no evaluada y evaluándola en un entorno especial. Hay dos diferencias principales:</p>
+<ul>
+<li><p>El entorno de evaluación ya no es constante, ya que tiene que variar según la entrada. Esto es necesario para manejar símbolos y funciones desconocidos.</p></li>
+<li><p>Nunca evaluamos en el entorno de argumentos porque estamos traduciendo cada función a una expresión LaTeX. El usuario necesitará usar explícitamente <code>!!</code> para evaluar normalmente.</p></li>
+</ul>
+<p>Esto nos da:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>to_math <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  expr <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(x)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">eval_bare</span>(expr, <span class="fu">latex_env</span>(expr))</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">latex</span>(out)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>latex <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">structure</span>(x, <span class="at">class =</span> <span class="st">"advr_latex"</span>)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>print.advr_latex <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"&lt;LATEX&gt; "</span>, x, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A continuación, construiremos <code>latex_env()</code>, comenzando de manera simple y haciéndonos progresivamente más complejos.</p>
+</section>
+<section id="símbolos-conocidos" class="level3" data-number="21.3.4">
+<h3 data-number="21.3.4" class="anchored" data-anchor-id="símbolos-conocidos"><span class="header-section-number">21.3.4</span> Símbolos conocidos</h3>
+<p>Nuestro primer paso es crear un entorno que convierta los símbolos especiales de LaTeX utilizados para los caracteres griegos, por ejemplo, <code>pi</code> a <code>\pi</code>. Usaremos el truco de la <a href="Evaluation.html#sec-subset" class="quarto-xref"><span>Sección 20.4.3</span></a> para vincular el símbolo <code>pi</code> al valor <code>"\pi"</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>greek <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"alpha"</span>, <span class="st">"theta"</span>, <span class="st">"tau"</span>, <span class="st">"beta"</span>, <span class="st">"vartheta"</span>, <span class="st">"pi"</span>, <span class="st">"upsilon"</span>,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"gamma"</span>, <span class="st">"varpi"</span>, <span class="st">"phi"</span>, <span class="st">"delta"</span>, <span class="st">"kappa"</span>, <span class="st">"rho"</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"varphi"</span>, <span class="st">"epsilon"</span>, <span class="st">"lambda"</span>, <span class="st">"varrho"</span>, <span class="st">"chi"</span>, <span class="st">"varepsilon"</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mu"</span>, <span class="st">"sigma"</span>, <span class="st">"psi"</span>, <span class="st">"zeta"</span>, <span class="st">"nu"</span>, <span class="st">"varsigma"</span>, <span class="st">"omega"</span>, <span class="st">"eta"</span>,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"xi"</span>, <span class="st">"Gamma"</span>, <span class="st">"Lambda"</span>, <span class="st">"Sigma"</span>, <span class="st">"Psi"</span>, <span class="st">"Delta"</span>, <span class="st">"Xi"</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Upsilon"</span>, <span class="st">"Omega"</span>, <span class="st">"Theta"</span>, <span class="st">"Pi"</span>, <span class="st">"Phi"</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>greek_list <span class="ot">&lt;-</span> <span class="fu">set_names</span>(<span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">"</span>, greek), greek)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>greek_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(greek_list)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Entonces podemos comprobarlo:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  greek_env</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(pi)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; \pi</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(beta)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; \beta</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>¡Se ve bien hasta ahora!</p>
+</section>
+<section id="símbolos-desconocidos" class="level3" data-number="21.3.5">
+<h3 data-number="21.3.5" class="anchored" data-anchor-id="símbolos-desconocidos"><span class="header-section-number">21.3.5</span> Símbolos desconocidos</h3>
+<p>Si un símbolo no es griego, queremos dejarlo como está. Esto es complicado porque no sabemos de antemano qué símbolos se utilizarán y no podemos generarlos todos. En su lugar, usaremos el enfoque descrito en la <a href="Expressions.html#sec-ast-funs" class="quarto-xref"><span>Sección 18.5</span></a>: recorrer el AST para encontrar todos los símbolos. Esto nos da <code>all_names_rec()</code> y el asistente <code>all_names()</code>:</p>
+<!-- GVW: en la primera lectura, me preguntaba por qué te molestaste en definir `switch_expr`, ya que solo parece usarse una vez. Entonces vi que hay una segunda llamada mucho más abajo. Resaltar esto de alguna manera? -->
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>all_names_rec <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">switch_expr</span>(x,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">constant =</span> <span class="fu">character</span>(),</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">symbol =</span>   <span class="fu">as.character</span>(x),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">call =</span>     <span class="fu">flat_map_chr</span>(<span class="fu">as.list</span>(x[<span class="sc">-</span><span class="dv">1</span>]), all_names)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>all_names <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(<span class="fu">all_names_rec</span>(x))</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="fu">all_names</span>(<span class="fu">expr</span>(x <span class="sc">+</span> y <span class="sc">+</span> <span class="fu">f</span>(a, b, c, <span class="dv">10</span>)))</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "x" "y" "a" "b" "c"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora queremos tomar esa lista de símbolos y convertirla en un entorno para que cada símbolo se asigne a su representación de cadena correspondiente (por ejemplo, <code>eval(quote(x), env)</code> produce <code>"x"</code>). Nuevamente usamos el patrón de convertir un vector de caracteres con nombre en una lista y luego convertir la lista en un entorno.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  names <span class="ot">&lt;-</span> <span class="fu">all_names</span>(expr)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  symbol_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(<span class="fu">set_names</span>(names))</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  symbol_env</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(x)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; x</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(longvariablename)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; longvariablename</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(pi)</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; pi</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esto funciona, pero necesitamos combinarlo con el entorno de símbolos griegos. Dado que queremos dar preferencia al griego sobre los valores predeterminados (por ejemplo, <code>to_math(pi)</code> debe dar <code>"\\pi"</code>, no <code>"pi"</code>), <code>symbol_env</code> debe ser el padre de <code>greek_env</code>. Para hacer eso, necesitamos hacer una copia de <code>greek_env</code> con un nuevo padre. Esto nos da una función que puede convertir símbolos conocidos (griegos) y desconocidos.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Símbolos desconocidos</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  names <span class="ot">&lt;-</span> <span class="fu">all_names</span>(expr)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  symbol_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(<span class="fu">set_names</span>(names))</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Símbolos conocidos</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">env_clone</span>(greek_env, <span class="at">parent =</span> symbol_env)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(x)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; x</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(longvariablename)</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; longvariablename</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(pi)</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; \pi</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="funciones-conocidas" class="level3" data-number="21.3.6">
+<h3 data-number="21.3.6" class="anchored" data-anchor-id="funciones-conocidas"><span class="header-section-number">21.3.6</span> Funciones conocidas</h3>
+<p>A continuación agregaremos funciones a nuestro DSL. Comenzaremos con un par de ayudantes que facilitan la adición de nuevos operadores binarios y unarios. Estas funciones son muy simples: solo ensamblan cadenas.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>unary_op <span class="ot">&lt;-</span> <span class="cf">function</span>(left, right) {</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">new_function</span>(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">exprs</span>(<span class="at">e1 =</span> ),</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expr</span>(</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">paste0</span>(<span class="sc">!!</span>left, e1, <span class="sc">!!</span>right)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">caller_env</span>()</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>binary_op <span class="ot">&lt;-</span> <span class="cf">function</span>(sep) {</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">new_function</span>(</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">exprs</span>(<span class="at">e1 =</span> , <span class="at">e2 =</span> ),</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expr</span>(</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">paste0</span>(e1, <span class="sc">!!</span>sep, e2)</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">caller_env</span>()</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sqrt{"</span>, <span class="st">"}"</span>)</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function (e1) </span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; paste0("\\sqrt{", e1, "}")</span></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a><span class="fu">binary_op</span>(<span class="st">"+"</span>)</span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function (e1, e2) </span></span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; paste0(e1, "+", e2)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Usando estos ayudantes, podemos mapear algunos ejemplos ilustrativos de conversión de R a LaTeX. Tenga en cuenta que con las reglas de alcance léxico de R ayudándonos, podemos proporcionar fácilmente nuevos significados para funciones estándar como <code>+</code>, <code>-</code> y <code>*</code>, e incluso <code>(</code> y <code>{</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Operadores binarios</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>f_env <span class="ot">&lt;-</span> <span class="fu">child_env</span>(</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">.parent =</span> <span class="fu">empty_env</span>(),</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">+</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" + "</span>),</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">-</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" - "</span>),</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">*</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" * "</span>),</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">/</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" / "</span>),</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">^</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">"^"</span>),</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">[</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">"_"</span>),</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Agrupamiento</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">{</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left{ "</span>, <span class="st">" </span><span class="sc">\\</span><span class="st">right}"</span>),</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">(</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left( "</span>, <span class="st">" </span><span class="sc">\\</span><span class="st">right)"</span>),</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">paste =</span> paste,</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Otras funciones matemáticas</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">sqrt =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sqrt{"</span>, <span class="st">"}"</span>),</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">sin =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sin("</span>, <span class="st">")"</span>),</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">log =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">log("</span>, <span class="st">")"</span>),</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">abs =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left| "</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">right| "</span>),</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">frac =</span> <span class="cf">function</span>(a, b) {</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">frac{"</span>, a, <span class="st">"}{"</span>, b, <span class="st">"}"</span>)</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Etiquetado</span></span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">hat =</span>   <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">hat{"</span>, <span class="st">"}"</span>),</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">tilde =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">tilde{"</span>, <span class="st">"}"</span>)</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Nuevamente modificamos <code>latex_env()</code> para incluir este entorno. Debería ser el último entorno en el que R busca nombres para que expresiones como <code>sin(sin)</code> funcionen.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Funciones conocidas</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  f_env</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Símbolos predeterminados</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  names <span class="ot">&lt;-</span> <span class="fu">all_names</span>(expr)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  symbol_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(<span class="fu">set_names</span>(names), <span class="at">parent =</span> f_env)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Símbolos conocidos</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  greek_env <span class="ot">&lt;-</span> <span class="fu">env_clone</span>(greek_env, <span class="at">parent =</span> symbol_env)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  greek_env</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(<span class="fu">sin</span>(x <span class="sc">+</span> pi))</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; \sin(x + \pi)</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(<span class="fu">log</span>(x[i]<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; \log(x_i^2)</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(<span class="fu">sin</span>(sin))</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; \sin(sin)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="funciones-desconocidas" class="level3" data-number="21.3.7">
+<h3 data-number="21.3.7" class="anchored" data-anchor-id="funciones-desconocidas"><span class="header-section-number">21.3.7</span> Funciones desconocidas</h3>
+<p>Finalmente, agregaremos un valor predeterminado para las funciones que aún no conocemos. No podemos saber de antemano cuáles serán las funciones desconocidas, por lo que nuevamente recorremos el AST para encontrarlas:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>all_calls_rec <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">switch_expr</span>(x,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">constant =</span> ,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">symbol =</span>   <span class="fu">character</span>(),</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">call =</span> {</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>      fname <span class="ot">&lt;-</span> <span class="fu">as.character</span>(x[[<span class="dv">1</span>]])</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>      children <span class="ot">&lt;-</span> <span class="fu">flat_map_chr</span>(<span class="fu">as.list</span>(x[<span class="sc">-</span><span class="dv">1</span>]), all_calls)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(fname, children)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>all_calls <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>(<span class="fu">all_calls_rec</span>(x))</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="fu">all_calls</span>(<span class="fu">expr</span>(<span class="fu">f</span>(g <span class="sc">+</span> b, c, <span class="fu">d</span>(a))))</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "f" "+" "d"</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Necesitamos un cierre que genere las funciones para cada llamada desconocida:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>unknown_op <span class="ot">&lt;-</span> <span class="cf">function</span>(op) {</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">new_function</span>(</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ),</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expr</span>({</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>      contents <span class="ot">&lt;-</span> <span class="fu">paste</span>(..., <span class="at">collapse =</span> <span class="st">", "</span>)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">paste0</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">mathrm{"</span>, op, <span class="st">"}("</span>), contents, <span class="st">")"</span>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="fu">unknown_op</span>(<span class="st">"foo"</span>)</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function (...) </span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; {</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     contents &lt;- paste(..., collapse = ", ")</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     paste0("\\mathrm{foo}(", contents, ")")</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; }</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: 0x55ad40d59db8&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Y de nuevo la actualizamos <code>latex_env()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  calls <span class="ot">&lt;-</span> <span class="fu">all_calls</span>(expr)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  call_list <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="fu">set_names</span>(calls), unknown_op)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  call_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(call_list)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Funciones conocidas</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  f_env <span class="ot">&lt;-</span> <span class="fu">env_clone</span>(f_env, call_env)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Símbolos predeterminados</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  names <span class="ot">&lt;-</span> <span class="fu">all_names</span>(expr)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  symbol_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(<span class="fu">set_names</span>(names), <span class="at">parent =</span> f_env)</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Símbolos conocidos</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  greek_env <span class="ot">&lt;-</span> <span class="fu">env_clone</span>(greek_env, <span class="at">parent =</span> symbol_env)</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>  greek_env</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esto completa nuestros requisitos originales:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">to_math</span>(<span class="fu">sin</span>(pi) <span class="sc">+</span> <span class="fu">f</span>(a))</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;LATEX&gt; \sin(\pi) + \mathrm{f}(a)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Sin duda, podría llevar esta idea más allá y traducir tipos de expresiones matemáticas, pero no debería necesitar ninguna herramienta de metaprogramación adicional.</p>
+</section>
+<section id="ejercicios-1" class="level3" data-number="21.3.8">
+<h3 data-number="21.3.8" class="anchored" data-anchor-id="ejercicios-1"><span class="header-section-number">21.3.8</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Añadir escape. Los símbolos especiales que deben escaparse agregando una barra invertida delante de ellos son <code>\</code>, <code>$</code> y <code>%</code>. Al igual que con HTML, deberá asegurarse de no terminar con doble escape. Por lo tanto, deberá crear una clase S3 pequeña y luego usarla en los operadores de funciones. Eso también le permitirá incrustar LaTeX arbitrario si es necesario.</p></li>
+<li><p>Complete el DSL para admitir todas las funciones que admite <code>plotmath</code>.</p></li>
+</ol>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-dsls" class="csl-entry" role="listitem">
+Fowler, Martin. 2010. <em>Domain-specific Languages</em>. Pearson Education. <a href="http://amzn.com/0321712943">http://amzn.com/0321712943</a>.
+</div>
+</div>
+</section>
+</section>
+
+</main> <!-- /main -->
+
+<script>
+
+  // Chapter name
+  const currentChapterFile = window.location.pathname.split('/').pop().replace('.html', '');
+
+  //Deffining urls
+  const originalURL = "https://github.com/hadley/adv-r";
+  const translationURL = "https://github.com/davidrsch/adv-res";
+
+  //Deffining texts
+  const edit_text = "Editar esta página";
+  const issue_text = "Informar de un problema"
+
+  //Deffining git_i
+  const git_i = '<div><i class="bi bi-github"></i></div>';
+
+  // Adding TOC if not exist
+  const sidebarmargin = document.getElementById('quarto-margin-sidebar');
+  const buscar_TOC = document.getElementById('TOC');
+
+  if (!buscar_TOC) {
+    const crear_TOC = document.createElement('nav');
+    crear_TOC.id = 'TOC';
+    crear_TOC.role = "doc-toc";
+    crear_TOC.class = "toc-active";
+    sidebarmargin.appendChild(crear_TOC);
+  }
+
+
+  // Adding original github actions
+  const TOC = document.getElementById('TOC');
+  const originalga = document.createElement('h2');
+  originalga.textContent = "Original";
+  originalga.style["border-top"] = "1px solid #ccc";
+  originalga.style["padding-top"] = "0.5rem";
+  const toc_act_O = document.createElement('div');
+  toc_act_O.className = 'toc-actions';
+  toc_act_O.id = 'toc-act-O';
+  const act_link_O = document.createElement('div');
+  act_link_O.className='action-links';
+  act_link_O.id='act-link-O';
+  const edit_issue_O ='<p><a href="'+originalURL+'/edit/master/'+currentChapterFile+'.Rmd" class="toc-action">'+edit_text+'</p><p><a href="'+originalURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(originalga);
+  TOC.appendChild(toc_act_O);
+  toc_act_O.innerHTML += git_i;
+  toc_act_O.appendChild(act_link_O);
+  act_link_O.innerHTML += edit_issue_O;
+
+  // Adding translation github actions
+  const translationga = document.createElement('h2');
+  translationga.textContent = "Traducción";
+  const toc_act_T = document.createElement('div');
+  toc_act_T.className = 'toc-actions';
+  toc_act_T.id = 'toc-act-T';
+  const act_link_T = document.createElement('div');
+  act_link_T.className='action-links';
+  act_link_T.id='act-link-T';
+  const edit_issue_T ='<p><a href="'+translationURL+'/edit/main/'+currentChapterFile+'.qmd" class="toc-action">'+edit_text+'</p><p><a href="'+translationURL+'/issues/new" class="toc-action">'+issue_text+'</p>';
+
+
+  TOC.appendChild(translationga);
+  TOC.appendChild(toc_act_T);
+  toc_act_T.innerHTML += git_i;
+  toc_act_T.appendChild(act_link_T);
+  act_link_T.innerHTML += edit_issue_T;
+
+
+</script>
+
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Evaluation.html" class="pagination-link" aria-label="Evaluación">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Evaluación</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./Techniques.html" class="pagination-link" aria-label="Introducción">
+        <span class="nav-page-text">Introducción</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><b>“R Avanzado”</b> fue escrito por Hadley Wickham.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
