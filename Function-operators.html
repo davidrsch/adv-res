@@ -85,7 +85,7 @@ div.csl-indent {
 <meta name="quarto:offset" content="./">
 <link href="./OO.html" rel="next">
 <link href="./Function-factories.html" rel="prev">
-<link href="./cover.png" rel="icon" type="image/png">
+<link href="./projectlogo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -601,8 +601,8 @@ Los operadores de función se usan ampliamente en lenguajes FP como Haskell y co
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>safe_sum</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function (...) </span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; capture_error(.f(...), otherwise, quiet)</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;bytecode: 0x55c9eae30138&gt;</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: 0x55c9eae2fca0&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;bytecode: 0x55b43564fd08&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;environment: 0x55b43564f870&gt;</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Como todos los operadores de funciones, <code>safely()</code> toma una función y devuelve una función envuelta a la que podemos llamar como de costumbre:</p>
 <div class="cell" data-layout-align="center">
@@ -721,7 +721,7 @@ Los operadores de función se usan ampliamente en lenguajes FP como Haskell y co
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">slow_function</span>(<span class="dv">1</span>)))</span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 8.34</span></span>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.001   0.000   1.003</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.001   0.001   1.003</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Cuando memorizamos esta función, es lenta cuando la llamamos con nuevos argumentos. Pero cuando lo llamamos con argumentos de que se ve antes, es instantáneo: recupera el valor anterior del cómputo.</p>
 <div class="cell" data-layout-align="center">
@@ -734,7 +734,7 @@ Los operadores de función se usan ampliamente en lenguajes FP como Haskell y co
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">fast_function</span>(<span class="dv">1</span>)))</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 6.01</span></span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.013   0.000   0.013</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.013   0.001   0.014</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Un uso relativamente realista de la memorización es calcular la serie de Fibonacci. La serie de Fibonacci se define recursivamente: los dos primeros valores se definen por convención, <span class="math inline">\(f(0) = 0\)</span>, <span class="math inline">\(f(1) = 1\)</span>, y luego <span class="math inline">\(f(n) = f(n - 1) + f (n - 2)\)</span> (para cualquier entero positivo). Una versión ingenua es lenta porque, por ejemplo, <code>fib(10)</code> calcula <code>fib(9)</code> y <code>fib(8)</code>, y <code>fib(9)</code> calcula <code>fib(8)</code> y <code>fib(7) )</code>, y así sucesivamente.</p>
 <div class="cell" data-layout-align="center">
@@ -744,10 +744,10 @@ Los operadores de función se usan ampliamente en lenguajes FP como Haskell y co
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="fu">fib</span>(<span class="dv">23</span>))</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.029   0.000   0.029</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    0.03    0.00    0.03</span></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="fu">fib</span>(<span class="dv">24</span>))</span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.042   0.004   0.046</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.042   0.003   0.046</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Memoizar <code>fib()</code> hace que la implementación sea mucho más rápida porque cada valor se calcula solo una vez:</p>
 <div class="cell" data-layout-align="center">
@@ -763,7 +763,7 @@ Los operadores de función se usan ampliamente en lenguajes FP como Haskell y co
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(<span class="fu">fib2</span>(<span class="dv">24</span>))</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.001   0.000   0.001</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.000   0.000   0.001</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Este es un ejemplo de <strong>programación dinámica</strong>, donde un problema complejo se puede dividir en muchos subproblemas superpuestos, y recordar los resultados de un subproblema mejora considerablemente el rendimiento.</p>
 <p>Piense cuidadosamente antes de memorizar una función. Si la función no es <strong>pura</strong>, es decir, la salida no depende solo de la entrada, obtendrá resultados engañosos y confusos. Creé un error sutil en las herramientas de desarrollo porque memoricé los resultados de <code>available.pachages()</code>, que es bastante lento porque tiene que descargar un archivo grande de CRAN. Los paquetes disponibles no cambian con tanta frecuencia, pero si tiene un proceso R que se ha estado ejecutando durante algunos días, los cambios pueden volverse importantes y, dado que el problema solo surgió en los procesos R de ejecución prolongada, el error fue muy doloroso para encontrar.</p>
