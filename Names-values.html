@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,6 +10,9 @@
 
 <title>2&nbsp; Nombres y valores – R Avanzado</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -60,7 +63,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -90,15 +92,14 @@ div.csl-indent {
 <link href="./projectlogo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a73e7facfaf3f326b6370add29585988.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-94509cf776e35d8cf5b7004333b6cf71.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -610,9 +611,9 @@ div.csl-indent {
 <p>Puede acceder al identificador de un objeto con <code>lobstr::obj_addr()</code>. Hacerlo te permite ver que tanto <code>x</code> como <code>y</code> apuntan al mismo identificador:</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(x)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "0x559286a68388"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "0x565025e2fd28"</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">obj_addr</span>(y)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "0x559286a68388"</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "0x565025e2fd28"</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Estos identificadores son largos y cambian cada vez que reinicia R.</p>
 <p>Puede tomar algún tiempo comprender la distinción entre nombres y valores, pero comprender esto es realmente útil en la programación funcional, donde las funciones pueden tener diferentes nombres en diferentes contextos.</p>
@@ -723,7 +724,7 @@ div.csl-indent {
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">tracemem</span>(x), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;0x559286a09508&gt;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;0x565025dd0e58&gt;</span></span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">f</span>(x)</span>
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co"># there's no copy here!</span></span>
@@ -799,15 +800,15 @@ div.csl-indent {
 <p>Para ver los valores que se comparten en las listas, use <code>lobstr::ref()</code>. <code>ref()</code> imprime la dirección de memoria de cada objeto, junto con una identificación local para que pueda cruzar fácilmente los componentes compartidos.</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ref</span>(l1, l2)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; █ [1:0x5592830075a8] &lt;list&gt; </span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[2:0x5592843b74c0] &lt;dbl&gt; </span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[3:0x5592843b74f8] &lt;dbl&gt; </span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; └─[4:0x5592843b7530] &lt;dbl&gt; </span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; █ [1:0x5650223ca978] &lt;list&gt; </span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[2:0x56502376c090] &lt;dbl&gt; </span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[3:0x56502376c0c8] &lt;dbl&gt; </span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; └─[4:0x56502376c100] &lt;dbl&gt; </span></span>
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  </span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; █ [5:0x5592869d8b68] &lt;list&gt; </span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[2:0x5592843b74c0] </span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[3:0x5592843b74f8] </span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; └─[6:0x5592810036c8] &lt;dbl&gt;</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; █ [5:0x565025d5f3b8] &lt;list&gt; </span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[2:0x56502376c090] </span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[3:0x56502376c0c8] </span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; └─[6:0x5650207f6ab8] &lt;dbl&gt;</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="sec-df-modify" class="level3" data-number="2.3.4">
@@ -883,11 +884,11 @@ div.csl-indent {
 <p>Puede solicitar que <code>ref()</code> muestre estas referencias configurando el argumento <code>character</code> en <code>TRUE</code>:</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ref</span>(x, <span class="at">character =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; █ [1:0x55928618c6e8] &lt;chr&gt; </span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[2:0x5592806f5ab0] &lt;string: "a"&gt; </span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[2:0x5592806f5ab0] </span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[3:0x559284d10240] &lt;string: "abc"&gt; </span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; └─[4:0x559280b499c8] &lt;string: "d"&gt;</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; █ [1:0x565025546268] &lt;chr&gt; </span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[2:0x56501fabbaa0] &lt;string: "a"&gt; </span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[2:0x56501fabbaa0] </span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ├─[3:0x5650240c7708] &lt;string: "abc"&gt; </span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; └─[4:0x56501ff0f9b8] &lt;string: "d"&gt;</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Esto tiene un impacto profundo en la cantidad de memoria que usa un vector de caracteres, pero por lo demás generalmente no es importante, por lo que en otras partes del libro dibujaré vectores de caracteres como si las cadenas vivieran dentro de un vector.</p>
 </section>
@@ -1135,8 +1136,8 @@ div.csl-indent {
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>e<span class="sc">$</span>self <span class="ot">&lt;-</span> e</span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ref</span>(e)</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; █ [1:0x559283c84118] &lt;env&gt; </span></span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; └─self = [1:0x559283c84118]</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; █ [1:0x565023047380] &lt;env&gt; </span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; └─self = [1:0x565023047380]</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -1209,8 +1210,8 @@ div.csl-indent {
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>() </span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           used (Mb) gc trigger (Mb) max used  (Mb)</span></span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Ncells 1028796 55.0    2064637  110  1794662  95.9</span></span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Vcells 5399323 41.2   15002646  114 14995729 114.5</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Ncells 1028821 55.0    2064715  110  1794725  95.9</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Vcells 5399416 41.2   15002781  114 14995832 114.5</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>lobstr::mem_used()</code> es un envoltorio alrededor de <code>gc()</code> que imprime el número total de bytes utilizados:</p>
 <div class="cell" data-layout-align="center">
@@ -1245,7 +1246,7 @@ div.csl-indent {
 </ol>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-bench" class="csl-entry" role="listitem">
 Hester, Jim. 2018. <em>bench: high precision timing of <span>R</span> expressions</em>. <a href="http://bench.r-lib.org/">http://bench.r-lib.org/</a>.
 </div>
@@ -1253,7 +1254,7 @@ Hester, Jim. 2018. <em>bench: high precision timing of <span>R</span> expression
 R Core Team. 2018a. <span>«R Internals»</span>. <em>R Foundation for Statistical Computing</em>. <a href="https://cran.r-project.org/doc/manuals/r-devel/R-ints.html">https://cran.r-project.org/doc/manuals/r-devel/R-ints.html</a>.
 </div>
 <div id="ref-r-exts" class="csl-entry" role="listitem">
-———. 2018b. <span>«Writing <span>R</span> extensions»</span>. <em>R Foundation for Statistical Computing</em>. <a href="https://cran.r-project.org/doc/manuals/r-devel/R-exts.html">https://cran.r-project.org/doc/manuals/r-devel/R-exts.html</a>.
+R Core Team. 2018b. <span>«Writing <span>R</span> extensions»</span>. <em>R Foundation for Statistical Computing</em>. <a href="https://cran.r-project.org/doc/manuals/r-devel/R-exts.html">https://cran.r-project.org/doc/manuals/r-devel/R-exts.html</a>.
 </div>
 </div>
 </section>

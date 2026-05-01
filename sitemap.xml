@@ -2,138 +2,138 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://davidrsch.github.io/advr-es/index.html</loc>
-    <lastmod>2026-03-20T04:03:00.616Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.659Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Preface.html</loc>
-    <lastmod>2026-03-20T04:03:00.589Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.634Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Introduction.html</loc>
-    <lastmod>2026-03-20T04:03:00.589Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.634Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Foundations.html</loc>
-    <lastmod>2026-03-20T04:03:00.588Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.633Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Names-values.html</loc>
-    <lastmod>2026-03-20T04:03:00.589Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.634Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Vectors.html</loc>
-    <lastmod>2026-03-20T04:03:00.591Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.636Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Subsetting.html</loc>
-    <lastmod>2026-03-20T04:03:00.591Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.636Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Control-flow.html</loc>
-    <lastmod>2026-03-20T04:03:00.586Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.632Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Functions.html</loc>
-    <lastmod>2026-03-20T04:03:00.588Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.633Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Environments.html</loc>
-    <lastmod>2026-03-20T04:03:00.587Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.632Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Conditions.html</loc>
-    <lastmod>2026-03-20T04:03:00.586Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.631Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/FP.html</loc>
-    <lastmod>2026-03-20T04:03:00.588Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.633Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Functionals.html</loc>
-    <lastmod>2026-03-20T04:03:00.588Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.633Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Function-factories.html</loc>
-    <lastmod>2026-03-20T04:03:00.588Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.633Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Function-operators.html</loc>
-    <lastmod>2026-03-20T04:03:00.588Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.633Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/OO.html</loc>
-    <lastmod>2026-03-20T04:03:00.589Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.634Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/base-types.html</loc>
-    <lastmod>2026-03-20T04:03:00.592Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.637Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/S3.html</loc>
-    <lastmod>2026-03-20T04:03:00.590Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.635Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/R6.html</loc>
-    <lastmod>2026-03-20T04:03:00.590Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.635Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/S4.html</loc>
-    <lastmod>2026-03-20T04:03:00.591Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.635Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/OO-tradeoffs.html</loc>
-    <lastmod>2026-03-20T04:03:00.589Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.634Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Meta.html</loc>
-    <lastmod>2026-03-20T04:03:00.589Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.634Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Big-picture.html</loc>
-    <lastmod>2026-03-20T04:03:00.586Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.631Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Expressions.html</loc>
-    <lastmod>2026-03-20T04:03:00.588Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.633Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Quotation.html</loc>
-    <lastmod>2026-03-20T04:03:00.590Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.635Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Evaluation.html</loc>
-    <lastmod>2026-03-20T04:03:00.587Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.632Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Translation.html</loc>
-    <lastmod>2026-03-20T04:03:00.591Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.636Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Techniques.html</loc>
-    <lastmod>2026-03-20T04:03:00.591Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.636Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Debugging.html</loc>
-    <lastmod>2026-03-20T04:03:00.587Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.632Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Perf-measure.html</loc>
-    <lastmod>2026-03-20T04:03:00.589Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.634Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Perf-improve.html</loc>
-    <lastmod>2026-03-20T04:03:00.589Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.634Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/Rcpp.html</loc>
-    <lastmod>2026-03-20T04:03:00.590Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.635Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/References.html</loc>
-    <lastmod>2026-03-20T04:03:00.590Z</lastmod>
+    <lastmod>2026-05-01T07:17:16.635Z</lastmod>
   </url>
   <url>
     <loc>https://davidrsch.github.io/advr-es/R-Avanzado.pdf</loc>
-    <lastmod>2026-03-20T04:13:20.502Z</lastmod>
+    <lastmod>2026-05-01T07:29:28.115Z</lastmod>
   </url>
 </urlset>

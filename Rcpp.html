@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,6 +10,9 @@
 
 <title>25&nbsp; Reescribiendo código de R en C++ – R Avanzado</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -60,7 +63,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -90,15 +92,14 @@ div.csl-indent {
 <link href="./projectlogo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a73e7facfaf3f326b6370add29585988.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-94509cf776e35d8cf5b7004333b6cf71.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -575,7 +576,7 @@ div.csl-indent {
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># add funciona como una función R normal</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>add</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; function (x, y, z) </span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; .Call(&lt;pointer: 0x7f35d817b510&gt;, x, y, z)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; .Call(&lt;pointer: 0x7f5545667510&gt;, x, y, z)</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">add</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 6</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -684,9 +685,9 @@ div.csl-indent {
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 6</span></span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 sum(x)       2.06µs   2.15µs   454639.        0B      0  </span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 sumC(x)      1.72µs   1.85µs   502638.        0B     50.3</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 sumR(x)     23.79µs  24.16µs    40697.      22KB      0</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 sum(x)       2.04µs   2.07µs   469517.        0B      0  </span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 sumC(x)      1.62µs   1.69µs   542062.        0B     54.2</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 sumR(x)     23.55µs  23.95µs    39489.      22KB      0</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="entrada-vectorial-salida-vectorial" class="level3" data-number="25.2.4">
@@ -725,8 +726,8 @@ div.csl-indent {
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 6</span></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression          min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;     &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 pdistR(0.5, y)   4.61ms   4.73ms      210.    7.63MB     109.</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 pdistC(0.5, y)   3.94ms   4.04ms      247.    7.63MB     123.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 pdistR(0.5, y)    4.4ms   4.57ms      218.    7.63MB     113.</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 pdistC(0.5, y)   3.78ms    3.9ms      255.    7.63MB     128.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En mi computadora, toma alrededor de 5 ms con un vector <code>y</code> de 1 millón de elementos. La función de C++ es unas 2,5 veces más rápida, ~2 ms, pero suponiendo que le haya llevado 10 minutos escribir la función de C++, necesitará ejecutarla ~200.000 veces para que valga la pena reescribirla. La razón por la que la función de C++ es más rápida es sutil y se relaciona con la administración de la memoria. La versión R necesita crear un vector intermedio de la misma longitud que y (<code>x - ys</code>), y asignar memoria es una operación costosa. La función de C++ evita esta sobrecarga porque usa un escalar intermedio.</p>
 </section>
@@ -1294,8 +1295,8 @@ div.csl-indent {
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 6</span></span>
 <span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression              min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 gibbs_r(100, 10)     2.47ms   2.53ms      392.   107.5KB     13.0</span></span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 gibbs_cpp(100, 10) 231.01µs 249.26µs     3957.    1.61KB     16.9</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 gibbs_r(100, 10)     2.41ms   2.48ms      401.   107.5KB     12.9</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 gibbs_cpp(100, 10) 226.31µs 244.24µs     4030.    1.61KB     16.7</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="r-vectorización-frente-a-vectorización-c" class="level3" data-number="25.6.2">
@@ -1382,9 +1383,9 @@ div.csl-indent {
 <span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 6</span></span>
 <span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`</span></span>
 <span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;</span></span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 vacc1         1.5ms   1.53ms      646.    7.86KB     19.6</span></span>
-<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 vacc2        42.1µs  44.05µs    21036.  148.56KB     43.9</span></span>
-<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 vacc3        11.6µs  11.94µs    81911.   14.48KB     16.4</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 vacc1        1.52ms   1.56ms      636.    7.86KB     19.3</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 vacc2        41.2µs  43.13µs    21777.  148.57KB     45.4</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 vacc3       12.32µs  12.74µs    77186.   14.48KB     15.4</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>No es sorprendente que nuestro enfoque original con bucles sea muy lento. La vectorización en R proporciona una gran aceleración, y podemos obtener aún más rendimiento (unas diez veces) con el ciclo de C++. Me sorprendió un poco que C++ fuera mucho más rápido, pero se debe a que la versión R tiene que crear 11 vectores para almacenar resultados intermedios, mientras que el código C++ solo necesita crear 1.</p>
 </section>
@@ -1433,7 +1434,7 @@ importFrom(Rcpp, sourceCpp)</code></pre>
 <p>Me gustaría agradecer a la lista de correo de Rcpp por muchas conversaciones útiles, en particular a Romain Francois y Dirk Eddelbuettel, quienes no solo han brindado respuestas detalladas a muchas de mis preguntas, sino que también han sido increíblemente receptivos para mejorar Rcpp. Este capítulo no hubiera sido posible sin JJ Allaire; me animó a aprender C++ y luego respondió muchas de mis preguntas tontas en el camino.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-Rcpp" class="csl-entry" role="listitem">
 Eddelbuettel, Dirk, y Romain François. 2011. <span>«<span>Rcpp</span>: Seamless <span>R</span> and <span>C++</span> Integration»</span>. <em>Journal of Statistical Software</em> 40 (8): 1-18. <a href="https://doi.org/10.18637/jss.v040.i08">https://doi.org/10.18637/jss.v040.i08</a>.
 </div>
@@ -1441,7 +1442,7 @@ Eddelbuettel, Dirk, y Romain François. 2011. <span>«<span>Rcpp</span>: Seamles
 Meyers, Scott. 2001. <em>Effective <span>STL</span>: 50 specific ways to improve your use of the standard template library</em>. Pearson Education. <a href="http://amzn.com/0201749629">http://amzn.com/0201749629</a>.
 </div>
 <div id="ref-effective-cpp" class="csl-entry" role="listitem">
-———. 2005. <em>Effective <span>C++</span>: 55 specific ways to improve your programs and designs</em>. Pearson Education. <a href="http://amzn.com/0321334876">http://amzn.com/0321334876</a>.
+Meyers, Scott. 2005. <em>Effective <span>C++</span>: 55 specific ways to improve your programs and designs</em>. Pearson Education. <a href="http://amzn.com/0321334876">http://amzn.com/0321334876</a>.
 </div>
 </div>
 </section>

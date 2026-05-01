@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,6 +10,9 @@
 
 <title>24&nbsp; Mejorando el desempeño – R Avanzado</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -60,7 +63,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -90,15 +92,14 @@ div.csl-indent {
 <link href="./projectlogo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a73e7facfaf3f326b6370add29585988.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-94509cf776e35d8cf5b7004333b6cf71.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -561,8 +562,8 @@ div.csl-indent {
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 4</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression      min   median `itr/sec`</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean1(x)      392µs    438µs     2262.</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean2(x)      186µs    187µs     5281.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean1(x)      421µs    440µs     2257.</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean2(x)      186µs    187µs     5279.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>(Puede que te sorprendan los resultados: <code>mean(x)</code> es considerablemente más lento que <code>sum(x) / length(x)</code>. Esto se debe a que, entre otras razones, <code>mean(x)</code> hace dos pasadas sobre el vector para que sea numéricamente más preciso.)</p>
 <p>Si desea ver esta estrategia en acción, la he usado varias veces en stackoverflow:</p>
@@ -631,8 +632,8 @@ div.csl-indent {
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 4</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression           min   median `itr/sec`</span></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean(x)            2.9µs   3.17µs   303615.</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean.default(x)   1.87µs   1.98µs   477882.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean(x)           2.94µs   3.19µs   299957.</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean.default(x)   1.87µs   1.99µs   477443.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Esta optimización es un poco arriesgada. Si bien <code>mean.default()</code> es casi el doble de rápido para 100 valores, fallará de manera sorprendente si <code>x</code> no es un vector numérico.</p>
 <p>Una optimización aún más arriesgada es llamar directamente a la función <code>.Internal</code> subyacente. Esto es más rápido porque no realiza ninguna verificación de entrada ni maneja NA, por lo que está comprando velocidad a costa de la seguridad.</p>
@@ -646,9 +647,9 @@ div.csl-indent {
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 4</span></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression              min   median `itr/sec`</span></span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean(x)              2.92µs   3.21µs   297235.</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean.default(x)      1.86µs   1.97µs   482668.</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 .Internal(mean(x)) 501.17ns 551.11ns  1731634.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean(x)              2.95µs   3.21µs   301714.</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean.default(x)      1.89µs      2µs   474374.</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 .Internal(mean(x)) 471.13ns 491.16ns  1970072.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>NB: La mayoría de estas diferencias surgen porque <code>x</code> es pequeño. Si aumenta el tamaño, las diferencias básicamente desaparecen, porque la mayor parte del tiempo ahora se dedica a calcular la media, sin encontrar la implementación subyacente. Este es un buen recordatorio de que el tamaño de la entrada es importante y debe motivar sus optimizaciones en función de datos realistas.</p>
 <div class="cell" data-layout-align="center">
@@ -661,9 +662,9 @@ div.csl-indent {
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 4</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression              min   median `itr/sec`</span></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean(x)              43.3µs     46µs    21496.</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean.default(x)      40.9µs   44.8µs    22081.</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 .Internal(mean(x))   37.8µs   43.3µs    22915.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 mean(x)              43.1µs   46.1µs    21419.</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 mean.default(x)      40.9µs   44.9µs    21997.</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 .Internal(mean(x))   37.5µs   43.2µs    22903.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="as.data.frame" class="level3" data-number="24.4.2">
@@ -687,8 +688,8 @@ div.csl-indent {
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 4</span></span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression         min   median `itr/sec`</span></span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;    &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 as.data.frame  982.6µs   1.04ms      946.</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 quick_df        6.32µs   7.29µs   128025.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 as.data.frame    980µs   1.04ms      948.</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 quick_df        6.43µs   7.38µs   126736.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Una vez más, tenga en cuenta la compensación. Este método es rápido porque es peligroso. Si le da entradas incorrectas, obtendrá un marco de datos corrupto:</p>
 <div class="cell" data-layout-align="center">
@@ -748,9 +749,9 @@ div.csl-indent {
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 4</span></span>
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression        min   median `itr/sec`</span></span>
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 lookup[x1]   431.09ns    541ns  1774453.</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 lookup[x10]    1.29µs    1.4µs   680551.</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 lookup[x100]   2.97µs    5.1µs   196605.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 lookup[x1]   410.01ns 451.11ns  2006883.</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 lookup[x10]    1.26µs   1.31µs   699933.</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 lookup[x100]   2.83µs   4.68µs   213576.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La vectorización no resolverá todos los problemas y, en lugar de convertir un algoritmo existente en uno que utilice un enfoque vectorizado, a menudo es mejor escribir su propia función vectorizada en C++. Aprenderá cómo hacerlo en el <a href="Rcpp.html" class="quarto-xref"><span>Capítulo 25</span></a>.</p>
 <section id="ejercicios-2" class="level3" data-number="24.5.1">
@@ -792,10 +793,10 @@ div.csl-indent {
 <span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 4</span></span>
 <span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   expression      min   median `itr/sec`</span></span>
 <span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;</span></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 loop10       19.4µs  20.93µs    46541.</span></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 loop100    526.53µs 549.58µs     1807.</span></span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 vec10        3.53µs   3.84µs   253721.</span></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 vec100       22.1µs  22.78µs    42975.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 loop10      19.44µs  20.85µs    46725.</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 loop100    527.59µs 547.35µs     1820.</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 vec10        3.48µs   3.72µs   262440.</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 vec100      21.85µs   22.2µs    44172.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Modificar un objeto en un bucle, por ejemplo, <code>x[i] &lt;- y</code>, también puede crear una copia, dependiendo de la clase de <code>x</code>. La <a href="Names-values.html#sec-single-binding" class="quarto-xref"><span>Sección 2.5.1</span></a> analiza este problema con mayor profundidad y le brinda algunas herramientas para determinar cuándo está haciendo copias.</p>
 </section>
@@ -817,14 +818,14 @@ div.csl-indent {
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.406   0.000   0.406</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     0.4     0.0     0.4</span></span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>m) {</span>
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">t.test</span>(X[i, grp <span class="sc">==</span> <span class="dv">1</span>], X[i, grp <span class="sc">==</span> <span class="dv">2</span>])<span class="sc">$</span>statistic</span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.108   0.000   0.108</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    0.11    0.00    0.11</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Por supuesto, un bucle for calcula, pero no guarda los valores. Podemos <code>map_dbl()</code> (<a href="Functionals.html#sec-map-atomic" class="quarto-xref"><span>Sección 9.2.1</span></a>) para hacer eso. Esto agrega un poco de sobrecarga:</p>
 <div class="cell" data-layout-align="center">
@@ -833,7 +834,7 @@ div.csl-indent {
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(t1 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, compT))</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.120   0.001   0.120</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.121   0.002   0.124</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>¿Cómo podemos hacer esto más rápido? Primero, podríamos intentar hacer menos trabajo. Si observa el código fuente de <code>stats:::t.test.default()</code>, verá que hace mucho más que calcular la estadística t. También calcula el valor p y formatea la salida para su impresión. Podemos intentar que nuestro código sea más rápido eliminando esas piezas.</p>
 <div class="cell" data-layout-align="center">
@@ -855,7 +856,7 @@ div.csl-indent {
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(t2 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, <span class="sc">~</span> <span class="fu">my_t</span>(X[.,], grp)))</span>
 <span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.025   0.000   0.025</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   0.024   0.000   0.025</span></span>
 <span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(t1, t2))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Esto nos da una mejora de velocidad de seis veces.</p>
@@ -897,7 +898,7 @@ div.csl-indent {
 <p>También puede comunicarse con la comunidad para obtener ayuda. StackOverflow puede ser un recurso útil. Deberá esforzarse un poco para crear un ejemplo fácilmente digerible que también capture las características más destacadas de su problema. Si su ejemplo es demasiado complejo, pocas personas tendrán el tiempo y la motivación para intentar una solución. Si es demasiado simple, obtendrá respuestas que resuelven el problema del juguete pero no el problema real. Si también intenta responder preguntas en StackOverflow, rápidamente tendrá una idea de lo que constituye una buena pregunta.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-mature-opt" class="csl-entry" role="listitem">
 Bueno, Carlos. 2013. <em>Mature Optimization Handbook</em>. <a href="http://carlos.bueno.org/optimization/">http://carlos.bueno.org/optimization/</a>.
 </div>
@@ -908,13 +909,13 @@ Hunt, Andrew, y David Thomas. 1990. <em>The Pragmatic Programmer</em>. Addison W
 Matloff, Norman. 2011. <em>The Art of <span>R</span> Programming</em>. No Starch Press.
 </div>
 <div id="ref-parcomp-ds" class="csl-entry" role="listitem">
-———. 2015. <em>Parallel Computing for Data Science</em>. Chapman &amp; Hall/CRC. <a href="http://amzn.com/1466587016">http://amzn.com/1466587016</a>.
+Matloff, Norman. 2015. <em>Parallel Computing for Data Science</em>. Chapman &amp; Hall/CRC. <a href="http://amzn.com/1466587016">http://amzn.com/1466587016</a>.
 </div>
 <div id="ref-parallel-r" class="csl-entry" role="listitem">
 McCallum, Q. Ethan, y Steve Weston. 2011. <em>Parallel <span>R</span></em>. O’Reilly. <a href="http://amzn.com/B005Z29QT4">http://amzn.com/B005Z29QT4</a>.
 </div>
 <div id="ref-r-design" class="csl-entry" role="listitem">
-Morandat, Floréal, Brandon Hill, Leo Osvald, y Jan Vitek. 2012. <span>«Evaluating the design of the <span>R</span> language»</span>. En <em>European Conference on Object-Oriented Programming</em>, 104-31. Springer. <a href="http://r.cs.purdue.edu/pub/ecoop12.pdf">http://r.cs.purdue.edu/pub/ecoop12.pdf</a>.
+Morandat, Floréal, Brandon Hill, Leo Osvald, y Jan Vitek. 2012. <span>«Evaluating the design of the <span>R</span> language»</span>. <em>European Conference on Object-Oriented Programming</em>, 104-31. <a href="http://r.cs.purdue.edu/pub/ecoop12.pdf">http://r.cs.purdue.edu/pub/ecoop12.pdf</a>.
 </div>
 </div>
 </section>

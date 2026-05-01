@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,6 +10,9 @@
 
 <title>1&nbsp; Introducción – R Avanzado</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -25,7 +28,6 @@ ul.task-list li input[type="checkbox"] {
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -55,15 +57,14 @@ div.csl-indent {
 <link href="./projectlogo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a73e7facfaf3f326b6370add29585988.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-94509cf776e35d8cf5b7004333b6cf71.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -518,7 +519,7 @@ div.csl-indent {
 <section id="recommended-reading" class="level2" data-number="1.6">
 <h2 data-number="1.6" class="anchored" data-anchor-id="recommended-reading"><span class="header-section-number">1.6</span> Lectura recomendada</h2>
 <p>Debido a que la comunidad de R se compone principalmente de científicos de datos, no de informáticos, hay relativamente pocos libros que profundicen en los fundamentos técnicos de R. En mi viaje personal para comprender R, he encontrado que es particularmente útil usar recursos de otros lenguajes de programación. R tiene aspectos de lenguajes de programación tanto funcionales como orientados a objetos (OO). Aprender cómo se expresan estos conceptos en R lo ayudará a aprovechar su conocimiento existente de otros lenguajes de programación y lo ayudará a identificar áreas en las que puede mejorar.</p>
-<p>Para comprender por qué los sistemas de objetos de R funcionan de la forma en que lo hacen, descubrí que <em>La estructura e interpretación de los programas informáticos</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a><a href="SICP"><span class="citation" data-cites="SICP">Abelson, Sussman, y Sussman (<span>1996</span>)</span></a> es particularmente útil. Es un libro conciso pero profundo, y después de leerlo, sentí por primera vez que podía diseñar mi propio sistema orientado a objetos. El libro fue mi primera introducción al paradigma encapsulado de la programación orientada a objetos que se encuentra en R y me ayudó a comprender las fortalezas y debilidades de este sistema. SICP también enseña la mentalidad funcional en la que crea funciones que son simples individualmente y que se vuelven poderosas cuando se componen juntas.</p>
+<p>Para comprender por qué los sistemas de objetos de R funcionan de la forma en que lo hacen, descubrí que <em>La estructura e interpretación de los programas informáticos</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a><a href="SICP"><span class="citation" data-cites="SICP">Abelson et&nbsp;al. (<span>1996</span>)</span></a> es particularmente útil. Es un libro conciso pero profundo, y después de leerlo, sentí por primera vez que podía diseñar mi propio sistema orientado a objetos. El libro fue mi primera introducción al paradigma encapsulado de la programación orientada a objetos que se encuentra en R y me ayudó a comprender las fortalezas y debilidades de este sistema. SICP también enseña la mentalidad funcional en la que crea funciones que son simples individualmente y que se vuelven poderosas cuando se componen juntas.</p>
 <p>Para comprender las compensaciones que ha hecho R en comparación con otros lenguajes de programación, encontré <em>Conceptos, técnicas y modelos de programación de computadoras</em> <span class="citation" data-cites="ctmcp">(<a href="References.html#ref-ctmcp" role="doc-biblioref">Van-Roy y Haridi 2004</a>)</span> extremadamente útil. Me ayudó a comprender que la semántica de copiar al modificar de R hace que sea sustancialmente más fácil razonar sobre el código y que, si bien su implementación actual no es particularmente eficiente, es un problema solucionable.</p>
 <p>Si quieres aprender a ser un mejor programador, no hay mejor lugar al que acudir que <em>El programador pragmático</em> <span class="citation" data-cites="pragprog">(<a href="References.html#ref-pragprog" role="doc-biblioref">Hunt y Thomas 1990</a>)</span>. Este libro es independiente del lenguaje y brinda excelentes consejos sobre cómo ser un mejor programador.</p>
 </section>
@@ -703,7 +704,7 @@ div.csl-indent {
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-SICP" class="csl-entry" role="listitem">
 Abelson, Harold, Gerald Jay Sussman, y Julie Sussman. 1996. <em>Structure and Interpretation of Computer Programs</em>. MIT Press.
 </div>
